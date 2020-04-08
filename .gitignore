@@ -3,3 +3,7 @@
 ################################################################################
 
 /DynamicEnergyTest/debug
+/DynamicEnergyTest/.vs/DynamicEnergyTest/v16/Server/sqlite3
+/DynamicEnergyTest/DynamicEnergyTest/obj/Debug
+/DynamicEnergyTest/KoboldCom/obj/Debug
+/DynamicEnergyTest/DynamicEnergyTest/bin/Debug
