@@ -10,13 +10,16 @@ using System.Windows.Forms;
 using DevExpress.XtraEditors;
 using DevExpress.Skins;
 using KoboldCom;
+using DynamicEnergyTest.UI;
 
 namespace DynamicEnergyTest
 {
-    public partial class MainForm : DevExpress.XtraEditors.XtraForm
+    public partial class MainForm : XtraShadowForm
     {
         private readonly Communicator communicator = new Communicator(new SerialPort(), new Protocols());
-
+        private TestPanelCtrl testPanelCtrl;
+        private SettingPanelCtrl settingPanelCtrl;
+        private ReportPanelCtrl reportPanelCtrl;
         public MainForm()
         {
             InitializeComponent();
@@ -25,13 +28,45 @@ namespace DynamicEnergyTest
                 0x4d, 0x61, 0x6e, 0x75, 0x66, 0x61, 0x63, 0x74, 0x75, 0x72, 0x65, 0x54, 0x65, 0x73, 0x74
             };
             string result = System.Text.Encoding.UTF8.GetString(bytes);
+
+            testPanelCtrl = new TestPanelCtrl();
+            reportPanelCtrl = new ReportPanelCtrl();
+            settingPanelCtrl = new SettingPanelCtrl();
+
+            this.toolBarCtrl1.EventHandler += SwitchPageEventHandler;
         }
 
-        private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void SwitchPageEventHandler(object sender, EventArgs e)
         {
-            System.Windows.Forms.ComboBox comboBox = sender as System.Windows.Forms.ComboBox;
-            string skinName = comboBox.Text;
-            DevExpress.LookAndFeel.UserLookAndFeel.Default.SkinName = skinName;
+            ToolBarItem toolBarItem = sender as ToolBarItem;
+            if (toolBarItem != null)
+            {
+                switch (toolBarItem.ItemIndex)
+                {
+                    case 1:
+                        this.panel.Controls.Clear();
+                        this.panel.Controls.Add(testPanelCtrl);
+                        break;
+                    case 2:
+                        this.panel.Controls.Clear();
+                        this.panel.Controls.Add(reportPanelCtrl);
+                        break;
+                    case 3:
+                        this.panel.Controls.Clear();
+                        this.panel.Controls.Add(settingPanelCtrl);
+                        break;
+                }
+            }
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            testPanelCtrl.Dock = DockStyle.Fill;
+            reportPanelCtrl.Dock = DockStyle.Fill;
+            settingPanelCtrl.Dock = DockStyle.Fill;
+
+            this.panel.Controls.Add(testPanelCtrl);
         }
     }
 }

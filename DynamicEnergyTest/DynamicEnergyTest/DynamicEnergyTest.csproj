@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataModel.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -65,9 +66,96 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocols.cs" />
+    <Compile Include="TestStatus.cs" />
+    <Compile Include="UI\ColorFactory.cs" />
+    <Compile Include="UI\ImportTestPlanCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ImportTestPlanCtrl.Designer.cs">
+      <DependentUpon>ImportTestPlanCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ParameterSettingCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ParameterSettingCtrl.Designer.cs">
+      <DependentUpon>ParameterSettingCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ReportPanelCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ReportPanelCtrl.Designer.cs">
+      <DependentUpon>ReportPanelCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\SettingPanelCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\SettingPanelCtrl.Designer.cs">
+      <DependentUpon>SettingPanelCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\StatusSwitchCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\StatusSwitchCtrl.Designer.cs">
+      <DependentUpon>StatusSwitchCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\SwitchIndexCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\SwitchIndexCtrl.Designer.cs">
+      <DependentUpon>SwitchIndexCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\SwitchInfoCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\SwitchInfoCtrl.Designer.cs">
+      <DependentUpon>SwitchInfoCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\TestPanelCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\TestPanelCtrl.Designer.cs">
+      <DependentUpon>TestPanelCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\TestProcessCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\TestProcessCtrl.Designer.cs">
+      <DependentUpon>TestProcessCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\TestProcessItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\TestProcessItem.Designer.cs">
+      <DependentUpon>TestProcessItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\TestProcessLine.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\TestProcessLine.Designer.cs">
+      <DependentUpon>TestProcessLine.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ToolBarCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ToolBarCtrl.Designer.cs">
+      <DependentUpon>ToolBarCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ToolBarItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ToolBarItem.Designer.cs">
+      <DependentUpon>ToolBarItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="XtraShadowForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="XtraShadowForm.Designer.cs">
+      <DependentUpon>XtraShadowForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -81,6 +169,48 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="UI\ImportTestPlanCtrl.resx">
+      <DependentUpon>ImportTestPlanCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ParameterSettingCtrl.resx">
+      <DependentUpon>ParameterSettingCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ReportPanelCtrl.resx">
+      <DependentUpon>ReportPanelCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\SettingPanelCtrl.resx">
+      <DependentUpon>SettingPanelCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\StatusSwitchCtrl.resx">
+      <DependentUpon>StatusSwitchCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\SwitchIndexCtrl.resx">
+      <DependentUpon>SwitchIndexCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\SwitchInfoCtrl.resx">
+      <DependentUpon>SwitchInfoCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TestPanelCtrl.resx">
+      <DependentUpon>TestPanelCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TestProcessCtrl.resx">
+      <DependentUpon>TestProcessCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TestProcessItem.resx">
+      <DependentUpon>TestProcessItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TestProcessLine.resx">
+      <DependentUpon>TestProcessLine.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ToolBarCtrl.resx">
+      <DependentUpon>ToolBarCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ToolBarItem.resx">
+      <DependentUpon>ToolBarItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="XtraShadowForm.resx">
+      <DependentUpon>XtraShadowForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
