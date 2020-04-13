@@ -20,6 +20,7 @@ namespace DynamicEnergyTest
         private TestPanelCtrl testPanelCtrl;
         private SettingPanelCtrl settingPanelCtrl;
         private ReportPanelCtrl reportPanelCtrl;
+        private FlashPanelCtrl flashPanelCtrl;
         public MainForm()
         {
             InitializeComponent();
@@ -32,6 +33,7 @@ namespace DynamicEnergyTest
             testPanelCtrl = new TestPanelCtrl();
             reportPanelCtrl = new ReportPanelCtrl();
             settingPanelCtrl = new SettingPanelCtrl();
+            flashPanelCtrl = new FlashPanelCtrl();
 
             this.toolBarCtrl1.EventHandler += SwitchPageEventHandler;
         }
@@ -55,6 +57,10 @@ namespace DynamicEnergyTest
                         this.panel.Controls.Clear();
                         this.panel.Controls.Add(settingPanelCtrl);
                         break;
+                    case 4:
+                        this.panel.Controls.Clear();
+                        this.panel.Controls.Add(flashPanelCtrl);
+                        break;
                 }
             }
         }
@@ -65,6 +71,7 @@ namespace DynamicEnergyTest
             testPanelCtrl.Dock = DockStyle.Fill;
             reportPanelCtrl.Dock = DockStyle.Fill;
             settingPanelCtrl.Dock = DockStyle.Fill;
+            flashPanelCtrl.Dock = DockStyle.Fill;
 
             this.panel.Controls.Add(testPanelCtrl);
         }

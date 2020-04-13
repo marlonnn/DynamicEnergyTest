@@ -33,6 +33,7 @@ namespace DynamicEnergyTest.UI
             this.toolBarItemTest = new DynamicEnergyTest.UI.ToolBarItem();
             this.toolBarItemReport = new DynamicEnergyTest.UI.ToolBarItem();
             this.toolBarItemSetting = new DynamicEnergyTest.UI.ToolBarItem();
+            this.toolBarItemFlash = new DynamicEnergyTest.UI.ToolBarItem();
             this.SuspendLayout();
             // 
             // toolBarItemTest
@@ -66,7 +67,18 @@ namespace DynamicEnergyTest.UI
             this.toolBarItemSetting.Size = new System.Drawing.Size(120, 60);
             this.toolBarItemSetting.TabIndex = 3;
             this.toolBarItemSetting.ItemIndex = 3;
-            this.toolBarItemSetting.ClickEvent += ClickEvent;
+            this.toolBarItemSetting.ClickEvent += ClickEvent;            
+            // 
+            // toolBarItemFlash
+            // 
+            this.toolBarItemFlash.BackColor = System.Drawing.Color.White;
+            this.toolBarItemFlash.ItemText = "烧录";
+            this.toolBarItemFlash.Location = new System.Drawing.Point(360, 0);
+            this.toolBarItemFlash.Name = "toolBarItemReport";
+            this.toolBarItemFlash.Size = new System.Drawing.Size(120, 60);
+            this.toolBarItemFlash.TabIndex = 4;
+            this.toolBarItemFlash.ItemIndex = 4;
+            this.toolBarItemFlash.ClickEvent += ClickEvent;
             // 
             // ToolBarCtrl
             // 
@@ -76,6 +88,7 @@ namespace DynamicEnergyTest.UI
             this.Controls.Add(this.toolBarItemReport);
             this.Controls.Add(this.toolBarItemTest);
             this.Controls.Add(this.toolBarItemSetting);
+            this.Controls.Add(this.toolBarItemFlash);
             this.Name = "ToolBarCtrl";
             this.Size = new System.Drawing.Size(952, 70);
             this.ResumeLayout(false);
@@ -87,5 +100,6 @@ namespace DynamicEnergyTest.UI
         private ToolBarItem toolBarItemTest;
         private ToolBarItem toolBarItemReport;
         private ToolBarItem toolBarItemSetting;
+        private ToolBarItem toolBarItemFlash;
     }
 }

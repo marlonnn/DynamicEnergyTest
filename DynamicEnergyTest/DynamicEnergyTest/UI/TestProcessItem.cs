@@ -7,12 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DynamicEnergyTest.TestModel;
 
 namespace DynamicEnergyTest.UI
 {
     public partial class TestProcessItem : UserControl
     {
         private const int diameter = 30;
+        private RectangleF EclipseRectangle { set; get; }
         private string _itemText;
         [Description("Item Text"), Category("Appearance"), DefaultValue("0")]
         public string ItemText
@@ -60,10 +62,36 @@ namespace DynamicEnergyTest.UI
                 }
             }
         }
+
+        private ProcessItem _processItem;
+        public ProcessItem ProcessItem
+        {
+            get { return _processItem; }
+            set { _processItem = value; }
+        }
+
+        public MouseEventHandler MouseEventClick;
+
         public TestProcessItem()
         {
             InitializeComponent();
             this.TestStatus = TestStatus.Unknow;
+            this.ProcessItem = new ProcessItem();
+            this.MouseClick += TestProcessItem_MouseClick;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            this.EclipseRectangle = new RectangleF((this.Width - diameter) / 2, (this.Height - diameter) / 2, diameter, diameter);
+        }
+
+        private void TestProcessItem_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (this.EclipseRectangle.Contains(e.Location))
+            {
+                MouseEventClick?.Invoke(sender, e);
+            }
         }
 
         protected override void OnResize(EventArgs e)
@@ -101,6 +129,7 @@ namespace DynamicEnergyTest.UI
             }
         }
 
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -117,7 +146,7 @@ namespace DynamicEnergyTest.UI
                         using (SolidBrush solidBrush = new SolidBrush(circleColor))
                         {
                             SizeF textSize = graphics.MeasureString(ItemText, font);
-                            graphics.DrawEllipse(pen, new RectangleF((this.Width - diameter) / 2, (this.Height - diameter) / 2, diameter, diameter));
+                            graphics.DrawEllipse(pen, this.EclipseRectangle);
                             graphics.DrawString(ItemText, font, solidBrush, (this.Width - textSize.Width) / 2, (this.Height - textSize.Height) / 2);
                         }
                     }
@@ -132,7 +161,7 @@ namespace DynamicEnergyTest.UI
                         using (SolidBrush solidBrush = new SolidBrush(circleColor))
                         {
                             SizeF textSize = graphics.MeasureString(ItemText, font);
-                            graphics.FillEllipse(solidBrush, new RectangleF((this.Width - diameter) / 2, (this.Height - diameter) / 2, diameter, diameter));
+                            graphics.FillEllipse(solidBrush, this.EclipseRectangle);
                             using (SolidBrush textBrush = new SolidBrush(Color.White))
                                 graphics.DrawString(ItemText, font, textBrush, (this.Width - textSize.Width) / 2, (this.Height - textSize.Height) / 2);
                         }
@@ -147,7 +176,7 @@ namespace DynamicEnergyTest.UI
                     using (Font font = new Font("Microsoft Sans Serif", 10F))
                     using (SolidBrush solidBrush = new SolidBrush(circleColor))
                     {
-                        graphics.DrawEllipse(pen, new RectangleF((this.Width - diameter) / 2, (this.Height - diameter) / 2, diameter, diameter));
+                        graphics.DrawEllipse(pen, this.EclipseRectangle);
                         Rectangle rectangle = new Rectangle((this.Width - correctHeght) / 2, (this.Height - correctWidth) / 2, correctHeght, correctWidth);
                         graphics.DrawLine(pen, rectangle.X, rectangle.Y + rectangle.Height * 2 / 3, rectangle.X + rectangle.Width / 3, rectangle.Y + rectangle.Height);
                         graphics.DrawLine(pen, rectangle.X + rectangle.Width / 3, rectangle.Y + rectangle.Height, rectangle.X + rectangle.Width, rectangle.Y);
@@ -162,7 +191,7 @@ namespace DynamicEnergyTest.UI
                         using (SolidBrush solidBrush = new SolidBrush(circleColor))
                         {
                             SizeF textSize = graphics.MeasureString(ItemText, font);
-                            graphics.FillEllipse(solidBrush, new RectangleF((this.Width - diameter) / 2, (this.Height - diameter) / 2, diameter, diameter));
+                            graphics.FillEllipse(solidBrush, this.EclipseRectangle);
                             using (SolidBrush textBrush = new SolidBrush(Color.White))
                                 graphics.DrawString(ItemText, font, textBrush, (this.Width - textSize.Width) / 2, (this.Height - textSize.Height) / 2);
                         }

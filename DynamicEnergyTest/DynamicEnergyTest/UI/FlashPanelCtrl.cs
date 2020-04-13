@@ -10,16 +10,11 @@ using System.Windows.Forms;
 
 namespace DynamicEnergyTest.UI
 {
-    public partial class TestPanelCtrl : UserControl
+    public partial class FlashPanelCtrl : UserControl
     {
-        public TestPanelCtrl()
+        public FlashPanelCtrl()
         {
             InitializeComponent();
-        }
-
-        public StatusSwitchCtrl StatusSwitchCtrl
-        {
-            get { return this.statusSwitchCtrl1; }
         }
     }
 }

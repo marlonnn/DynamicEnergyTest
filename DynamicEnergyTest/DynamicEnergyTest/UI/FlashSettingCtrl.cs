@@ -10,17 +10,13 @@ using System.Windows.Forms;
 
 namespace DynamicEnergyTest.UI
 {
-    public partial class ImportTestPlanCtrl : UserControl
+    public partial class FlashSettingCtrl : UserControl
     {
         private const int MARGIN = 10;
-        public ImportTestPlanCtrl()
+
+        public FlashSettingCtrl()
         {
             InitializeComponent();
-        }
-
-        private void BtnImport_Click(object sender, EventArgs e)
-        {
-
         }
 
         protected override void OnResize(EventArgs e)
@@ -34,7 +30,7 @@ namespace DynamicEnergyTest.UI
             base.OnPaint(e);
             Graphics g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            g.DrawString("新建测试计划", this.Font, Brushes.Black, MARGIN, MARGIN);
+            g.DrawString("参数设置", this.Font, Brushes.Black, MARGIN, MARGIN);
 
             g.FillRectangle(Brushes.White, MARGIN, 3 * MARGIN, this.Width - 2 * MARGIN, this.Height - 4 * MARGIN);
         }

@@ -1,6 +1,6 @@
 ﻿namespace DynamicEnergyTest.UI
 {
-    partial class ImportTestPlanCtrl
+    partial class FlashBinFilesCtrl
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,35 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnImport = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // btnImport
-            // 
-            this.btnImport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(144)))), ((int)(((byte)(255)))));
-            this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnImport.ForeColor = System.Drawing.Color.White;
-            this.btnImport.Location = new System.Drawing.Point(38, 50);
-            this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(130, 30);
-            this.btnImport.TabIndex = 1;
-            this.btnImport.Text = "导入UID列表";
-            this.btnImport.UseVisualStyleBackColor = false;
-            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
-            // 
-            // ImportTestPlanCtrl
+            // FlashBinFilesCtrl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.White;
-            this.Controls.Add(this.btnImport);
-            this.Name = "ImportTestPlanCtrl";
-            this.Size = new System.Drawing.Size(1070, 90);
+            this.Name = "FlashBinFilesCtrl";
+            this.Size = new System.Drawing.Size(667, 459);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private System.Windows.Forms.Button btnImport;
     }
 }

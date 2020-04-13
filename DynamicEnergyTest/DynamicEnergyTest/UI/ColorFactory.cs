@@ -14,5 +14,9 @@ namespace DynamicEnergyTest.UI
         public static Color DynamicOrange = Color.FromArgb(255, 131, 26);
         public static Color DynamicGreen = Color.FromArgb(126, 211, 26);
         public static Color DynamicRed = Color.FromArgb(208, 2, 26);
+        public static Color Pass = Color.DarkGreen;
+        public static Color Failure = Color.Red;
+        public static Color UnTested = Color.Orange;
+
     }
 }

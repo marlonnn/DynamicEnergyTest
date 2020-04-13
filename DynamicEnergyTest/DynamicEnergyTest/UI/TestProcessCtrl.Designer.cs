@@ -106,7 +106,7 @@
             // testProcessItemMeasure
             // 
             this.testProcessItemMeasure.BackColor = System.Drawing.Color.White;
-            this.testProcessItemMeasure.InfoText = "测量测试";
+            this.testProcessItemMeasure.InfoText = "计量测试";
             this.testProcessItemMeasure.ItemText = "4";
             this.testProcessItemMeasure.Location = new System.Drawing.Point(327, 0);
             this.testProcessItemMeasure.Name = "testProcessItemMeasure";

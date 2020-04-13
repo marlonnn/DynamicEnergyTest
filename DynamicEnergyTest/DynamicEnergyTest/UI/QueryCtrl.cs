@@ -10,18 +10,13 @@ using System.Windows.Forms;
 
 namespace DynamicEnergyTest.UI
 {
-    public partial class ParameterSettingCtrl : UserControl
+    public partial class QueryCtrl : UserControl
     {
         private const int MARGIN = 10;
-        public ParameterSettingCtrl()
+
+        public QueryCtrl()
         {
             InitializeComponent();
-        }
-
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-            this.Invalidate();
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -29,9 +24,7 @@ namespace DynamicEnergyTest.UI
             base.OnPaint(e);
             Graphics g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            g.DrawString("参数设置", this.Font, Brushes.Black, MARGIN, 0);
-
-            g.FillRectangle(Brushes.White, MARGIN, 3 * MARGIN, this.Width - 2 * MARGIN, this.Height - 4 * MARGIN);
+            g.FillRectangle(Brushes.White, MARGIN, MARGIN, this.Width - 2 * MARGIN, this.Height - 2 * MARGIN);
         }
     }
 }

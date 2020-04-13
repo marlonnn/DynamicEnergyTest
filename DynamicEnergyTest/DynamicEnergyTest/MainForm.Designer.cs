@@ -43,10 +43,11 @@
             // 
             // panel
             // 
+            this.panel.BackColor = System.Drawing.SystemColors.Control;
             this.panel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel.Location = new System.Drawing.Point(0, 70);
             this.panel.Name = "panel";
-            this.panel.Size = new System.Drawing.Size(1284, 697);
+            this.panel.Size = new System.Drawing.Size(1284, 791);
             this.panel.TabIndex = 1;
             // 
             // MainForm
@@ -55,7 +56,7 @@
             this.Appearance.Options.UseBackColor = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1284, 767);
+            this.ClientSize = new System.Drawing.Size(1284, 861);
             this.Controls.Add(this.panel);
             this.Controls.Add(this.toolBarCtrl1);
             this.Name = "MainForm";

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DynamicEnergyTest.TestModel;
 
 namespace DynamicEnergyTest.UI
 {
@@ -54,6 +55,30 @@ namespace DynamicEnergyTest.UI
                     this.InvokeInvalidate(SwitchText, value);
                 }
             }
+        }
+
+        private string _testContent;
+        [Description("Test Content"), Category("Appearance"), DefaultValue(" ")]
+        public string TestContent
+        {
+            get { return _testContent; }
+            set
+            {
+                if (value != _testContent)
+                {
+                    this._testContent = value;
+                    this.Invalidate();
+                    this.InvokeInvalidate(TestContent, value);
+                }
+            }
+        }
+
+        public void UpdateProcessItem(ProcessItem processItem)
+        {
+            this._index = processItem.Index;
+            this.switchIndexCtrl.SwitchIndex = processItem.Index.ToString();
+            this.switchIndexCtrl.SwitchText = processItem.TestTitle;
+            this.TestContent = processItem.TestContent;
         }
 
         public StatusSwitchCtrl()
@@ -105,6 +130,17 @@ namespace DynamicEnergyTest.UI
             }
             SolidBrush bottomSolidBrush = new SolidBrush(bottomColor);
             graphics.FillRectangle(bottomSolidBrush, new RectangleF(0, this.Height / 2, this.Width, this.Height / 2));
+
+            if (!string.IsNullOrEmpty(this.TestContent))
+            {
+                using (Font font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular))
+                using (SolidBrush textSolidBrush = new SolidBrush(Color.White))
+                {
+                    SizeF textSize = graphics.MeasureString(this.SwitchText, font);
+                    graphics.DrawString(TestContent, font, textSolidBrush, new RectangleF(20, 70, this.Width - 20, this.Height - 70));
+
+                }
+            }
 
             if (!string.IsNullOrEmpty(this.SwitchText))
             {
