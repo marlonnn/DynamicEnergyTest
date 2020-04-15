@@ -89,8 +89,8 @@ namespace KoboldCom
                     }
                     //-数据校验
                     if ((CheckData != null) && //--存在校验方法
-                        (CheckData(buffer, (index + Mask.Length) + LenLength, dataLength) //--数据长度
-                         != buffer[index + (Mask.Length + dataLength) + LenLength]))
+                        (CheckData(buffer, /*(index + Mask.Length) + LenLength*/0, /*dataLength*/ buffer.Count - 1) //--数据长度
+                         != buffer[/*index + (Mask.Length + dataLength) + LenLength*/ buffer.Count - 1]))
                     {
                         Console.WriteLine(index + "-" + buffer.Count + "-" + maskIndex);
                         // 对于校验不符合要求的数据，继续向后搜寻。(数据头是协议中定义出来的特异标志肯定不会出现在数据中)

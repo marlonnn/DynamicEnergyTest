@@ -106,5 +106,19 @@ namespace KoboldCom
         /// 消息解析方法集合
         /// </summary>
         public IAnalyzerCollection Analyzers { get; set; }
+
+        /// <summary>
+        /// 把指定数据写入到串口
+        /// </summary>
+        /// <param name="buffer">要写入的数组</param>
+        /// <param name="offset">数组起始位置</param>
+        /// <param name="count">长度</param>
+        public void Write(byte[] buffer, int offset, int count)
+        {
+            if (Com != null && Com.IsOpen)
+            {
+                Com.Write(buffer, offset, count);
+            }
+        }
     }
 }

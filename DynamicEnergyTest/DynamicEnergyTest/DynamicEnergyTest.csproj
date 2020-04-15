@@ -35,10 +35,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.Data.v18.1, Version=18.1.12.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Printing.v18.1.Core, Version=18.1.12.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Utils.v18.1, Version=18.1.12.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.XtraEditors.v18.1, Version=18.1.12.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Extensions" />
@@ -52,7 +48,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataModel.cs" />
+    <Compile Include="ByteHelper.cs" />
+    <Compile Include="Protocol\C00.cs" />
+    <Compile Include="Protocol\C01.cs" />
+    <Compile Include="Protocol\C08.cs" />
+    <Compile Include="Protocol\C0E.cs" />
+    <Compile Include="Protocol\C12.cs" />
+    <Compile Include="Protocol\C13.cs" />
+    <Compile Include="Protocol\C14.cs" />
+    <Compile Include="Protocol\C15.cs" />
+    <Compile Include="Protocol\C7071.cs" />
+    <Compile Include="Protocol\C7072.cs" />
+    <Compile Include="Protocol\DataModel.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FlashStatus.cs" />
     <Compile Include="Form1.cs">
@@ -61,7 +68,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="HexProtocol.cs" />
+    <Compile Include="Protocol\HexProtocol.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -73,7 +80,9 @@
     <Compile Include="ProcessFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Protocols.cs" />
+    <Compile Include="Protocol\ProtocolFactory.cs" />
+    <Compile Include="Protocol\Protocols.cs" />
+    <Compile Include="Protocol\ReturnCode.cs" />
     <Compile Include="TestModel\ProcessItem.cs" />
     <Compile Include="TestModel\ProcessCollection.cs" />
     <Compile Include="TestStatus.cs" />
@@ -131,6 +140,12 @@
     </Compile>
     <Compile Include="UI\ReportPanelCtrl.Designer.cs">
       <DependentUpon>ReportPanelCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\SerialPortSetingCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\SerialPortSetingCtrl.Designer.cs">
+      <DependentUpon>SerialPortSetingCtrl.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\SettingPanelCtrl.cs">
       <SubType>UserControl</SubType>
@@ -198,12 +213,6 @@
     <Compile Include="UI\ToolBarItem.Designer.cs">
       <DependentUpon>ToolBarItem.cs</DependentUpon>
     </Compile>
-    <Compile Include="XtraShadowForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="XtraShadowForm.Designer.cs">
-      <DependentUpon>XtraShadowForm.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -244,6 +253,9 @@
     <EmbeddedResource Include="UI\ReportPanelCtrl.resx">
       <DependentUpon>ReportPanelCtrl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\SerialPortSetingCtrl.resx">
+      <DependentUpon>SerialPortSetingCtrl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\SettingPanelCtrl.resx">
       <DependentUpon>SettingPanelCtrl.cs</DependentUpon>
     </EmbeddedResource>
@@ -276,9 +288,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\ToolBarItem.resx">
       <DependentUpon>ToolBarItem.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="XtraShadowForm.resx">
-      <DependentUpon>XtraShadowForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">

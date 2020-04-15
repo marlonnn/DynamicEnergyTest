@@ -17,7 +17,7 @@ namespace KoboldCom
         public SerialPortSetting()
         {
             this.Port = 1;
-            this.Baudrate = 0x2580;
+            this.Baudrate = 115200;
             this.StopBits = StopBits.One;
             this.Parity = Parity.None;
             this.Handshake = Handshake.None;
@@ -83,5 +83,6 @@ namespace KoboldCom
         /// 停止位
         /// </summary>
         public StopBits StopBits;
+
     }
 }

@@ -7,14 +7,15 @@ using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DevExpress.XtraEditors;
-using DevExpress.Skins;
 using KoboldCom;
 using DynamicEnergyTest.UI;
+using System.IO;
+using System.Xml;
+using DynamicEnergyTest.Protocol;
 
 namespace DynamicEnergyTest
 {
-    public partial class MainForm : XtraShadowForm
+    public partial class MainForm : Form
     {
         private readonly Communicator communicator = new Communicator(new SerialPort(), new Protocols());
         private TestPanelCtrl testPanelCtrl;
@@ -24,7 +25,6 @@ namespace DynamicEnergyTest
         public MainForm()
         {
             InitializeComponent();
-
             byte[] bytes = new byte[] {
                 0x4d, 0x61, 0x6e, 0x75, 0x66, 0x61, 0x63, 0x74, 0x75, 0x72, 0x65, 0x54, 0x65, 0x73, 0x74
             };
