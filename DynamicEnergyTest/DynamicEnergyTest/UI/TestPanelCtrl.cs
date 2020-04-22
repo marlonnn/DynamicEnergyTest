@@ -13,9 +13,39 @@ namespace DynamicEnergyTest.UI
 {
     public partial class TestPanelCtrl : UserControl
     {
+        private Timer timer;
+
         public TestPanelCtrl()
         {
             InitializeComponent();
+            timer = new Timer();
+            timer.Interval = 300;
+            timer.Tick += Timer_Tick;
+            timer.Start();
+            ColumnHeader columnHeader = new ColumnHeader();
+            columnHeader.Text = "消息日志";
+            columnHeader.Width = 500;
+            this.listView.Columns.Add(columnHeader);
+            this.listView.Timer = timer;
+        }
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (timer != null) timer.Stop();
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+
         }
 
         public StatusSwitchCtrl StatusSwitchCtrl
@@ -25,9 +55,9 @@ namespace DynamicEnergyTest.UI
 
         public void UpdateListView(string info)
         {
-            ListViewItem lvi = new ListViewItem();
-            lvi.Text = info;
-            this.listView.Items.Add(lvi);
+            //ListViewItem lvi = new ListViewItem();
+            //lvi.Text = info;
+            this.listView.AppendLog(new string[] { info });
         }
 
         public void UpdateStatusSwitch(ComCode comCode)

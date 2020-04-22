@@ -16,5 +16,12 @@ namespace DynamicEnergyTest.UI
         {
             InitializeComponent();
         }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            this.flashFilesCtrl1.Bounds =
+                new Rectangle(10, flashBinFilesCtrl1.Location.Y + flashBinFilesCtrl1.Height + 10, this.Width - 20, this.Height - flashBinFilesCtrl1.Location.Y - flashBinFilesCtrl1.Height - 20);
+        }
     }
 }

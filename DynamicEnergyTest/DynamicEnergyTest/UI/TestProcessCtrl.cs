@@ -47,6 +47,18 @@ namespace DynamicEnergyTest.UI
                 processTest.ProcessEntrys = processEntries;
                 sysConfig.ProcessTests.Add(processTest);
             }
+            //TestResultToJsonFile();
+        }
+
+        private void TestResultToJsonFile()
+        {
+            var processTests = sysConfig.ProcessTests;
+            foreach (var process in processTests)
+            {
+                string fileName = string.Format("TestResult\\{0}.json", process.UID.UIDCode);
+                var jsonStr = fastJSON.JSON.ToNiceJSON(process);
+                File.WriteAllText(fileName, jsonStr);
+            }
         }
 
         protected override void OnLoad(EventArgs e)
