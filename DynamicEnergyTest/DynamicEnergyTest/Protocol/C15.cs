@@ -12,6 +12,8 @@ namespace DynamicEnergyTest.Protocol
         public string ICCID { get; set; }
         public C15()
         {
+            this.TestIndex = 5;
+            this.TestItem = "ICCID测试";
             this.FunCode = 0x00710015;
         }
 

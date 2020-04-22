@@ -29,31 +29,33 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtVersion = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.lowInputVoltage = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
+            this.highInputVoltage = new System.Windows.Forms.NumericUpDown();
+            this.highCurrent = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
-            this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
+            this.lowCurrent = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
-            this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
+            this.highPower = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
-            this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
+            this.lowPower = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
-            this.numericUpDown7 = new System.Windows.Forms.NumericUpDown();
+            this.highSleepCurrent = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
-            this.numericUpDown8 = new System.Windows.Forms.NumericUpDown();
+            this.lowSleepCurrent = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown8)).BeginInit();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.lowInputVoltage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.highInputVoltage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.highCurrent)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lowCurrent)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.highPower)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lowPower)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.highSleepCurrent)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lowSleepCurrent)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -61,191 +63,244 @@
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.White;
             this.label1.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(22, 24);
+            this.label1.Location = new System.Drawing.Point(29, 30);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(70, 12);
+            this.label1.Size = new System.Drawing.Size(87, 15);
             this.label1.TabIndex = 0;
             this.label1.Text = "固件版本号";
             // 
-            // textBox1
+            // txtVersion
             // 
-            this.textBox1.Location = new System.Drawing.Point(24, 48);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(266, 21);
-            this.textBox1.TabIndex = 1;
+            this.txtVersion.Location = new System.Drawing.Point(32, 60);
+            this.txtVersion.Margin = new System.Windows.Forms.Padding(4);
+            this.txtVersion.Name = "txtVersion";
+            this.txtVersion.Size = new System.Drawing.Size(353, 25);
+            this.txtVersion.TabIndex = 1;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.White;
             this.label2.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label2.Location = new System.Drawing.Point(22, 88);
+            this.label2.Location = new System.Drawing.Point(29, 110);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(64, 12);
+            this.label2.Size = new System.Drawing.Size(80, 15);
             this.label2.TabIndex = 2;
             this.label2.Text = "电压（V）";
             // 
-            // numericUpDown1
+            // lowInputVoltage
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(24, 118);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(266, 21);
-            this.numericUpDown1.TabIndex = 3;
+            this.lowInputVoltage.Location = new System.Drawing.Point(32, 148);
+            this.lowInputVoltage.Margin = new System.Windows.Forms.Padding(4);
+            this.lowInputVoltage.Name = "lowInputVoltage";
+            this.lowInputVoltage.Size = new System.Drawing.Size(355, 25);
+            this.lowInputVoltage.TabIndex = 3;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
+            this.label3.BackColor = System.Drawing.Color.White;
             this.label3.Font = new System.Drawing.Font("SimSun", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label3.Location = new System.Drawing.Point(306, 127);
+            this.label3.Location = new System.Drawing.Point(408, 159);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(20, 19);
+            this.label3.Size = new System.Drawing.Size(23, 24);
             this.label3.TabIndex = 4;
             this.label3.Text = "~";
             // 
-            // numericUpDown2
+            // highInputVoltage
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(353, 118);
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(266, 21);
-            this.numericUpDown2.TabIndex = 5;
+            this.highInputVoltage.Location = new System.Drawing.Point(471, 148);
+            this.highInputVoltage.Margin = new System.Windows.Forms.Padding(4);
+            this.highInputVoltage.Name = "highInputVoltage";
+            this.highInputVoltage.Size = new System.Drawing.Size(355, 25);
+            this.highInputVoltage.TabIndex = 5;
             // 
-            // numericUpDown3
+            // highCurrent
             // 
-            this.numericUpDown3.Location = new System.Drawing.Point(353, 192);
-            this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(266, 21);
-            this.numericUpDown3.TabIndex = 9;
+            this.highCurrent.Location = new System.Drawing.Point(471, 240);
+            this.highCurrent.Margin = new System.Windows.Forms.Padding(4);
+            this.highCurrent.Name = "highCurrent";
+            this.highCurrent.Size = new System.Drawing.Size(355, 25);
+            this.highCurrent.TabIndex = 9;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
+            this.label4.BackColor = System.Drawing.Color.White;
             this.label4.Font = new System.Drawing.Font("SimSun", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label4.Location = new System.Drawing.Point(306, 201);
+            this.label4.Location = new System.Drawing.Point(408, 251);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(20, 19);
+            this.label4.Size = new System.Drawing.Size(23, 24);
             this.label4.TabIndex = 8;
             this.label4.Text = "~";
             // 
-            // numericUpDown4
+            // lowCurrent
             // 
-            this.numericUpDown4.Location = new System.Drawing.Point(24, 192);
-            this.numericUpDown4.Name = "numericUpDown4";
-            this.numericUpDown4.Size = new System.Drawing.Size(266, 21);
-            this.numericUpDown4.TabIndex = 7;
+            this.lowCurrent.Location = new System.Drawing.Point(32, 240);
+            this.lowCurrent.Margin = new System.Windows.Forms.Padding(4);
+            this.lowCurrent.Name = "lowCurrent";
+            this.lowCurrent.Size = new System.Drawing.Size(355, 25);
+            this.lowCurrent.TabIndex = 7;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.BackColor = System.Drawing.Color.White;
             this.label5.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label5.Location = new System.Drawing.Point(22, 162);
+            this.label5.Location = new System.Drawing.Point(29, 202);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(64, 12);
+            this.label5.Size = new System.Drawing.Size(80, 15);
             this.label5.TabIndex = 6;
             this.label5.Text = "电流（A）";
             // 
-            // numericUpDown5
+            // highPower
             // 
-            this.numericUpDown5.Location = new System.Drawing.Point(353, 257);
-            this.numericUpDown5.Name = "numericUpDown5";
-            this.numericUpDown5.Size = new System.Drawing.Size(266, 21);
-            this.numericUpDown5.TabIndex = 13;
+            this.highPower.Location = new System.Drawing.Point(471, 321);
+            this.highPower.Margin = new System.Windows.Forms.Padding(4);
+            this.highPower.Name = "highPower";
+            this.highPower.Size = new System.Drawing.Size(355, 25);
+            this.highPower.TabIndex = 13;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
+            this.label6.BackColor = System.Drawing.Color.White;
             this.label6.Font = new System.Drawing.Font("SimSun", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label6.Location = new System.Drawing.Point(306, 266);
+            this.label6.Location = new System.Drawing.Point(408, 332);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(20, 19);
+            this.label6.Size = new System.Drawing.Size(23, 24);
             this.label6.TabIndex = 12;
             this.label6.Text = "~";
             // 
-            // numericUpDown6
+            // lowPower
             // 
-            this.numericUpDown6.Location = new System.Drawing.Point(24, 257);
-            this.numericUpDown6.Name = "numericUpDown6";
-            this.numericUpDown6.Size = new System.Drawing.Size(266, 21);
-            this.numericUpDown6.TabIndex = 11;
+            this.lowPower.Location = new System.Drawing.Point(32, 321);
+            this.lowPower.Margin = new System.Windows.Forms.Padding(4);
+            this.lowPower.Name = "lowPower";
+            this.lowPower.Size = new System.Drawing.Size(355, 25);
+            this.lowPower.TabIndex = 11;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.BackColor = System.Drawing.Color.White;
             this.label7.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label7.Location = new System.Drawing.Point(22, 227);
+            this.label7.Location = new System.Drawing.Point(29, 284);
+            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(64, 12);
+            this.label7.Size = new System.Drawing.Size(80, 15);
             this.label7.TabIndex = 10;
             this.label7.Text = "功率（W）";
             // 
-            // numericUpDown7
+            // highSleepCurrent
             // 
-            this.numericUpDown7.Location = new System.Drawing.Point(353, 324);
-            this.numericUpDown7.Name = "numericUpDown7";
-            this.numericUpDown7.Size = new System.Drawing.Size(266, 21);
-            this.numericUpDown7.TabIndex = 17;
+            this.highSleepCurrent.Location = new System.Drawing.Point(471, 405);
+            this.highSleepCurrent.Margin = new System.Windows.Forms.Padding(4);
+            this.highSleepCurrent.Name = "highSleepCurrent";
+            this.highSleepCurrent.Size = new System.Drawing.Size(355, 25);
+            this.highSleepCurrent.TabIndex = 17;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
+            this.label8.BackColor = System.Drawing.Color.White;
             this.label8.Font = new System.Drawing.Font("SimSun", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label8.Location = new System.Drawing.Point(306, 333);
+            this.label8.Location = new System.Drawing.Point(408, 416);
+            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(20, 19);
+            this.label8.Size = new System.Drawing.Size(23, 24);
             this.label8.TabIndex = 16;
             this.label8.Text = "~";
             // 
-            // numericUpDown8
+            // lowSleepCurrent
             // 
-            this.numericUpDown8.Location = new System.Drawing.Point(24, 324);
-            this.numericUpDown8.Name = "numericUpDown8";
-            this.numericUpDown8.Size = new System.Drawing.Size(266, 21);
-            this.numericUpDown8.TabIndex = 15;
+            this.lowSleepCurrent.Location = new System.Drawing.Point(32, 405);
+            this.lowSleepCurrent.Margin = new System.Windows.Forms.Padding(4);
+            this.lowSleepCurrent.Name = "lowSleepCurrent";
+            this.lowSleepCurrent.Size = new System.Drawing.Size(355, 25);
+            this.lowSleepCurrent.TabIndex = 15;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
             this.label9.BackColor = System.Drawing.Color.White;
             this.label9.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label9.Location = new System.Drawing.Point(22, 294);
+            this.label9.Location = new System.Drawing.Point(29, 368);
+            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(97, 12);
+            this.label9.Size = new System.Drawing.Size(121, 15);
             this.label9.TabIndex = 14;
             this.label9.Text = "待机电流（uA）";
             // 
+            // btnSave
+            // 
+            this.btnSave.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(144)))), ((int)(((byte)(255)))));
+            this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSave.ForeColor = System.Drawing.Color.White;
+            this.btnSave.Location = new System.Drawing.Point(882, 510);
+            this.btnSave.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(97, 38);
+            this.btnSave.TabIndex = 18;
+            this.btnSave.Text = "保存";
+            this.btnSave.UseVisualStyleBackColor = false;
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(144)))), ((int)(((byte)(255)))));
+            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCancel.ForeColor = System.Drawing.Color.White;
+            this.btnCancel.Location = new System.Drawing.Point(1040, 510);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(97, 38);
+            this.btnCancel.TabIndex = 19;
+            this.btnCancel.Text = "取消";
+            this.btnCancel.UseVisualStyleBackColor = false;
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
+            // 
             // ParameterSettingCtrl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.numericUpDown7);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnSave);
+            this.Controls.Add(this.highSleepCurrent);
             this.Controls.Add(this.label8);
-            this.Controls.Add(this.numericUpDown8);
+            this.Controls.Add(this.lowSleepCurrent);
             this.Controls.Add(this.label9);
-            this.Controls.Add(this.numericUpDown5);
+            this.Controls.Add(this.highPower);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.numericUpDown6);
+            this.Controls.Add(this.lowPower);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.numericUpDown3);
+            this.Controls.Add(this.highCurrent);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.numericUpDown4);
+            this.Controls.Add(this.lowCurrent);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.numericUpDown2);
+            this.Controls.Add(this.highInputVoltage);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.lowInputVoltage);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtVersion);
             this.Controls.Add(this.label1);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "ParameterSettingCtrl";
-            this.Size = new System.Drawing.Size(1070, 600);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown8)).EndInit();
+            this.Size = new System.Drawing.Size(1427, 750);
+            ((System.ComponentModel.ISupportInitialize)(this.lowInputVoltage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.highInputVoltage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.highCurrent)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lowCurrent)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.highPower)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lowPower)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.highSleepCurrent)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lowSleepCurrent)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -254,22 +309,24 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtVersion;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown lowInputVoltage;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.NumericUpDown numericUpDown2;
-        private System.Windows.Forms.NumericUpDown numericUpDown3;
+        private System.Windows.Forms.NumericUpDown highInputVoltage;
+        private System.Windows.Forms.NumericUpDown highCurrent;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.NumericUpDown numericUpDown4;
+        private System.Windows.Forms.NumericUpDown lowCurrent;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.NumericUpDown numericUpDown5;
+        private System.Windows.Forms.NumericUpDown highPower;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.NumericUpDown numericUpDown6;
+        private System.Windows.Forms.NumericUpDown lowPower;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.NumericUpDown numericUpDown7;
+        private System.Windows.Forms.NumericUpDown highSleepCurrent;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.NumericUpDown numericUpDown8;
+        private System.Windows.Forms.NumericUpDown lowSleepCurrent;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnCancel;
     }
 }

@@ -13,6 +13,8 @@ namespace DynamicEnergyTest.Protocol
         public byte RSSI { get; set; }
         public C14()
         {
+            this.TestIndex = 6;
+            this.TestItem = "通信测试";
             this.FunCode = 0x00710014;
         }
 

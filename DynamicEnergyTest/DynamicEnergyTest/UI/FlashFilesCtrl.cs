@@ -94,22 +94,22 @@ namespace DynamicEnergyTest.UI
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
             //flash operate
-            SolidBrush topSolidBrush = new SolidBrush(ColorFactory.DynamicGray);
+            SolidBrush topSolidBrush = new SolidBrush(GraphicFactory.DynamicGray);
             g.FillRectangle(topSolidBrush, new RectangleF(0, MARGINTOP, _flashOperate.Width, this.Height - MARGINTOP));
-            Color bottomColor = ColorFactory.DynamicOrange;
+            Color bottomColor = GraphicFactory.DynamicOrange;
             switch (_flashStatus)
             {
                 case FlashStatus.UnFlash:
-                    bottomColor = ColorFactory.DynamicBlue;
+                    bottomColor = GraphicFactory.DynamicBlue;
                     break;
                 case FlashStatus.Flashing:
-                    bottomColor = ColorFactory.DynamicBlue;
+                    bottomColor = GraphicFactory.DynamicBlue;
                     break;
                 case FlashStatus.Pass:
-                    bottomColor = ColorFactory.DynamicGreen;
+                    bottomColor = GraphicFactory.DynamicGreen;
                     break;
                 case FlashStatus.Failure:
-                    bottomColor = ColorFactory.DynamicRed;
+                    bottomColor = GraphicFactory.DynamicRed;
                     break;
             }
 

@@ -68,14 +68,14 @@ namespace DynamicEnergyTest.UI
             Graphics g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
-            using (SolidBrush sb = new SolidBrush(ColorFactory.DynamicBlue))
+            using (SolidBrush sb = new SolidBrush(GraphicFactory.DynamicBlue))
             {
                 if (EnableFocus)
                     g.FillRectangle(sb, new Rectangle(0, this.Height - 4, this.Width, 4));
             }
             if (!string.IsNullOrEmpty(ItemText))
             {
-                using (SolidBrush sb = new SolidBrush(EnableFocus ? ColorFactory.DynamicBlue : Color.Black))
+                using (SolidBrush sb = new SolidBrush(EnableFocus ? GraphicFactory.DynamicBlue : Color.Black))
                 {
                     using (Font font = new System.Drawing.Font("Courier New", 10F))
                     {

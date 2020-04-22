@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DynamicEnergyTest.TestModel;
+using DynamicEnergyTest.SysSetting;
 
 namespace DynamicEnergyTest.UI
 {
@@ -48,7 +49,7 @@ namespace DynamicEnergyTest.UI
         }
 
         private TestStatus _testStatus;
-        [Description("Test status"), Category("Appearance"), DefaultValue(TestStatus.Unknow)]
+        [Description("Test status"), Category("Appearance"), DefaultValue(TestStatus.UnTest)]
         public TestStatus TestStatus
         {
             get { return _testStatus; }
@@ -57,6 +58,7 @@ namespace DynamicEnergyTest.UI
                 if (value != _testStatus)
                 {
                     _testStatus = value;
+                    this.ProcessEntry.TestStatus = value;
                     this.Invalidate();
                     this.InvokeInvalidate(TestStatus, value);
                 }
@@ -70,12 +72,19 @@ namespace DynamicEnergyTest.UI
             set { _processItem = value; }
         }
 
+        private ProcessEntry _processEntry;
+        public ProcessEntry ProcessEntry
+        {
+            get { return _processEntry; }
+            set { _processEntry = value; }
+        }
+
         public MouseEventHandler MouseEventClick;
 
         public TestProcessItem()
         {
             InitializeComponent();
-            this.TestStatus = TestStatus.Unknow;
+            this.TestStatus = TestStatus.UnTest;
             this.ProcessItem = new ProcessItem();
             this.MouseClick += TestProcessItem_MouseClick;
         }
@@ -83,6 +92,8 @@ namespace DynamicEnergyTest.UI
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            ProcessEntry = new ProcessEntry(Int32.Parse(ItemText), InfoText, this.TestStatus);
+
             this.EclipseRectangle = new RectangleF((this.Width - diameter) / 2, (this.Height - diameter) / 2, diameter, diameter);
         }
 
@@ -107,8 +118,8 @@ namespace DynamicEnergyTest.UI
                 Color infotextColor = Color.Black;
                 switch (TestStatus)
                 {
-                    case TestStatus.Unknow:
-                        using (Font font = new Font("Microsoft Sans Serif", 10F))
+                    case TestStatus.UnTest:
+                        using (Font font = GraphicFactory.CreateFont())
                         using (SolidBrush solidBrush = new SolidBrush(infotextColor))
                         {
                             SizeF textSize = graphics.MeasureString(InfoText, font);
@@ -118,7 +129,7 @@ namespace DynamicEnergyTest.UI
                     case TestStatus.Testing:
                     case TestStatus.Pass:
                     case TestStatus.Fail:
-                        using (Font font = new Font("Microsoft Sans Serif", 10F, FontStyle.Bold))
+                        using (Font font = GraphicFactory.CreateFont(10F, FontStyle.Bold))
                         using (SolidBrush solidBrush = new SolidBrush(infotextColor))
                         {
                             SizeF textSize = graphics.MeasureString(InfoText, font);
@@ -135,14 +146,14 @@ namespace DynamicEnergyTest.UI
             base.OnPaint(e);
             Graphics graphics = e.Graphics;
             graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            Color circleColor = ColorFactory.DynamicGray;
+            Color circleColor = GraphicFactory.DynamicGray;
             switch (TestStatus)
             {
-                case TestStatus.Unknow:
+                case TestStatus.UnTest:
                     if (!string.IsNullOrEmpty(ItemText))
                     {
                         using (Pen pen = new Pen(circleColor, 2f))
-                        using (Font font = new Font("Microsoft Sans Serif", 10F))
+                        using (Font font = GraphicFactory.CreateFont())
                         using (SolidBrush solidBrush = new SolidBrush(circleColor))
                         {
                             SizeF textSize = graphics.MeasureString(ItemText, font);
@@ -155,9 +166,9 @@ namespace DynamicEnergyTest.UI
                 case TestStatus.Testing:
                     if (!string.IsNullOrEmpty(ItemText))
                     {
-                        circleColor = ColorFactory.DynamicBlue;
+                        circleColor = GraphicFactory.DynamicBlue;
                         using (Pen pen = new Pen(circleColor, 2f))
-                        using (Font font = new Font("Microsoft Sans Serif", 10F))
+                        using (Font font = GraphicFactory.CreateFont())
                         using (SolidBrush solidBrush = new SolidBrush(circleColor))
                         {
                             SizeF textSize = graphics.MeasureString(ItemText, font);
@@ -171,9 +182,9 @@ namespace DynamicEnergyTest.UI
                     //draw pass symbol
                     int correctWidth = 20;
                     int correctHeght = 15;
-                    circleColor = ColorFactory.DynamicBlue;
+                    circleColor = GraphicFactory.DynamicBlue;
                     using (Pen pen = new Pen(circleColor, 2f))
-                    using (Font font = new Font("Microsoft Sans Serif", 10F))
+                    using (Font font = GraphicFactory.CreateFont())
                     using (SolidBrush solidBrush = new SolidBrush(circleColor))
                     {
                         graphics.DrawEllipse(pen, this.EclipseRectangle);
@@ -187,7 +198,7 @@ namespace DynamicEnergyTest.UI
                     {
                         circleColor = Color.Red;
                         using (Pen pen = new Pen(circleColor, 2f))
-                        using (Font font = new Font("Microsoft Sans Serif", 10F))
+                        using (Font font = GraphicFactory.CreateFont())
                         using (SolidBrush solidBrush = new SolidBrush(circleColor))
                         {
                             SizeF textSize = graphics.MeasureString(ItemText, font);

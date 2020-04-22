@@ -1,8 +1,11 @@
 ﻿using DynamicEnergyTest.Protocol;
+using DynamicEnergyTest.SysSetting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 
 namespace DynamicEnergyTest
 {
@@ -40,11 +43,22 @@ namespace DynamicEnergyTest
             //    hexProtocol.Analyze();
             //    model.Decode(hexProtocol.Data.DataRegion);
             //}
-
+            InitializeParameters();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
             //Application.Run(new Form1());
         }
+
+        public static void InitializeParameters()
+        {
+            using (var reader = new StreamReader("Paramaters.xml"))
+            {
+                XmlSerializer deserializer = new XmlSerializer(typeof(ParameterSetting));
+                var parameterSetting = (ParameterSetting)deserializer.Deserialize(reader);
+                SysConfig.GetConfig().ParameterSetting = parameterSetting;
+            }
+        }
+
     }
 }

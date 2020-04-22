@@ -18,6 +18,8 @@ namespace DynamicEnergyTest.Protocol
         public BTInfo BTInfomation { get; set; }
         public C7071()
         {
+            this.TestIndex = 8;
+            this.TestItem = "蓝牙测试";
             this.FunCode = 0x00717071;
         }
 

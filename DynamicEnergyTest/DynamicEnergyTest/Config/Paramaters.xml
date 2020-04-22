@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ParameterSetting xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Version>V1.0</Version>
+  <LowVoltage>5</LowVoltage>
+  <HighVoltage>5</HighVoltage>
+  <LowCurrent>5</LowCurrent>
+  <HighCurrent>5</HighCurrent>
+  <LowPower>5</LowPower>
+  <HighPower>5</HighPower>
+  <LowSleepCurrent>5</LowSleepCurrent>
+  <HighSleepCurrent>5</HighSleepCurrent>
+</ParameterSetting>

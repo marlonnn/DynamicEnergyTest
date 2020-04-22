@@ -13,6 +13,8 @@ namespace DynamicEnergyTest.Protocol
 
         public C00()
         {
+            this.TestIndex = 0;
+            this.TestItem = "进入产测";
             this.FunCode = 0x00000000;
         }
 

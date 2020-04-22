@@ -13,7 +13,7 @@ namespace DynamicEnergyTest.UI
     public partial class TestProcessLine : UserControl
     {
         private TestStatus _testStatus;
-        [Description("Test status"), Category("Appearance"), DefaultValue(TestStatus.Unknow)]
+        [Description("Test status"), Category("Appearance"), DefaultValue(TestStatus.UnTest)]
         public TestStatus TestStatus
         {
             get { return _testStatus; }
@@ -41,7 +41,7 @@ namespace DynamicEnergyTest.UI
             Color circleColor = Color.Gray;
             switch (TestStatus)
             {
-                case TestStatus.Unknow:
+                case TestStatus.UnTest:
                     using (Pen pen = new Pen(circleColor, 2f))
                     {
                         graphics.DrawLine(pen, 0, 2, this.Width, 2);
@@ -50,7 +50,7 @@ namespace DynamicEnergyTest.UI
                 case TestStatus.Testing:
                 case TestStatus.Pass:
                 case TestStatus.Fail:
-                    circleColor = ColorFactory.DynamicBlue;
+                    circleColor = GraphicFactory.DynamicBlue;
                     using (Pen pen = new Pen(circleColor, 2f))
                     {
                         graphics.DrawLine(pen, 0, 2, this.Width, 2);

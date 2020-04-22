@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 
 namespace KoboldCom
 {
@@ -107,18 +109,35 @@ namespace KoboldCom
         /// </summary>
         public IAnalyzerCollection Analyzers { get; set; }
 
-        /// <summary>
-        /// 把指定数据写入到串口
-        /// </summary>
-        /// <param name="buffer">要写入的数组</param>
-        /// <param name="offset">数组起始位置</param>
-        /// <param name="count">长度</param>
-        public void Write(byte[] buffer, int offset, int count)
+        ///// <summary>
+        ///// 把指定数据写入到串口
+        ///// </summary>
+        ///// <param name="buffer">要写入的数组</param>
+        ///// <param name="offset">数组起始位置</param>
+        ///// <param name="count">长度</param>
+        //public void Write(byte[] buffer, int offset, int count)
+        //{
+        //    if (Com != null && Com.IsOpen)
+        //    {
+        //        Com.Write(buffer, offset, count);
+        //    }
+        //}
+
+        public ComCode Write(byte[] buffer, int offset, int count)
         {
-            if (Com != null && Com.IsOpen)
+            if (Com != null)
             {
-                Com.Write(buffer, offset, count);
+                if (Com.IsOpen)
+                {
+                    Com.Write(buffer, offset, count);
+                    return ComCode.SendOK;
+                }
+                else
+                {
+                    return ComCode.ComNotOpen;
+                }
             }
+            return ComCode.ComNotExist;
         }
     }
 }

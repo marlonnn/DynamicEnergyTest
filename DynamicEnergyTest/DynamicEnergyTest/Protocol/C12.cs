@@ -14,6 +14,8 @@ namespace DynamicEnergyTest.Protocol
         //读取设备ID
         public C12()
         {
+            this.TestIndex = 1;
+            this.TestItem = "条码测试";
             this.FunCode = 0x00710012;
         }
 

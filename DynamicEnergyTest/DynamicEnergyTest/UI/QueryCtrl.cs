@@ -7,16 +7,64 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DynamicEnergyTest.SysSetting;
 
 namespace DynamicEnergyTest.UI
 {
     public partial class QueryCtrl : UserControl
     {
+        private SysConfig sysConfig;
         private const int MARGIN = 10;
-
+        private DataTable dataTable;
         public QueryCtrl()
         {
             InitializeComponent();
+
+            sysConfig = SysConfig.GetConfig();
+
+            BindDataToGridView();
+
+            sysConfig.UpdateDataGridViewHandler += UpdateDataGridViewHandler;
+        }
+
+
+        private void BindDataToGridView()
+        {
+            dataTable = sysConfig.UIDs.ToDataTable();
+
+            this.dataGridView.DataSource = dataTable;
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (i == 0)
+                {
+                    this.dataGridView.Columns[i].Width = 250;
+                    this.dataGridView.Columns[i].DataPropertyName = "UIDCode";
+                }
+                if (i == 1)
+                {
+                    this.dataGridView.Columns[i].Width = 400;
+                    this.dataGridView.Columns[i].DataPropertyName = "TestStatus";
+                }
+                if (i == 2)
+                {
+                    this.dataGridView.Columns[i].Width = 300;
+                    this.dataGridView.Columns[i].DataPropertyName = "Operate";
+                }
+
+            }
+        }
+        private void UpdateDataGridViewHandler(object sender, EventArgs e)
+        {
+            BindDataToGridView();
+
+            this.dataGridView.Refresh();
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
         }
 
         protected override void OnPaint(PaintEventArgs e)

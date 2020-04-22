@@ -56,7 +56,7 @@ namespace DynamicEnergyTest.UI
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            this.BackColor = ColorFactory.DynamicGray;
+            this.BackColor = GraphicFactory.DynamicGray;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -64,11 +64,11 @@ namespace DynamicEnergyTest.UI
             base.OnPaint(e);
             Graphics graphics = e.Graphics;
             graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            Color circleColor = ColorFactory.DynamicGray;
+            Color circleColor = GraphicFactory.DynamicGray;
             if (!string.IsNullOrEmpty(SwitchText) && !string.IsNullOrEmpty(SwitchIndex))
             {
                 using (Pen pen = new Pen(Color.White, 2f))
-                using (Font font = new Font("Microsoft Sans Serif", 10F))
+                using (Font font = GraphicFactory.CreateFont())
                 {
                     SolidBrush ellipseBrush = new SolidBrush(Color.White);
                     SolidBrush indexSolidBrush = new SolidBrush(circleColor);

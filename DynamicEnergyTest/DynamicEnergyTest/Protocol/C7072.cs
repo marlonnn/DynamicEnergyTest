@@ -19,6 +19,8 @@ namespace DynamicEnergyTest.Protocol
         public WifiInfo WifiInfomation { get; set; }
         public C7072()
         {
+            this.TestIndex = 7;
+            this.TestItem = "WIFI测试";
             this.FunCode = 0x00717072;
         }
 

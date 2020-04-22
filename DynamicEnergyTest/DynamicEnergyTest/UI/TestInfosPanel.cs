@@ -108,9 +108,9 @@ namespace DynamicEnergyTest.UI
             int countMarginH = 10;
 
             //Test Plan
-            SolidBrush testPlanSb = new SolidBrush(ColorFactory.DynamicBlue);
-            Font font = new Font("Microsoft Sans Serif", 10F);
-            Font countFont = new Font("Microsoft Sans Serif", 20F, FontStyle.Bold);
+            SolidBrush testPlanSb = new SolidBrush(GraphicFactory.DynamicBlue);
+            Font font = GraphicFactory.CreateFont();
+            Font countFont = GraphicFactory.CreateFont(20F, FontStyle.Bold);
             g.FillEllipse(testPlanSb, _testPlanRectangle.X + ellipseMargin, _testPlanRectangle.Y + ellipseMargin, ellipseWH, ellipseWH);
             g.DrawString(_testPlanStr, font, Brushes.Black, _testPlanRectangle.X + ellipseMargin + ellipseWH + strMargin, _testPlanRectangle.Y + ellipseMargin);
             string testPlan = TestPlanCount.ToString();
@@ -118,7 +118,7 @@ namespace DynamicEnergyTest.UI
             g.DrawString(testPlan, countFont, Brushes.Black, _testPlanRectangle.X + (_testPlanRectangle.Width - size1.Width) / 2, _testPlanRectangle.Height / 2 + countMarginH);
 
             //Untest 
-            SolidBrush unTestedSb = new SolidBrush(ColorFactory.DynamicOrange);
+            SolidBrush unTestedSb = new SolidBrush(GraphicFactory.DynamicOrange);
             g.FillEllipse(unTestedSb, _unTestRectangle.X + ellipseMargin, _unTestRectangle.Y + ellipseMargin, ellipseWH, ellipseWH);
             g.DrawString(_unTestStr, font, Brushes.Black, _unTestRectangle.X + ellipseMargin + ellipseWH + strMargin, _unTestRectangle.Y + ellipseMargin);
             string unTest = UnTestCount.ToString();

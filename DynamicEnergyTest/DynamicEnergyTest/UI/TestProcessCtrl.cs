@@ -10,15 +10,43 @@ using System.Windows.Forms;
 using DynamicEnergyTest.TestModel;
 using System.IO;
 using System.Xml.Serialization;
+using DynamicEnergyTest.Protocol;
+using KoboldCom;
+using DynamicEnergyTest.SysSetting;
 
 namespace DynamicEnergyTest.UI
 {
     public partial class TestProcessCtrl : UserControl
     {
         private List<ProcessItem> processItems;
+        private ProtocolFactory protocolFactory;
+        private SysConfig sysConfig;
         public TestProcessCtrl()
         {
             InitializeComponent();
+            protocolFactory = Program.ProtocolsFactory;
+            sysConfig = SysConfig.GetConfig();
+            sysConfig.CreateProcessTestsHandler += CreateProcessTestsHandler;
+        }
+
+        private void CreateProcessTestsHandler(object sender, EventArgs e)
+        {
+            List<ProcessEntry> processEntries = new List<ProcessEntry>();
+            foreach (var ctrl in this.Controls)
+            {
+                TestProcessItem testProcessItem = ctrl as TestProcessItem;
+                if (testProcessItem != null)
+                {
+                    processEntries.Add(testProcessItem.ProcessEntry);
+                }
+            }
+            List<UID> UIDs = sysConfig.UIDs;
+            foreach (var uid in UIDs)
+            {
+                ProcessTest processTest = new ProcessTest(uid);
+                processTest.ProcessEntrys = processEntries;
+                sysConfig.ProcessTests.Add(processTest);
+            }
         }
 
         protected override void OnLoad(EventArgs e)
@@ -47,12 +75,68 @@ namespace DynamicEnergyTest.UI
             TestProcessItem testProcessItem = sender as TestProcessItem;
             if (testProcessItem != null)
             {
+                testProcessItem.TestStatus = TestStatus.Testing;
                 TestPanelCtrl parentCtrl = this.Parent as TestPanelCtrl;
                 if (parentCtrl != null)
                 {
                     parentCtrl.StatusSwitchCtrl.UpdateProcessItem(testProcessItem.ProcessItem);
                 }
-                //var v = testProcessItem.ProcessItem;
+                int testIndex = Int32.Parse(testProcessItem.ItemText);
+                UpdateListView(testIndex, parentCtrl);
+            }
+        }
+
+        private void UpdateListView(int testIndex, TestPanelCtrl parentCtrl)
+        {
+            var dataModels = protocolFactory.DataModels;
+
+            foreach (var dm in dataModels.Values)
+            {
+                if (dm.TestIndex == testIndex)
+                {
+                    string testItem = dm.TestItem;
+                    parentCtrl.UpdateListView(testItem);
+                    var bytes = dm.Encode();
+
+                    string realablebytes = ByteHelper.Byte2ReadalbeXstring(bytes);
+                    parentCtrl.UpdateListView(realablebytes);
+                    ComCode comCode = protocolFactory.Write(bytes, 0, bytes.Count());
+
+                    UpdateProcessItem(testIndex, comCode);
+                    parentCtrl.UpdateListView(comCode.GetComCodeDescription());
+                    
+                    parentCtrl.UpdateStatusSwitch(comCode);
+                }
+
+            }
+        }
+
+        private void UpdateProcessItem(int testIndex, ComCode comCode)
+        {
+            foreach (var ctrl in this.Controls)
+            {
+                TestProcessItem testProcessItem = ctrl as TestProcessItem;
+                if (testProcessItem != null && testProcessItem.ItemText == testIndex.ToString())
+                {
+                    switch (comCode)
+                    {
+                        case ComCode.ComNotExist:
+                            testProcessItem.TestStatus = TestStatus.Fail;
+                            break;
+                        case ComCode.ComNotOpen:
+                            testProcessItem.TestStatus = TestStatus.Fail;
+                            break;
+                        case ComCode.TimeOut:
+                            testProcessItem.TestStatus = TestStatus.Fail;
+                            break;
+                        case ComCode.SendOK:
+                            break;
+                        case ComCode.ReceivedOK:
+                            testProcessItem.TestStatus = TestStatus.Pass;
+                            break;
+                    }
+                }
+
             }
         }
 

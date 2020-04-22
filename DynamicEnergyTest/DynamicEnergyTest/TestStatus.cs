@@ -8,8 +8,7 @@ namespace DynamicEnergyTest
 {
     public enum TestStatus
     {
-        Unknow,
-        Test,
+        UnTest,
         Testing,
         Pass,
         Fail

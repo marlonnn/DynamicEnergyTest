@@ -86,7 +86,7 @@ namespace DynamicEnergyTest
         /// </summary>
         public static string Byte2ReadalbeXstring(byte[] bytes)
         {
-            string msg = "0x ";
+            string msg = "";
             foreach (byte b in bytes)
             {
                 msg += string.Format("{0:x2} ", b);

@@ -11,6 +11,8 @@ namespace DynamicEnergyTest.Protocol
     {
         public C08()
         {
+            this.TestIndex = 10;
+            this.TestItem = "休眠测试";
             this.FunCode = 0x00710008;
         }
 

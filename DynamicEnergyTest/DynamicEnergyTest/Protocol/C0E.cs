@@ -11,6 +11,8 @@ namespace DynamicEnergyTest.Protocol
     {
         public C0E()
         {
+            this.TestIndex = 3;
+            this.TestItem = "指示灯测试";
             this.FunCode = 0x0071000E;
         }
 

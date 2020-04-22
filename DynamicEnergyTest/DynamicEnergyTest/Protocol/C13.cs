@@ -19,32 +19,34 @@ namespace DynamicEnergyTest.Protocol
         public ushort Power { get; set; }
         public C13()
         {
+            this.TestIndex = 4;
+            this.TestItem = "计量测试";
             this.FunCode = 0x00710013;
         }
 
-        public override byte[] Encode()
-        {
-            int datalength = 11;
-            byte[] data = new byte[datalength + 3];
-            data[0] = 0x7E;
-            data[1] = (byte)datalength;
+        //public override byte[] Encode()
+        //{
+        //    int datalength = 11;
+        //    byte[] data = new byte[datalength + 3];
+        //    data[0] = 0x7E;
+        //    data[1] = (byte)datalength;
 
-            //小端
-            var tempData = ByteHelper.IntToBytes(this.FunCode);
-            Array.Copy(tempData, 0, data, 8, 4);
+        //    //小端
+        //    var tempData = ByteHelper.IntToBytes(this.FunCode);
+        //    Array.Copy(tempData, 0, data, 8, 4);
 
-            data[12] = JackNum;
+        //    data[12] = JackNum;
 
-            //check sum
-            int sum = 0;
-            for (int i = 0; i < data.Length - 1; i++)
-            {
-                sum += data[i];
-            }
-            data[13] = (byte)sum;
+        //    //check sum
+        //    int sum = 0;
+        //    for (int i = 0; i < data.Length - 1; i++)
+        //    {
+        //        sum += data[i];
+        //    }
+        //    data[13] = (byte)sum;
 
-            return data;
-        }
+        //    return data;
+        //}
 
         public override bool Decode(byte[] buf)
         {

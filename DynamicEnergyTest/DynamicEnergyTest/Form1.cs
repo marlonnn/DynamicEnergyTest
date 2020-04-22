@@ -1,4 +1,5 @@
-﻿using DynamicEnergyTest.TestModel;
+﻿using DynamicEnergyTest.SysSetting;
+using DynamicEnergyTest.TestModel;
 using KoboldCom;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,21 @@ namespace DynamicEnergyTest
                 var items = (SerialPortSetting)deserializer.Deserialize(reader);
             }
 
+            using (var writer = new FileStream("Paramaters.xml", FileMode.Create))
+            {
+                XmlSerializer ser = new XmlSerializer(typeof(ParameterSetting));
+                ParameterSetting parameterSetting = new ParameterSetting();
+                parameterSetting.Version = "V1.0";
+                parameterSetting.LowVoltage = 5;
+                parameterSetting.HighVoltage = 5;
+                parameterSetting.LowCurrent = 5;
+                parameterSetting.HighCurrent = 5;
+                parameterSetting.LowPower = 5;
+                parameterSetting.HighPower = 5;
+                parameterSetting.LowSleepCurrent = 5;
+                parameterSetting.HighSleepCurrent = 5;
+                ser.Serialize(writer, parameterSetting);
+            }
             //// e.g. my test to create a file
             //using (var writer = new FileStream("ProcessItems.xml", FileMode.Create))
             //{

@@ -16,6 +16,8 @@ namespace DynamicEnergyTest.Protocol
         public Version McuVersion { get; set; }
         public C01()
         {
+            this.TestIndex = 2;
+            this.TestItem = "版本测试";
             this.FunCode = 0x00710001;
         }
 

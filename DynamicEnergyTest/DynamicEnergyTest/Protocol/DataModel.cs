@@ -8,6 +8,12 @@ namespace DynamicEnergyTest.Protocol
 {
     public class DataModel
     {
+        //Raw data
+        public byte[] Raw { get; set; }
+        //测试序号
+        public int TestIndex { get; set; }
+        //测试项目名称
+        public string TestItem { get; set; }
         public byte[] Mac { get; set; }
 
         public int FunCode { get; set; }

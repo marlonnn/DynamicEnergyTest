@@ -26,7 +26,7 @@ namespace DynamicEnergyTest.UI
             }
         }
         private TestStatus _testStatus;
-        [Description("Test status"), Category("Appearance"), DefaultValue(TestStatus.Unknow)]
+        [Description("Test status"), Category("Appearance"), DefaultValue(TestStatus.UnTest)]
         public TestStatus TestStatus
         {
             get { return _testStatus; }
@@ -81,59 +81,86 @@ namespace DynamicEnergyTest.UI
             this.TestContent = processItem.TestContent;
         }
 
+        private Rectangle bottomRectangle;
+        private RectangleF topRectangle;
+        private int _alpha;
+        public int Alpha
+        {
+            get { return _alpha; }
+            set
+            {
+                if (value != _alpha)
+                {
+                    this._alpha = value;
+                    //this.Invalidate();
+                    this.InvokeInvalidate(Alpha, value);
+                    this.Invalidate(bottomRectangle);
+                }
+            }
+        }
+
         public StatusSwitchCtrl()
         {
             InitializeComponent();
-            this.TestStatus = TestStatus.Test;
+            this.TestStatus = TestStatus.UnTest;
             this.SwitchText = "Test";
+            this.DoubleBuffered = true;
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             this.switchIndexCtrl.Location = new Point((this.Width - this.switchIndexCtrl.Width) / 2, 0);
+            topRectangle = new RectangleF(0, 0, this.Width, this.Height / 2);
+            bottomRectangle = new Rectangle(0, this.Height / 2, this.Width, this.Height / 2);
+            Alpha = 255;
         }
 
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
             this.switchIndexCtrl.Location = new Point((this.Width - this.switchIndexCtrl.Width) / 2, 0);
+            topRectangle = new RectangleF(0, 0, this.Width, this.Height / 2);
+            bottomRectangle = new Rectangle(0, this.Height / 2, this.Width, this.Height / 2);
             this.Invalidate();
         }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
             Graphics graphics = e.Graphics;
             graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
-            SolidBrush topSolidBrush = new SolidBrush(ColorFactory.DynamicGray);
-            graphics.FillRectangle(topSolidBrush, new RectangleF(0, 0, this.Width, this.Height / 2));
+            SolidBrush topSolidBrush = new SolidBrush(GraphicFactory.DynamicGray);
+            graphics.FillRectangle(topSolidBrush, topRectangle);
 
-            Color bottomColor = ColorFactory.DynamicOrange;
+            Color bottomColor = GraphicFactory.DynamicOrange;
             switch (TestStatus)
             {
-                case TestStatus.Unknow:
-                    bottomColor = ColorFactory.DynamicOrange;
-                    break;
-                case TestStatus.Test:
-                    bottomColor = ColorFactory.DynamicOrange;
+                case TestStatus.UnTest:
+                    bottomColor = GraphicFactory.DynamicOrange;
+                    this.SwitchText = "UNTEST";
                     break;
                 case TestStatus.Testing:
-                    bottomColor = ColorFactory.DynamicOrange;
+                    bottomColor = GraphicFactory.DynamicOrange;
+                    this.SwitchText = "Testing";
                     break;
                 case TestStatus.Pass:
-                    bottomColor = ColorFactory.DynamicGreen;
+                    bottomColor = GraphicFactory.DynamicGreen;
+                    this.SwitchText = "PASS";
                     break;
                 case TestStatus.Fail:
-                    bottomColor = ColorFactory.DynamicRed;
+                    bottomColor = GraphicFactory.DynamicRed;
+                    this.SwitchText = "FAIL";
                     break;
             }
+            bottomColor = Color.FromArgb(Alpha, bottomColor.R, bottomColor.G, bottomColor.B);
             SolidBrush bottomSolidBrush = new SolidBrush(bottomColor);
-            graphics.FillRectangle(bottomSolidBrush, new RectangleF(0, this.Height / 2, this.Width, this.Height / 2));
+            graphics.FillRectangle(bottomSolidBrush, bottomRectangle);
 
             if (!string.IsNullOrEmpty(this.TestContent))
             {
-                using (Font font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular))
+                using (Font font = GraphicFactory.CreateFont(10F, FontStyle.Regular))
                 using (SolidBrush textSolidBrush = new SolidBrush(Color.White))
                 {
                     SizeF textSize = graphics.MeasureString(this.SwitchText, font);
@@ -144,7 +171,7 @@ namespace DynamicEnergyTest.UI
 
             if (!string.IsNullOrEmpty(this.SwitchText))
             {
-                using (Font font = new Font("Microsoft Sans Serif", 60F, FontStyle.Bold))
+                using (Font font = GraphicFactory.CreateFont(60F, FontStyle.Bold))
                 using (SolidBrush textSolidBrush = new SolidBrush(Color.White))
                 {
                     SizeF textSize = graphics.MeasureString(this.SwitchText, font);
@@ -154,6 +181,25 @@ namespace DynamicEnergyTest.UI
             }
             topSolidBrush.Dispose();
             bottomSolidBrush.Dispose();
+        }
+
+        private void StatusSwitchCtrl_MouseMove(object sender, MouseEventArgs e)
+        {
+            Alpha = bottomRectangle.Contains(e.Location) ? 200 : 255;
+        }
+
+        private void StatusSwitchCtrl_MouseClick(object sender, MouseEventArgs e)
+        {
+        }
+
+        private void StatusSwitchCtrl_MouseUp(object sender, MouseEventArgs e)
+        {
+            Alpha = 255;
+        }
+
+        private void StatusSwitchCtrl_MouseDown(object sender, MouseEventArgs e)
+        {
+            Alpha = 100;
         }
     }
 }

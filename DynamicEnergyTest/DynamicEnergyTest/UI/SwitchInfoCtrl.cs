@@ -37,7 +37,7 @@ namespace DynamicEnergyTest.UI
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            this.BackColor = ColorFactory.DynamicGray;
+            this.BackColor = GraphicFactory.DynamicGray;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -47,10 +47,10 @@ namespace DynamicEnergyTest.UI
                 base.OnPaint(e);
                 Graphics graphics = e.Graphics;
                 graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                using (Font font = new Font("Microsoft Sans Serif", 10F))
+                using (Font font = GraphicFactory.CreateFont())
                 using (SolidBrush solidBrush = new SolidBrush(Color.White))
                 {
-                    graphics.DrawString(InfoText, font, solidBrush, new RectangleF(offset, offset, this.Width - offset, this.Height - offset));
+                    graphics.DrawString(InfoText, font, solidBrush, new RectangleF(offset, offset, this.Width - offset , this.Height - offset));
                 }
             }
         }
