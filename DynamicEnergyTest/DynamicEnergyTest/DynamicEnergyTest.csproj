@@ -146,6 +146,7 @@
     <Compile Include="UI\ImportTestPlanCtrl.Designer.cs">
       <DependentUpon>ImportTestPlanCtrl.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\MainUIFactory.cs" />
     <Compile Include="UI\ParameterSettingCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>

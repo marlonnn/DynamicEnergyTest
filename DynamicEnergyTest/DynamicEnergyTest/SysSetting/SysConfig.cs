@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,6 +50,17 @@ namespace DynamicEnergyTest.SysSetting
         }
 
         public EventHandler UpdateDataGridViewHandler;
-        public EventHandler CreateProcessTestsHandler;
+
+        public void ResultToJsonFile(ProcessTest processTest)
+        {
+            string fileName = GetJsonFileName(processTest.UID);
+            var jsonStr = fastJSON.JSON.ToNiceJSON(processTest);
+            File.WriteAllText(fileName, jsonStr);
+        }
+
+        public string GetJsonFileName(UID uID)
+        {
+            return string.Format("TestResult\\{0}.json", uID.UIDCode);
+        }
     }
 }

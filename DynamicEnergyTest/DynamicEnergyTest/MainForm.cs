@@ -18,10 +18,11 @@ namespace DynamicEnergyTest
     public partial class MainForm : Form
     {
         private readonly Communicator communicator = new Communicator(new SerialPort(), new Protocols());
-        private TestPanelCtrl testPanelCtrl;
-        private SettingPanelCtrl settingPanelCtrl;
-        private ReportPanelCtrl reportPanelCtrl;
-        private FlashPanelCtrl flashPanelCtrl;
+        //private TestPanelCtrl testPanelCtrl;
+        //private SettingPanelCtrl settingPanelCtrl;
+        //private ReportPanelCtrl reportPanelCtrl;
+        //private FlashPanelCtrl flashPanelCtrl;
+        private MainUIFactory UIFactory;
         public MainForm()
         {
             InitializeComponent();
@@ -29,11 +30,12 @@ namespace DynamicEnergyTest
                 0x4d, 0x61, 0x6e, 0x75, 0x66, 0x61, 0x63, 0x74, 0x75, 0x72, 0x65, 0x54, 0x65, 0x73, 0x74
             };
             string result = System.Text.Encoding.UTF8.GetString(bytes);
+            UIFactory = Program.UIFactory;
 
-            testPanelCtrl = new TestPanelCtrl();
-            reportPanelCtrl = new ReportPanelCtrl();
-            settingPanelCtrl = new SettingPanelCtrl();
-            flashPanelCtrl = new FlashPanelCtrl();
+            //testPanelCtrl = new TestPanelCtrl();
+            //reportPanelCtrl = new ReportPanelCtrl();
+            //settingPanelCtrl = new SettingPanelCtrl();
+            //flashPanelCtrl = new FlashPanelCtrl();
 
             this.toolBarCtrl1.EventHandler += SwitchPageEventHandler;
         }
@@ -47,19 +49,19 @@ namespace DynamicEnergyTest
                 {
                     case 1:
                         this.panel.Controls.Clear();
-                        this.panel.Controls.Add(testPanelCtrl);
+                        this.panel.Controls.Add(UIFactory.TestPanelCtrl);
                         break;
                     case 2:
                         this.panel.Controls.Clear();
-                        this.panel.Controls.Add(reportPanelCtrl);
+                        this.panel.Controls.Add(UIFactory.ReportPanelCtrl);
                         break;
                     case 3:
                         this.panel.Controls.Clear();
-                        this.panel.Controls.Add(settingPanelCtrl);
+                        this.panel.Controls.Add(UIFactory.SettingPanelCtrl);
                         break;
                     case 4:
                         this.panel.Controls.Clear();
-                        this.panel.Controls.Add(flashPanelCtrl);
+                        this.panel.Controls.Add(UIFactory.FlashPanelCtrl);
                         break;
                 }
             }
@@ -68,12 +70,12 @@ namespace DynamicEnergyTest
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            testPanelCtrl.Dock = DockStyle.Fill;
-            reportPanelCtrl.Dock = DockStyle.Fill;
-            settingPanelCtrl.Dock = DockStyle.Fill;
-            flashPanelCtrl.Dock = DockStyle.Fill;
+            //testPanelCtrl.Dock = DockStyle.Fill;
+            //reportPanelCtrl.Dock = DockStyle.Fill;
+            //settingPanelCtrl.Dock = DockStyle.Fill;
+            //flashPanelCtrl.Dock = DockStyle.Fill;
 
-            this.panel.Controls.Add(testPanelCtrl);
+            this.panel.Controls.Add(UIFactory.TestPanelCtrl);
         }
     }
 }

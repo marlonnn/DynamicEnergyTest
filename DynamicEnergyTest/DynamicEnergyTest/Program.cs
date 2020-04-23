@@ -1,7 +1,9 @@
 ﻿using DynamicEnergyTest.Protocol;
 using DynamicEnergyTest.SysSetting;
+using DynamicEnergyTest.UI;
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,6 +18,13 @@ namespace DynamicEnergyTest
         {
             get { return _protocolsFactory; }
             set { _protocolsFactory = value; }
+        }
+
+        private static MainUIFactory _mainUI;
+        public static MainUIFactory UIFactory
+        {
+            get { return _mainUI; }
+            set { _mainUI = value; }
         }
         /// <summary>
         /// The main entry point for the application.
@@ -43,9 +52,22 @@ namespace DynamicEnergyTest
             //    hexProtocol.Analyze();
             //    model.Decode(hexProtocol.Data.DataRegion);
             //}
+
+            //try
+            //{
+            //    SQLiteConnection.CreateFile("Database.sqlite");
+            //    SQLiteConnection m_dbConnection = new SQLiteConnection("Data Source=Database.sqlite;Version=3;");
+            //    m_dbConnection.Open();
+            //    m_dbConnection.Close();
+            //}
+            //catch (Exception ex)
+            //{
+            //}
+
             InitializeParameters();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            UIFactory = MainUIFactory.Get();
             Application.Run(new MainForm());
             //Application.Run(new Form1());
         }

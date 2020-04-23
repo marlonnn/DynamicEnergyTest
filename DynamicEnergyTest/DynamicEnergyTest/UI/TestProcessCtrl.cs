@@ -13,6 +13,7 @@ using System.Xml.Serialization;
 using DynamicEnergyTest.Protocol;
 using KoboldCom;
 using DynamicEnergyTest.SysSetting;
+using System.Data.SQLite;
 
 namespace DynamicEnergyTest.UI
 {
@@ -26,10 +27,9 @@ namespace DynamicEnergyTest.UI
             InitializeComponent();
             protocolFactory = Program.ProtocolsFactory;
             sysConfig = SysConfig.GetConfig();
-            sysConfig.CreateProcessTestsHandler += CreateProcessTestsHandler;
         }
 
-        private void CreateProcessTestsHandler(object sender, EventArgs e)
+        public List<ProcessEntry> GetProcessEntrys()
         {
             List<ProcessEntry> processEntries = new List<ProcessEntry>();
             foreach (var ctrl in this.Controls)
@@ -40,14 +40,7 @@ namespace DynamicEnergyTest.UI
                     processEntries.Add(testProcessItem.ProcessEntry);
                 }
             }
-            List<UID> UIDs = sysConfig.UIDs;
-            foreach (var uid in UIDs)
-            {
-                ProcessTest processTest = new ProcessTest(uid);
-                processTest.ProcessEntrys = processEntries;
-                sysConfig.ProcessTests.Add(processTest);
-            }
-            //TestResultToJsonFile();
+            return processEntries;
         }
 
         private void TestResultToJsonFile()

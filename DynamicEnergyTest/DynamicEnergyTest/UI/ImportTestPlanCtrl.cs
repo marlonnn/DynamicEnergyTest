@@ -27,6 +27,8 @@ namespace DynamicEnergyTest.UI
                 this.Invalidate();
             }
         }
+
+        private string safeFileName;
         public ImportTestPlanCtrl()
         {
             InitializeComponent();
@@ -68,17 +70,68 @@ namespace DynamicEnergyTest.UI
                             if (!string.IsNullOrEmpty(sn) && sn.ToLower().StartsWith("zs"))
                             {
                                 UID uID = new UID(sn);
-                                SysConfig.UIDs.Add(uID);
+                                if (!SysConfig.UIDs.Contains(uID))
+                                    SysConfig.UIDs.Add(uID);
                             }
                         }
 
                         //6. Free resources (IExcelDataReader is IDisposable)
                         excelReader.Close();
-                        ImportedFile = "文件： " + openFileDialog.SafeFileName + " 已成功导入 " + SysConfig.UIDs.Count + " 个UID";
-
+                        safeFileName = openFileDialog.SafeFileName;
+                        //ImportedFile = "文件： " + openFileDialog.SafeFileName + " 已成功导入 " + SysConfig.UIDs.Count + " 个UID";
+                        ProgressBarVisiable(true);
+                        this.backgroundWorker.RunWorkerAsync();
                     }
                     SysConfig.UpdateDataGridViewHandler?.Invoke(null, null);
-                    SysConfig.CreateProcessTestsHandler?.Invoke(null, null);
+                }
+            }
+        }
+
+        private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var bgw = sender as BackgroundWorker;
+
+            var testPanelCtrl = Program.UIFactory.TestPanelCtrl;
+            var processEntries = testPanelCtrl.GetProcessEntrys();
+            List<UID> UIDs = SysConfig.UIDs;
+            for (int i = 0; i < UIDs.Count; i++)
+            {
+                ProcessTest processTest = new ProcessTest(UIDs[i]);
+                processTest.ProcessEntrys = processEntries;
+                SysConfig.ProcessTests.Add(processTest);
+                bgw.ReportProgress((i * 100) / UIDs.Count);
+            }
+        }
+
+        private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressBar.Value = e.ProgressPercentage;
+        }
+
+        private void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // TODO: do something with final calculation.
+            ProgressBarVisiable(false);
+        }
+
+        private void ProgressBarVisiable(bool visiable)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action<bool>(ProgressBarVisiable), new object[] { visiable }) ; 
+            }
+            else
+            {
+                this.progressBar.Visible = visiable;
+                if (visiable)
+                {
+                    ImportedFile = "";
+
+                    progressBar.Value = 0;
+                }
+                else
+                {
+                    ImportedFile = "文件： " + safeFileName + " 已成功导入 " + SysConfig.UIDs.Count + " 个UID";
                 }
             }
         }

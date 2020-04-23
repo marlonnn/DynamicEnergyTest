@@ -64,7 +64,6 @@ namespace DynamicEnergyTest.UI
                 _dragRectangle = new Rectangle(2 * MARGIN, MARGIN, this.Width / 2 - 2 * MARGIN, this.Height - 2 * MARGIN);
                 loadButton.Location = new Point(_dragRectangle.X + (_dragRectangle.Width - loadButton.Width) / 2, _dragRectangle.Y + (_dragRectangle.Height - loadButton.Height) / 2);
                 this.Invalidate();
-
             }
         }
 

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using KoboldCom;
+using DynamicEnergyTest.SysSetting;
 
 namespace DynamicEnergyTest.UI
 {
@@ -41,6 +42,11 @@ namespace DynamicEnergyTest.UI
                 components.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public List<ProcessEntry> GetProcessEntrys()
+        {
+            return this.testProcessCtrl1.GetProcessEntrys();
         }
 
         private void Timer_Tick(object sender, EventArgs e)
