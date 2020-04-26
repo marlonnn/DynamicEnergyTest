@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DynamicEnergyTest.SysSetting;
 
 namespace DynamicEnergyTest.UI
 {
@@ -15,18 +16,24 @@ namespace DynamicEnergyTest.UI
         private const int MARGIN = 10;
 
         private Rectangle _dragRectangle;
+        private Rectangle _binBroserRectangle;
 
         private string dragFile;
         private string supportFile;
         //private Image dragFileImage;
         private Button loadButton;
 
+        private FlashBinFilesBroserCtrl flashBinFilesBroserCtrl;
+        private SysConfig sysConfig;
+
         public FlashBinFilesCtrl()
         {
+            sysConfig = SysConfig.GetConfig();
             InitializeComponent();
             dragFile = "点击或将固件拖拽到这里上传";
             supportFile = "支持扩展名: .bin";
             InitializeLoadButton();
+            InitializeBinBroserCtrl();
         }
 
         private void InitializeLoadButton()
@@ -43,9 +50,47 @@ namespace DynamicEnergyTest.UI
             this.loadButton.Click += LoadButton_Click;
         }
 
+        private void InitializeBinBroserCtrl()
+        {
+            flashBinFilesBroserCtrl = new FlashBinFilesBroserCtrl();
+            flashBinFilesBroserCtrl.Name = "flashBinFilesBroserCtrl";
+        }
+
         private void LoadButton_Click(object sender, EventArgs e)
         {
-
+            using (OpenFileDialog  openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Flush Bin Files (*.bin) | *.bin";
+                openFileDialog.InitialDirectory = System.Environment.CurrentDirectory + "\\Firmware";
+                openFileDialog.Multiselect = true;
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    if (openFileDialog.FileNames.Count() > 1)
+                    {
+                        for (int i=0; i<openFileDialog.FileNames.Count(); i++)
+                        {
+                            string fileName = openFileDialog.SafeFileNames[i];
+                            if (sysConfig.BinAddressTable.Keys.Contains(fileName))
+                            {
+                                string address = sysConfig.BinAddressTable[fileName];
+                                Bin bin = new Bin(address, fileName, openFileDialog.FileName);
+                                if (sysConfig.FlashBins.Find(b => b.Name == bin.Name) == null)
+                                {
+                                    sysConfig.FlashBins.Add(bin);
+                                }
+                            }
+                        }
+                    }
+                    //textBox.Text = openFileDialog.FileName;
+                    //string fileName = openFileDialog.SafeFileName;
+                    //if (sysConfig.BinAddressTable.Keys.Contains(fileName))
+                    //{
+                    //    string address = sysConfig.BinAddressTable[fileName];
+                    //    Bin bin = new Bin(address, fileName, openFileDialog.FileName);
+                    //    AddBinFile(bin);
+                    //}
+                }
+            }
         }
 
         protected override void OnLoad(EventArgs e)
@@ -54,6 +99,10 @@ namespace DynamicEnergyTest.UI
             _dragRectangle = new Rectangle(2 * MARGIN, MARGIN, this.Width / 2 - 2 * MARGIN, this.Height - 2 * MARGIN);
             loadButton.Location = new Point(_dragRectangle.X + (_dragRectangle.Width - loadButton.Width) / 2, _dragRectangle.Y + (_dragRectangle.Height - loadButton.Height) / 2);
             this.Controls.Add(loadButton);
+
+            _binBroserRectangle = new Rectangle(this.Width / 2, MARGIN, this.Width / 2 - 2 * MARGIN, this.Height - 2 * MARGIN);
+            this.flashBinFilesBroserCtrl.Bounds = _binBroserRectangle;
+            this.Controls.Add(flashBinFilesBroserCtrl);
         }
 
         protected override void OnResize(EventArgs e)
@@ -64,6 +113,12 @@ namespace DynamicEnergyTest.UI
                 _dragRectangle = new Rectangle(2 * MARGIN, MARGIN, this.Width / 2 - 2 * MARGIN, this.Height - 2 * MARGIN);
                 loadButton.Location = new Point(_dragRectangle.X + (_dragRectangle.Width - loadButton.Width) / 2, _dragRectangle.Y + (_dragRectangle.Height - loadButton.Height) / 2);
                 this.Invalidate();
+            }
+
+            if (this.flashBinFilesBroserCtrl != null)
+            {
+                _binBroserRectangle = new Rectangle(this.Width / 2, MARGIN, this.Width / 2 - 2 * MARGIN, this.Height - 2 * MARGIN);
+                this.flashBinFilesBroserCtrl.Bounds = _binBroserRectangle;
             }
         }
 

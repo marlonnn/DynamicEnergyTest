@@ -16,5 +16,10 @@ namespace DynamicEnergyTest.UI
         {
             InitializeComponent();
         }
+
+        public void UpdateTestInfos()
+        {
+            this.testInfosPanel1.UpdateTestInfos();
+        }
     }
 }

@@ -33,6 +33,10 @@ namespace DynamicEnergyTest
         static void Main()
         {
             ProtocolsFactory = ProtocolFactory.GetFactory();
+
+            C00 c00 = new C00();
+            var v = c00.Encode();
+            var v2 = ByteHelper.Byte2ReadalbeXstring(v);
             //var dataModels = ProtocolsFactory.DataModels;
             //foreach (var key in dataModels.Keys)
             //{
@@ -65,11 +69,19 @@ namespace DynamicEnergyTest
             //}
 
             InitializeParameters();
+            InitializeBinAddressTable();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             UIFactory = MainUIFactory.Get();
             Application.Run(new MainForm());
             //Application.Run(new Form1());
+        }
+
+        public static void InitializeBinAddressTable()
+        {
+            var binAddressTablesJson = File.ReadAllText(System.Environment.CurrentDirectory +  "\\Config\\BinAddressTable.json");
+            Type type = typeof(Dictionary<string, string>);
+            SysConfig.GetConfig().BinAddressTable = (Dictionary<string, string>)fastJSON.JSON.ToObject(binAddressTablesJson, type);
         }
 
         public static void InitializeParameters()

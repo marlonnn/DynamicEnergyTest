@@ -33,6 +33,9 @@ namespace DynamicEnergyTest
                 case ComCode.ReceivedOK:
                     des = "接收到数据";
                     break;
+                case ComCode.ReceivedMessageError:
+                    des = "接受到的消息体格式不正确";
+                    break;
             }
             return des;
         }

@@ -43,22 +43,16 @@ namespace DynamicEnergyTest.UI
             return processEntries;
         }
 
-        private void TestResultToJsonFile()
-        {
-            var processTests = sysConfig.ProcessTests;
-            foreach (var process in processTests)
-            {
-                string fileName = string.Format("TestResult\\{0}.json", process.UID.UIDCode);
-                var jsonStr = fastJSON.JSON.ToNiceJSON(process);
-                File.WriteAllText(fileName, jsonStr);
-            }
-        }
-
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             processItems = ProcessFactory.Instance().ProcessItems;
             InitializeProcessItemCtrl();
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
         }
 
         private void InitializeProcessItemCtrl()
@@ -75,22 +69,93 @@ namespace DynamicEnergyTest.UI
             }
         }
 
+        public void AutoProcess()
+        {
+            for (int i = 0; i < this.Controls.Count; i++)
+            {
+                TestProcessItem testProcessItem = this.Controls[i] as TestProcessItem;
+                if (testProcessItem != null)
+                {
+                    TestPanelCtrl parentCtrl = this.Parent as TestPanelCtrl;
+                    if (parentCtrl != null)
+                    {
+                        parentCtrl.StatusSwitchCtrl.UpdateProcessItem(testProcessItem.ProcessItem);
+                    }
+
+                    int testIndex = Int32.Parse(testProcessItem.ItemText);
+                    UpdateListView(testIndex, parentCtrl);
+
+                }
+            }
+        }
+
         private void MouseEventClick(object sender, MouseEventArgs e)
         {
             TestProcessItem testProcessItem = sender as TestProcessItem;
             if (testProcessItem != null)
             {
-                testProcessItem.TestStatus = TestStatus.Testing;
-                TestPanelCtrl parentCtrl = this.Parent as TestPanelCtrl;
-                if (parentCtrl != null)
+                if (testProcessItem.ItemText == "1")
                 {
-                    parentCtrl.StatusSwitchCtrl.UpdateProcessItem(testProcessItem.ProcessItem);
+                    Test00(testProcessItem);
+                    //if (ScanOrInputSN(testProcessItem) && sysConfig.TestUID == null)
+                    //{
+                    //    ProcessTest(testProcessItem);
+                    //}
                 }
-                int testIndex = Int32.Parse(testProcessItem.ItemText);
-                UpdateListView(testIndex, parentCtrl);
+                else
+                {
+                    ProcessTest(testProcessItem);
+                }
             }
         }
 
+        private void ProcessTest(TestProcessItem testProcessItem)
+        {
+            testProcessItem.TestStatus = TestStatus.Pass;
+            TestPanelCtrl parentCtrl = this.Parent as TestPanelCtrl;
+            if (parentCtrl != null)
+            {
+                parentCtrl.StatusSwitchCtrl.UpdateProcessItem(testProcessItem.ProcessItem);
+            }
+            int testIndex = Int32.Parse(testProcessItem.ItemText);
+            UpdateListView(testIndex, parentCtrl);
+        }
+
+        private bool ScanOrInputSN(TestProcessItem testProcessItem)
+        {
+            bool scanOK = false;
+            SNForm sNForm = new SNForm();
+            if (sNForm.ShowDialog() == DialogResult.OK)
+            {
+                scanOK = sysConfig.TestUID != null;
+            }
+            sNForm.Dispose();
+            return scanOK;
+        }
+
+        private void Test00(TestProcessItem testProcessItem)
+        {
+            TestPanelCtrl parentCtrl = this.Parent as TestPanelCtrl;
+            if (parentCtrl != null)
+            {
+                parentCtrl.StatusSwitchCtrl.UpdateProcessItem(testProcessItem.ProcessItem);
+            }
+
+            var dm = protocolFactory.DataModels[0];
+            var bytes = dm.Encode();
+
+            int testIndex = Int32.Parse(testProcessItem.ItemText);
+            parentCtrl.UpdateListView(dm.TestItem);
+
+            string readablebytes = ByteHelper.Byte2ReadalbeXstring(bytes);
+            parentCtrl.UpdateListView(readablebytes);
+            //ComCode comCode = ComCode.ReceivedOK;
+            ComCode comCode = protocolFactory.Write(bytes, 0, bytes.Count());
+            UpdateProcessItem(testIndex, comCode);
+            parentCtrl.UpdateListView(comCode.GetComCodeDescription());
+
+            parentCtrl.UpdateStatusSwitch(comCode);
+        }
         private void UpdateListView(int testIndex, TestPanelCtrl parentCtrl)
         {
             var dataModels = protocolFactory.DataModels;
@@ -103,8 +168,9 @@ namespace DynamicEnergyTest.UI
                     parentCtrl.UpdateListView(testItem);
                     var bytes = dm.Encode();
 
-                    string realablebytes = ByteHelper.Byte2ReadalbeXstring(bytes);
-                    parentCtrl.UpdateListView(realablebytes);
+                    string readablebytes = ByteHelper.Byte2ReadalbeXstring(bytes);
+                    parentCtrl.UpdateListView(readablebytes);
+                    //ComCode comCode = ComCode.ReceivedOK;
                     ComCode comCode = protocolFactory.Write(bytes, 0, bytes.Count());
 
                     UpdateProcessItem(testIndex, comCode);
@@ -140,8 +206,32 @@ namespace DynamicEnergyTest.UI
                             testProcessItem.TestStatus = TestStatus.Pass;
                             break;
                     }
+                    UpdateTestProcessLineStatus(testIndex, testProcessItem.TestStatus);
                 }
 
+            }
+        }
+
+        private TestProcessLine GetProcessLineName(int processItemIndex)
+        {
+            string lineName = string.Format("testProcessLine{0}", processItemIndex);
+            foreach (var ctrl in this.Controls)
+            {
+                TestProcessLine testProcessLine = ctrl as TestProcessLine;
+                if (testProcessLine != null && testProcessLine.Name == lineName)
+                {
+                    return testProcessLine;
+                }
+            }
+            return null;
+        }
+
+        private void UpdateTestProcessLineStatus(int testIndex, TestStatus testStatus)
+        {
+            TestProcessLine line = GetProcessLineName(testIndex);
+            if (line != null)
+            {
+                line.TestStatus = testStatus;
             }
         }
 

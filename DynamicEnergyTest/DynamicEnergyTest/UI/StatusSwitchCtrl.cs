@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DynamicEnergyTest.TestModel;
+using DynamicEnergyTest.SysSetting;
+using static DynamicEnergyTest.SysSetting.SysConfig;
 
 namespace DynamicEnergyTest.UI
 {
@@ -92,6 +94,7 @@ namespace DynamicEnergyTest.UI
                 if (value != _alpha)
                 {
                     this._alpha = value;
+                    StartAlpha = value;
                     //this.Invalidate();
                     this.InvokeInvalidate(Alpha, value);
                     this.Invalidate(bottomRectangle);
@@ -99,29 +102,75 @@ namespace DynamicEnergyTest.UI
             }
         }
 
+        private int _startAlpha;
+        public int StartAlpha
+        {
+            get { return _startAlpha; }
+            set
+            {
+                if (value != _startAlpha)
+                {
+                    this._startAlpha = value;
+                    //this.Invalidate();
+                    this.InvokeInvalidate(_startAlpha, value);
+                    this.Invalidate(_inEllipseRect);
+                }
+            }
+        }
+
+        private Rectangle _inEllipseRect;
+        public Rectangle InEllipseRect
+        {
+            get { return _inEllipseRect; }
+            set { _inEllipseRect = value; }
+        }
+
+        private SysStatus _sysStatus;
+        public SysStatus SystemStatus
+        {
+            get { return _sysStatus; }
+            set
+            {
+                if (value != _sysStatus)
+                {
+                    _sysStatus = value;
+                    this.Invalidate();
+                }
+            }
+        }
+        private SysConfig sysConfig;
+
         public StatusSwitchCtrl()
         {
+            sysConfig = SysConfig.GetConfig();
+
             InitializeComponent();
             this.TestStatus = TestStatus.UnTest;
             this.SwitchText = "Test";
             this.DoubleBuffered = true;
+
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            this.switchIndexCtrl.Location = new Point((this.Width - this.switchIndexCtrl.Width) / 2, 0);
+
+            this.switchIndexCtrl.Location = new Point((this.Width - this.switchIndexCtrl.Width) / 2, 10);
             topRectangle = new RectangleF(0, 0, this.Width, this.Height / 2);
             bottomRectangle = new Rectangle(0, this.Height / 2, this.Width, this.Height / 2);
             Alpha = 255;
+            this.SystemStatus = sysConfig.SystemStatus;
+            this.switchIndexCtrl.Visible = SystemStatus == SysStatus.GetReady;
+            this.Invalidate();
         }
 
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            this.switchIndexCtrl.Location = new Point((this.Width - this.switchIndexCtrl.Width) / 2, 0);
+            this.switchIndexCtrl.Location = new Point((this.Width - this.switchIndexCtrl.Width) / 2, 10);
             topRectangle = new RectangleF(0, 0, this.Width, this.Height / 2);
             bottomRectangle = new Rectangle(0, this.Height / 2, this.Width, this.Height / 2);
+            Alpha = 255;
             this.Invalidate();
         }
 
@@ -132,55 +181,85 @@ namespace DynamicEnergyTest.UI
             graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
             SolidBrush topSolidBrush = new SolidBrush(GraphicFactory.DynamicGray);
-            graphics.FillRectangle(topSolidBrush, topRectangle);
 
-            Color bottomColor = GraphicFactory.DynamicOrange;
-            switch (TestStatus)
+            if (SystemStatus == SysStatus.GetReady)
             {
-                case TestStatus.UnTest:
-                    bottomColor = GraphicFactory.DynamicOrange;
-                    this.SwitchText = "UNTEST";
-                    break;
-                case TestStatus.Testing:
-                    bottomColor = GraphicFactory.DynamicOrange;
-                    this.SwitchText = "Testing";
-                    break;
-                case TestStatus.Pass:
-                    bottomColor = GraphicFactory.DynamicGreen;
-                    this.SwitchText = "PASS";
-                    break;
-                case TestStatus.Fail:
-                    bottomColor = GraphicFactory.DynamicRed;
-                    this.SwitchText = "FAIL";
-                    break;
-            }
-            bottomColor = Color.FromArgb(Alpha, bottomColor.R, bottomColor.G, bottomColor.B);
-            SolidBrush bottomSolidBrush = new SolidBrush(bottomColor);
-            graphics.FillRectangle(bottomSolidBrush, bottomRectangle);
+                graphics.FillRectangle(topSolidBrush, topRectangle);
 
-            if (!string.IsNullOrEmpty(this.TestContent))
-            {
-                using (Font font = GraphicFactory.CreateFont(10F, FontStyle.Regular))
-                using (SolidBrush textSolidBrush = new SolidBrush(Color.White))
+                Color bottomColor = GraphicFactory.DynamicOrange;
+                switch (TestStatus)
                 {
-                    SizeF textSize = graphics.MeasureString(this.SwitchText, font);
-                    graphics.DrawString(TestContent, font, textSolidBrush, new RectangleF(20, 70, this.Width - 20, this.Height - 70));
-
+                    case TestStatus.UnTest:
+                        bottomColor = GraphicFactory.DynamicOrange;
+                        this.SwitchText = "UNTEST";
+                        break;
+                    case TestStatus.Testing:
+                        bottomColor = GraphicFactory.DynamicOrange;
+                        this.SwitchText = "Testing";
+                        break;
+                    case TestStatus.Pass:
+                        bottomColor = GraphicFactory.DynamicGreen;
+                        this.SwitchText = "PASS";
+                        break;
+                    case TestStatus.Fail:
+                        bottomColor = GraphicFactory.DynamicRed;
+                        this.SwitchText = "FAIL";
+                        break;
                 }
-            }
+                bottomColor = Color.FromArgb(Alpha, bottomColor.R, bottomColor.G, bottomColor.B);
+                SolidBrush bottomSolidBrush = new SolidBrush(bottomColor);
+                graphics.FillRectangle(bottomSolidBrush, bottomRectangle);
 
-            if (!string.IsNullOrEmpty(this.SwitchText))
-            {
-                using (Font font = GraphicFactory.CreateFont(60F, FontStyle.Bold))
-                using (SolidBrush textSolidBrush = new SolidBrush(Color.White))
+                if (!string.IsNullOrEmpty(this.TestContent))
                 {
-                    SizeF textSize = graphics.MeasureString(this.SwitchText, font);
-                    graphics.DrawString(SwitchText, font, textSolidBrush, (this.Width - textSize.Width) / 2, this.Height / 2 + (this.Height / 2 - textSize.Height) / 2);
+                    using (Font font = GraphicFactory.CreateFont(10F, FontStyle.Regular))
+                    using (SolidBrush textSolidBrush = new SolidBrush(Color.White))
+                    {
+                        SizeF textSize = graphics.MeasureString(this.SwitchText, font);
+                        graphics.DrawString(TestContent, font, textSolidBrush, new RectangleF(20, 70, this.Width - 20, this.Height - 70));
 
+                    }
                 }
+
+                if (!string.IsNullOrEmpty(this.SwitchText))
+                {
+                    using (Font font = GraphicFactory.CreateFont(60F, FontStyle.Bold))
+                    using (SolidBrush textSolidBrush = new SolidBrush(Color.White))
+                    {
+                        SizeF textSize = graphics.MeasureString(this.SwitchText, font);
+                        graphics.DrawString(SwitchText, font, textSolidBrush, (this.Width - textSize.Width) / 2, this.Height / 2 + (this.Height / 2 - textSize.Height) / 2);
+
+                    }
+                }
+                bottomSolidBrush.Dispose();
+
             }
+            else if (SystemStatus == SysStatus.NotReady)
+            {
+                graphics.FillRectangle(topSolidBrush, new RectangleF(0, 0, this.Bounds.Width, this.Bounds.Height));
+
+                int OutEllipseRadiu = this.Bounds.Height / 2 - 130;
+                int inEllipseRadiu = this.Bounds.Height / 2 - 150;
+
+                graphics.FillEllipse(Brushes.White, this.Width / 2  - OutEllipseRadiu, this.Height / 2 - OutEllipseRadiu, 2 * OutEllipseRadiu, 2 * OutEllipseRadiu);
+
+                Color color = Color.FromArgb(Alpha, GraphicFactory.DynamicBlue);
+                SolidBrush inSolidBrush = new SolidBrush(color);
+
+                this.InEllipseRect = new Rectangle(this.Width / 2 - inEllipseRadiu, this.Height / 2 - inEllipseRadiu, 2 * inEllipseRadiu, 2 * inEllipseRadiu);
+                graphics.FillEllipse(inSolidBrush, InEllipseRect);
+
+                using (Font font = GraphicFactory.CreateFont(40, FontStyle.Bold))
+                {
+                    string start = "START";
+                    var size = graphics.MeasureString(start, font);
+                    graphics.DrawString(start, font, Brushes.White, InEllipseRect.X + (InEllipseRect.Width - size.Width) / 2, InEllipseRect.Y + (InEllipseRect.Height - size.Height) / 2);
+                }
+
+                inSolidBrush.Dispose();
+            }
+
             topSolidBrush.Dispose();
-            bottomSolidBrush.Dispose();
         }
 
         private void StatusSwitchCtrl_MouseMove(object sender, MouseEventArgs e)
@@ -190,7 +269,17 @@ namespace DynamicEnergyTest.UI
 
         private void StatusSwitchCtrl_MouseClick(object sender, MouseEventArgs e)
         {
+
+            if (SystemStatus == SysStatus.NotReady && InEllipseRect.Contains(e.Location))
+            {
+                sysConfig.SystemStatus = SysStatus.GetReady;
+                SystemStatus = sysConfig.SystemStatus;
+                this.switchIndexCtrl.Visible = SystemStatus == SysStatus.GetReady;
+                StartProcessHandler?.Invoke(sender, e);
+            }
         }
+
+        public EventHandler StartProcessHandler;
 
         private void StatusSwitchCtrl_MouseUp(object sender, MouseEventArgs e)
         {

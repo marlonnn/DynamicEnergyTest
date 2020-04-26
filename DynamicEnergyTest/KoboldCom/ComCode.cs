@@ -18,6 +18,8 @@ namespace KoboldCom
         [LocalizedDescription("StrSendOK")]
         SendOK,
         [LocalizedDescription("StrReceivedOK")]
-        ReceivedOK
+        ReceivedOK,
+
+        ReceivedMessageError
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DynamicEnergyTest.SysSetting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,6 +61,19 @@ namespace DynamicEnergyTest.Protocol
                 return true;
             }
             return false;
+        }
+
+        public override bool CheckLegal()
+        {
+            bool legal = false;
+            var parameter = SysConfig.GetConfig().ParameterSetting;
+            if (parameter != null)
+            {
+                legal = (this.Voltage > parameter.LowVoltage && this.Voltage < parameter.HighVoltage) &&
+                    (this.Current > parameter.LowCurrent && this.Current < parameter.HighCurrent) &&
+                    (this.Power > parameter.LowPower && this.Power < parameter.HighPower);
+            }
+            return legal;
         }
     }
 }

@@ -9,25 +9,70 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using KoboldCom;
 using DynamicEnergyTest.SysSetting;
+using static DynamicEnergyTest.SysSetting.SysConfig;
 
 namespace DynamicEnergyTest.UI
 {
     public partial class TestPanelCtrl : UserControl
     {
-        private Timer timer;
+        private Timer logViewTimer;
+        private Timer processTimer;
+
+        private SysConfig sysConfig;
+
+        private SysStatus _sysStatus;
+        public SysStatus SystemStatus
+        {
+            get { return _sysStatus; }
+            set
+            {
+                if (value != _sysStatus)
+                {
+                    _sysStatus = value;
+                    AutoSetStatusCtrlBounds();
+                    StatusSwitchCtrl.SystemStatus = value;
+                    this.Invalidate();
+                }
+            }
+        }
 
         public TestPanelCtrl()
         {
+            sysConfig = SysConfig.GetConfig();
+
             InitializeComponent();
-            timer = new Timer();
-            timer.Interval = 300;
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            logViewTimer = new Timer();
+            logViewTimer.Interval = 300;
+            logViewTimer.Tick += Timer_Tick;
+            logViewTimer.Start();
+
+            processTimer = new Timer();
+            processTimer.Interval = 1000;
+            processTimer.Tick += ProcessTimer_Tick;
+
             ColumnHeader columnHeader = new ColumnHeader();
             columnHeader.Text = "消息日志";
             columnHeader.Width = 500;
             this.listView.Columns.Add(columnHeader);
-            this.listView.Timer = timer;
+            this.listView.Timer = logViewTimer;
+
+            this.statusSwitchCtrl.SystemStatus = sysConfig.SystemStatus;
+            this.statusSwitchCtrl.StartProcessHandler += StartProcessHandler;
+        }
+
+        private void StartProcessHandler(object sender, EventArgs e)
+        {
+            StartProcessTimer();
+        }
+
+        private void ProcessTimer_Tick(object sender, EventArgs e)
+        {
+
+        }
+
+        public void StartProcessTimer()
+        {
+            processTimer.Start();
         }
 
         /// <summary> 
@@ -36,7 +81,8 @@ namespace DynamicEnergyTest.UI
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (timer != null) timer.Stop();
+            if (logViewTimer != null) logViewTimer.Stop();
+            if (processTimer != null) processTimer.Stop();
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -61,8 +107,6 @@ namespace DynamicEnergyTest.UI
 
         public void UpdateListView(string info)
         {
-            //ListViewItem lvi = new ListViewItem();
-            //lvi.Text = info;
             this.listView.AppendLog(new string[] { info });
         }
 
@@ -85,6 +129,51 @@ namespace DynamicEnergyTest.UI
                     this.statusSwitchCtrl.TestStatus = TestStatus.Pass;
                     break;
             }
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            AutoSetStatusCtrlBounds();
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            AutoSetStatusCtrlBounds();
+        }
+
+        private void AutoSetStatusCtrlBounds()
+        {
+            switch (sysConfig.SystemStatus)
+            {
+                case SysConfig.SysStatus.NotReady:
+                    SetNotReadyStatusCtrlBounds();
+                    break;
+                case SysConfig.SysStatus.GetReady:
+                    SetGetReadyStatusCtrlBounds();
+                    break;
+            }
+        }
+
+        private void SetNotReadyStatusCtrlBounds()
+        {
+            this.statusSwitchCtrl.Bounds =
+                new Rectangle(0, this.testProcessCtrl1.Location.Y + this.testProcessCtrl1.Height + 10, 
+                this.Width, this.Height - this.testProcessCtrl1.Height - 10);
+            this.listView.Visible = false;
+
+        }
+
+        private void SetGetReadyStatusCtrlBounds()
+        {
+            this.statusSwitchCtrl.Bounds =
+                new Rectangle(0, this.testProcessCtrl1.Location.Y + this.testProcessCtrl1.Height + 10,
+                this.Width / 2, this.Height - this.testProcessCtrl1.Height - 10);
+            this.listView.Bounds =
+                new Rectangle(this.Width / 2, this.testProcessCtrl1.Location.Y + this.testProcessCtrl1.Height + 10,
+                this.Width / 2, this.Height - this.testProcessCtrl1.Height - 10);
+            this.listView.Visible = true;
         }
     }
 }

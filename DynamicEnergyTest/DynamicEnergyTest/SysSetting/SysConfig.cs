@@ -10,6 +10,28 @@ namespace DynamicEnergyTest.SysSetting
 {
     public class SysConfig
     {
+        public enum SysStatus
+        {
+            NotReady,
+            GetReady,
+            ProductionMode,
+            Exit
+        }
+
+        private SysStatus _sysStatus;
+        public SysStatus SystemStatus
+        {
+            get { return _sysStatus; }
+            set
+            {
+                if (value != _sysStatus)
+                {
+                    _sysStatus = value;
+                    Program.UIFactory.TestPanelCtrl.SystemStatus = value;
+                }
+            }
+        }
+
         private static SysConfig sysConfig;
 
         private List<UID> _uIDs;
@@ -17,6 +39,27 @@ namespace DynamicEnergyTest.SysSetting
         {
             get { return _uIDs; }
             set { _uIDs = value; }
+        }
+
+        public UID _uID;
+        public UID TestUID
+        {
+            get { return _uID; }
+            set { _uID = value; }
+        }
+
+        private Dictionary<string, string>_binAddressTables;
+        public Dictionary<string, string> BinAddressTable
+        {
+            get { return _binAddressTables; }
+            set { _binAddressTables = value; }
+        }
+
+        private List<Bin> _flashBins;
+        public List<Bin> FlashBins
+        {
+            get { return _flashBins; }
+            set { _flashBins = value; }
         }
 
         private List<ProcessTest> _processTests;
@@ -35,7 +78,11 @@ namespace DynamicEnergyTest.SysSetting
 
         public SysConfig()
         {
+            SystemStatus = SysStatus.NotReady;
             UIDs = new List<UID>();
+            BinAddressTable = new Dictionary<string, string>();
+            FlashBins = new List<Bin>();
+
             ProcessTests = new List<ProcessTest>();
             ParameterSetting = new ParameterSetting();
         }
@@ -50,6 +97,7 @@ namespace DynamicEnergyTest.SysSetting
         }
 
         public EventHandler UpdateDataGridViewHandler;
+        public EventHandler UpdateTestInfoHandler;
 
         public void ResultToJsonFile(ProcessTest processTest)
         {

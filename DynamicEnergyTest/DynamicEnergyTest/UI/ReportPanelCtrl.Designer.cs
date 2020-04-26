@@ -35,15 +35,15 @@
             // testInfosPanel1
             // 
             this.testInfosPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.testInfosPanel1.FailureCount = 100;
+            this.testInfosPanel1.FailureCount = 0;
             this.testInfosPanel1.Location = new System.Drawing.Point(0, 0);
             this.testInfosPanel1.Name = "testInfosPanel1";
-            this.testInfosPanel1.PassCount = 1800;
+            this.testInfosPanel1.PassCount = 0;
             this.testInfosPanel1.Size = new System.Drawing.Size(1100, 122);
             this.testInfosPanel1.TabIndex = 0;
-            this.testInfosPanel1.TestedCount = 1900;
-            this.testInfosPanel1.TestPlanCount = 2000;
-            this.testInfosPanel1.UnTestCount = 100;
+            this.testInfosPanel1.TestedCount = 0;
+            this.testInfosPanel1.TestPlanCount = 0;
+            this.testInfosPanel1.UnTestCount = 0;
             // 
             // queryCtrl1
             // 

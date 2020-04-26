@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DynamicEnergyTest.SysSetting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,6 +39,17 @@ namespace DynamicEnergyTest.Protocol
         public override byte[] Encode()
         {
             return base.Encode();
+        }
+
+        public override bool CheckLegal()
+        {
+            bool legal = false;
+            var testUID = SysConfig.GetConfig().TestUID;
+            if (testUID != null && !string.IsNullOrEmpty(DevID))
+            {
+                legal = testUID.UIDCode == DevID;
+            }
+            return legal;
         }
     }
 }

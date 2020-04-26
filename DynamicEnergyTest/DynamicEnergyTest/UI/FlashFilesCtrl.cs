@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
+using DynamicEnergyTest.SysSetting;
+using DynamicEnergyTest.Protocol;
 
 namespace DynamicEnergyTest.UI
 {
@@ -16,19 +19,36 @@ namespace DynamicEnergyTest.UI
         private const int MARGINTOP = 20;
         private Rectangle _flashOperate;
         private Rectangle _flashLog;
+        private Rectangle _listViewRect;
+
         private FlashStatus _flashStatus;
 
         private Button flashButton;
+        private ExListView listView;
 
         private const int TextBoxMargin = 20;
         private TextBox uidTxtBox;
         private Rectangle uidTxtBoxRect;
+
+        private Timer logViewTimer;
+        private string esptool;
+        private string _arguments;
+        public string Arguments
+        {
+            get { return _arguments; }
+            set { _arguments = value; }
+        }
+
+        private SysConfig sysConfig;
+
         public FlashFilesCtrl()
         {
+            sysConfig = SysConfig.GetConfig();
             InitializeComponent();
             _flashStatus = FlashStatus.UnFlash;
             InitializeTextBox();
             InitializeLoadButton();
+            InitializeExListView();
         }
 
         private void InitializeTextBox()
@@ -54,9 +74,87 @@ namespace DynamicEnergyTest.UI
             this.flashButton.Click += FlashButton_Click;
         }
 
-        private void FlashButton_Click(object sender, EventArgs e)
+        private void InitializeExListView()
+        {
+            this.listView = new ExListView();
+            this.listView.FullRowSelect = true;
+            this.listView.GridLines = true;
+            this.listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listView.HideSelection = false;
+            //this.listView.Location = new System.Drawing.Point(552, 138);
+            this.listView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.listView.MaxLogRecords = 300;
+            this.listView.MultiSelect = false;
+            this.listView.Name = "listView";
+            this.listView.ShowGroups = false;
+            //this.listView.Size = new System.Drawing.Size(547, 511);
+            this.listView.TabIndex = 2;
+            this.listView.Timer = null;
+            this.listView.UseCompatibleStateImageBehavior = false;
+            this.listView.View = System.Windows.Forms.View.Details;
+
+            logViewTimer = new Timer();
+            logViewTimer.Interval = 300;
+            logViewTimer.Tick += Timer_Tick;
+            logViewTimer.Start();
+
+            ColumnHeader columnHeader = new ColumnHeader();
+            columnHeader.Text = "Messages: ";
+            columnHeader.Width = 500;
+            this.listView.Columns.Add(columnHeader);
+            this.listView.Timer = logViewTimer;
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
         {
 
+        }
+
+        private void FlashButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                FormatParameter();
+                esptool = System.Environment.CurrentDirectory + "\\tool-esptool\\esptool.exe";
+                //ProtocolFactory
+                Process process = new Process()
+                {
+                    StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = esptool,
+                        Arguments = Arguments,
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
+                process.Start();
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    var line = process.StandardOutput.ReadLine();
+                    this.listView.AppendLog(new string[] { line });
+                    Console.WriteLine(line);
+                }
+                process.WaitForExit();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+        public void FormatParameter()
+        {
+            StringBuilder sb = new StringBuilder();
+            string preFix = "--chip esp32 --port COM4 --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m " +
+                "--flash_size detect";
+            sb.Append(preFix);
+            for (int i=0; i<sysConfig.FlashBins.Count(); i++)
+            {
+                string binParams = (" " + sysConfig.FlashBins[i].Address + " " + sysConfig.FlashBins[i].FullName);
+                sb.Append(binParams);
+            }
+            Arguments = sb.ToString();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -64,9 +162,13 @@ namespace DynamicEnergyTest.UI
             base.OnLoad(e);
             _flashOperate = new Rectangle(0, MARGINTOP, this.Width / 2, this.Height - MARGINTOP);
             _flashLog = new Rectangle(this.Width / 2, MARGINTOP, this.Width / 2, this.Height - MARGINTOP);
+            _listViewRect = new Rectangle(this.Width / 2, MARGINTOP, this.Width / 2, this.Height - MARGINTOP);
 
             this.flashButton.Location = new Point((_flashOperate.Width - flashButton.Width) / 2, (_flashOperate.Height - flashButton.Height) / 2 - _flashOperate.Y);
             this.Controls.Add(flashButton);
+
+            this.listView.Bounds = _listViewRect;
+            this.Controls.Add(listView);
 
             uidTxtBoxRect = new Rectangle(TextBoxMargin, 60, _flashOperate.Width - 2 * TextBoxMargin, 21);
             uidTxtBox.Bounds = uidTxtBoxRect;
@@ -77,6 +179,8 @@ namespace DynamicEnergyTest.UI
             base.OnResize(e);
             _flashOperate = new Rectangle(0, MARGINTOP, this.Width / 2, this.Height - MARGINTOP);
             _flashLog = new Rectangle(this.Width / 2, MARGINTOP, this.Width / 2, this.Height - MARGINTOP);
+            _listViewRect = new Rectangle(this.Width / 2, MARGINTOP, this.Width / 2, this.Height - MARGINTOP);
+
             if (flashButton != null)
                 this.flashButton.Location = new Point((_flashOperate.Width - flashButton.Width) / 2, (_flashOperate.Height - flashButton.Height) / 2 - _flashOperate.Y);
             if (uidTxtBox != null)
@@ -84,6 +188,9 @@ namespace DynamicEnergyTest.UI
                 uidTxtBoxRect = new Rectangle(TextBoxMargin, 60, _flashOperate.Width - 2 * TextBoxMargin, 21);
                 uidTxtBox.Bounds = uidTxtBoxRect;
             }
+
+            if (this.listView != null)
+                this.listView.Bounds = _listViewRect;
             this.Invalidate();
         }
 
@@ -123,5 +230,20 @@ namespace DynamicEnergyTest.UI
             topSolidBrush.Dispose();
             bottomSolidBrush.Dispose();
         }
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (logViewTimer != null) logViewTimer.Stop();
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
     }
 }

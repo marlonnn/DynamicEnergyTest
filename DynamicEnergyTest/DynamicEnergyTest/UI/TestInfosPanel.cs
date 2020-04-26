@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DynamicEnergyTest.SysSetting;
 
 namespace DynamicEnergyTest.UI
 {
@@ -62,6 +63,7 @@ namespace DynamicEnergyTest.UI
         private string _subPass;
         private string _subFail;
         private string _subPassRate;
+        private SysConfig sysConfig;
 
         public TestInfosPanel()
         {
@@ -75,11 +77,37 @@ namespace DynamicEnergyTest.UI
             _subFail = "失败";
             _subPassRate = "通过率";
 
-            TestPlanCount = 2000;
-            UnTestCount = 100;
-            TestedCount = 1900;
-            PassCount = 1800;
+            TestPlanCount = 0;
+            UnTestCount = 0;
+            TestedCount = 0;
+            PassCount = 0;
             FailureCount = TestedCount - PassCount;
+
+            sysConfig = SysConfig.GetConfig();
+            sysConfig.UpdateTestInfoHandler += UpdateTestInfosHandler;
+        }
+
+        private void UpdateTestInfosHandler(object sender, EventArgs e)
+        {
+            var uids = sysConfig.UIDs;
+
+            TestPlanCount = uids.Count();
+            UnTestCount = uids.Where(uid => uid.TestStatus == TestStatus.UnTest).Count();
+            PassCount = uids.Where(uid => uid.TestStatus == TestStatus.Pass).Count();
+            TestedCount = TestPlanCount - UnTestCount;
+            FailureCount = uids.Where(uid => uid.TestStatus == TestStatus.Fail).Count();
+            this.Invalidate();
+        }
+
+        public void UpdateTestInfos()
+        {
+            var uids = sysConfig.UIDs;
+
+            TestPlanCount = uids.Count();
+            UnTestCount = uids.Where(uid => uid.TestStatus == TestStatus.UnTest).Count();
+            TestedCount = TestPlanCount - UnTestCount;
+            FailureCount = uids.Where(uid => uid.TestStatus == TestStatus.Fail).Count();
+            this.Invalidate();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -132,7 +160,7 @@ namespace DynamicEnergyTest.UI
             string totalTested = TestedCount.ToString();
             string pass = PassCount.ToString();
             string fail = FailureCount.ToString();
-            string passRate = string.Format("{0:P}", PassCount / (double)TestedCount);
+            string passRate = TestedCount == 0 ? "0" : string.Format("{0:P}", PassCount / (double)TestedCount);
 
             int subItemWidth = _testedRectangle.Width / 4;
             int subItemGap = 30;

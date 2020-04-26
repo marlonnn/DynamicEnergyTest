@@ -133,7 +133,11 @@ namespace DynamicEnergyTest.Protocol
 
         private void Communicator_OnRawDataReceived(byte[] bytes)
         {
+            //var v = ByteHelper.Byte2ReadalbeXstring(bytes);
+            //Console.WriteLine(v);
 
+            var v2 = System.Text.Encoding.UTF8.GetString(bytes);
+            Console.WriteLine(v2);
         }
 
         public static ProtocolFactory GetFactory()
@@ -141,6 +145,49 @@ namespace DynamicEnergyTest.Protocol
             if (_protocolFactory == null) _protocolFactory = new ProtocolFactory();
             return _protocolFactory;
         }
+
+        public ComCode Write(DataModel dataModel, int offset, int count)
+        {
+            receiveDataModel = null;
+
+            var sendBytes = dataModel.Encode();
+            string readableBytes = ByteHelper.Byte2ReadalbeXstring(sendBytes);
+            UpdateListViewHandler?.Invoke(readableBytes);
+
+            ComCode comCode = _communicator.Write(sendBytes, offset, count);
+            if (comCode == ComCode.SendOK)
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                while (true)
+                {
+                    //Do 
+                    if (receiveDataModel != null)
+                    {
+                        var raw = receiveDataModel.Raw;
+                        var dataRegion = receiveDataModel.DataRegion;
+                        if (receiveDataModel.CheckLegal())
+                            return ComCode.ReceivedOK;
+                        else
+                            return ComCode.ReceivedMessageError;
+                    }
+                    if (sw.ElapsedMilliseconds > 3000)
+                    {
+                        return ComCode.TimeOut;
+                    }
+                    Thread.Sleep(1);
+                    System.Windows.Forms.Application.DoEvents();
+                }
+            }
+            else
+            {
+                return comCode;
+            }
+        }
+
+        public delegate void RefreshListViewDelegate(string info);
+        public RefreshListViewDelegate UpdateListViewHandler;
+
 
         public ComCode Write(byte[] buffer, int offset, int count)
         {

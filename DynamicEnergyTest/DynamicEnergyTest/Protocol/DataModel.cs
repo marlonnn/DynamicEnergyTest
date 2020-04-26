@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DynamicEnergyTest.Protocol
 {
-    public class DataModel
+    public class DataModel 
     {
         //Raw data
         public byte[] Raw { get; set; }
@@ -55,6 +55,11 @@ namespace DynamicEnergyTest.Protocol
             }
             data[12] = (byte)sum;
             return data;
+        }
+
+        public virtual bool CheckLegal()
+        {
+            return true;
         }
     }
 }

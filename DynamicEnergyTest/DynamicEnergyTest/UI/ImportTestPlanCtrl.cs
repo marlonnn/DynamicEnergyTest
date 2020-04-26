@@ -83,6 +83,7 @@ namespace DynamicEnergyTest.UI
                         this.backgroundWorker.RunWorkerAsync();
                     }
                     SysConfig.UpdateDataGridViewHandler?.Invoke(null, null);
+                    SysConfig.UpdateTestInfoHandler?.Invoke(null, null);
                 }
             }
         }

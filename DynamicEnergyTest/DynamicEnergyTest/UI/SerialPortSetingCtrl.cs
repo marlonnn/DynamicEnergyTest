@@ -65,6 +65,8 @@ namespace DynamicEnergyTest.UI
                     SerialPortSetting sps = new SerialPortSetting();
                     sps.Baudrate = int.Parse(comboBaudrate.Text);
                     sps.Port = int.Parse(Regex.Match(comboPort.Text, @"\d+").Value);
+                    sps.Parity = System.IO.Ports.Parity.None;
+                    sps.StopBits = System.IO.Ports.StopBits.One;
                     if (ProtocolsFactory.Communicator.Com.Open(sps))
                     {
                         btnConnect.Text = "Disconnect";

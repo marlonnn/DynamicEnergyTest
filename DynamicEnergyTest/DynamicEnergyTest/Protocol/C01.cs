@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DynamicEnergyTest.SysSetting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,11 +10,8 @@ namespace DynamicEnergyTest.Protocol
     //版本测试
     public class C01 : DataModel
     {
-        public class Version
-        {
-            public string MCUVersion { get; set; }
-        }
-        public Version McuVersion { get; set; }
+        public string MCUVersion { get; set; }
+
         public C01()
         {
             this.TestIndex = 2;
@@ -25,11 +23,21 @@ namespace DynamicEnergyTest.Protocol
         {
             if (buf != null && buf.Count() > 0)
             {
-                string mcuVersion = System.Text.Encoding.UTF8.GetString(buf);
-                this.McuVersion = ParseHelpers.ParseJSON<Version>(mcuVersion);
+                MCUVersion = System.Text.Encoding.UTF8.GetString(buf);
                 return true;
             }
             return false;
+        }
+
+        public override bool CheckLegal()
+        {
+            bool legal = false;
+            var parameter = SysConfig.GetConfig().ParameterSetting;
+            if (!string.IsNullOrEmpty(MCUVersion) && parameter != null && !string.IsNullOrEmpty(parameter.Version))
+            {
+                legal = MCUVersion == parameter.Version;
+            }
+            return legal;
         }
     }
 }

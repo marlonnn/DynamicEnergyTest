@@ -104,6 +104,8 @@
     <Compile Include="Protocol\Protocols.cs" />
     <Compile Include="Protocol\ReturnCode.cs" />
     <Compile Include="DBClass\OleDBOperate.cs" />
+    <Compile Include="SysSetting\Bin.cs" />
+    <Compile Include="SysSetting\BinAddressTable.cs" />
     <Compile Include="SysSetting\ParameterSetting.cs" />
     <Compile Include="SysSetting\ProcessEntry.cs" />
     <Compile Include="SysSetting\ProcessTest.cs" />
@@ -114,6 +116,12 @@
     <Compile Include="TestStatus.cs" />
     <Compile Include="UI\ExListView.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\FlashBinFilesBroserCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\FlashBinFilesBroserCtrl.Designer.cs">
+      <DependentUpon>FlashBinFilesBroserCtrl.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\GraphicFactory.cs" />
     <Compile Include="UI\FlashBinFilesCtrl.cs">
@@ -182,6 +190,12 @@
     </Compile>
     <Compile Include="UI\SettingPanelCtrl.Designer.cs">
       <DependentUpon>SettingPanelCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\SNForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\SNForm.Designer.cs">
+      <DependentUpon>SNForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\StatusSwitchCtrl.cs">
       <SubType>UserControl</SubType>
@@ -256,6 +270,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="UI\FlashBinFilesBroserCtrl.resx">
+      <DependentUpon>FlashBinFilesBroserCtrl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\FlashBinFilesCtrl.resx">
       <DependentUpon>FlashBinFilesCtrl.cs</DependentUpon>
     </EmbeddedResource>
@@ -289,6 +306,9 @@
     <EmbeddedResource Include="UI\SettingPanelCtrl.resx">
       <DependentUpon>SettingPanelCtrl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\SNForm.resx">
+      <DependentUpon>SNForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\StatusSwitchCtrl.resx">
       <DependentUpon>StatusSwitchCtrl.cs</DependentUpon>
     </EmbeddedResource>
@@ -320,6 +340,9 @@
       <DependentUpon>ToolBarItem.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="Config\BinAddressTable.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -344,7 +367,13 @@
     <Content Include="Config\ProcessItems.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Firmware\readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResult\ReadMe.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tool-esptool\esptool.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

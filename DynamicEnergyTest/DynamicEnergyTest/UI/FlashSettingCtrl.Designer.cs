@@ -30,10 +30,9 @@
         {
             this.btnImport = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboPort = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            this.comboBaudrate = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // btnImport
@@ -58,13 +57,14 @@
             this.label1.TabIndex = 12;
             this.label1.Text = "COM端口";
             // 
-            // comboBox1
+            // comboPort
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(345, 56);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 20);
-            this.comboBox1.TabIndex = 13;
+            this.comboPort.FormattingEnabled = true;
+            this.comboPort.Location = new System.Drawing.Point(345, 56);
+            this.comboPort.Name = "comboPort";
+            this.comboPort.Size = new System.Drawing.Size(121, 20);
+            this.comboPort.TabIndex = 13;
+            this.comboPort.SelectedIndexChanged += new System.EventHandler(this.ComboPort_SelectedIndexChanged);
             // 
             // label2
             // 
@@ -76,25 +76,32 @@
             this.label2.TabIndex = 14;
             this.label2.Text = "波特率";
             // 
-            // numericUpDown1
+            // comboBaudrate
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(609, 56);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(151, 21);
-            this.numericUpDown1.TabIndex = 15;
+            this.comboBaudrate.FormattingEnabled = true;
+            this.comboBaudrate.Items.AddRange(new object[] {
+            "9600",
+            "19200",
+            "38400",
+            "115200",
+            "921600"});
+            this.comboBaudrate.Location = new System.Drawing.Point(609, 56);
+            this.comboBaudrate.Name = "comboBaudrate";
+            this.comboBaudrate.Size = new System.Drawing.Size(121, 20);
+            this.comboBaudrate.TabIndex = 15;
+            this.comboBaudrate.SelectedIndexChanged += new System.EventHandler(this.ComboBaudrate_SelectedIndexChanged);
             // 
             // FlashSettingCtrl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.comboBaudrate);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.comboPort);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnImport);
             this.Name = "FlashSettingCtrl";
             this.Size = new System.Drawing.Size(1006, 99);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -104,8 +111,8 @@
 
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboPort;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.ComboBox comboBaudrate;
     }
 }
