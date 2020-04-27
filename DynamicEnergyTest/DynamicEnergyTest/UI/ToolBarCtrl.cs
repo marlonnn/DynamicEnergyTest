@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DynamicEnergyTest.SysSetting;
 
 namespace DynamicEnergyTest.UI
 {
@@ -17,6 +18,15 @@ namespace DynamicEnergyTest.UI
         {
             InitializeComponent();
             this.toolBarItemTest.EnableFocus = true;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            bool isFullMode = SysConfig.GetConfig().SystemMode == SysMode.FullMode;
+            this.toolBarItemReport.Visible = isFullMode;
+            this.toolBarItemTest.Visible = isFullMode;
+            this.toolBarItemSetting.Visible = isFullMode;
         }
 
         private void ClickEvent(object sender, EventArgs e)

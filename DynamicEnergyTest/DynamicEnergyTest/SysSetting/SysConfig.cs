@@ -18,6 +18,16 @@ namespace DynamicEnergyTest.SysSetting
             Exit
         }
 
+        public string Com { get; set; }
+        public string Baund { get; set; }
+
+        private SysMode _sysMode;
+        public SysMode SystemMode
+        {
+            get { return _sysMode; }
+            set { _sysMode = value; }
+        }
+
         private SysStatus _sysStatus;
         public SysStatus SystemStatus
         {
@@ -41,6 +51,13 @@ namespace DynamicEnergyTest.SysSetting
             set { _uIDs = value; }
         }
 
+        private List<UID> _flushUIDs;
+        public List<UID> FlushUIDs
+        {
+            get { return _flushUIDs; }
+            set { _flushUIDs = value; }
+        }
+
         public UID _uID;
         public UID TestUID
         {
@@ -48,13 +65,18 @@ namespace DynamicEnergyTest.SysSetting
             set { _uID = value; }
         }
 
-        private Dictionary<string, string>_binAddressTables;
-        public Dictionary<string, string> BinAddressTable
+        //private Dictionary<string, string>_binAddressTables;
+        //public Dictionary<string, string> BinAddressTable
+        //{
+        //    get { return _binAddressTables; }
+        //    set { _binAddressTables = value; }
+        //}
+        private List<BinAddressTable> _binAddressTables;
+        public List<BinAddressTable> BinAddressTable
         {
             get { return _binAddressTables; }
             set { _binAddressTables = value; }
         }
-
         private List<Bin> _flashBins;
         public List<Bin> FlashBins
         {
@@ -78,9 +100,11 @@ namespace DynamicEnergyTest.SysSetting
 
         public SysConfig()
         {
+            SystemMode = SysMode.FullMode;
             SystemStatus = SysStatus.NotReady;
+            FlushUIDs = new List<UID>();
             UIDs = new List<UID>();
-            BinAddressTable = new Dictionary<string, string>();
+            BinAddressTable = new List<BinAddressTable>();
             FlashBins = new List<Bin>();
 
             ProcessTests = new List<ProcessTest>();
@@ -98,6 +122,7 @@ namespace DynamicEnergyTest.SysSetting
 
         public EventHandler UpdateDataGridViewHandler;
         public EventHandler UpdateTestInfoHandler;
+        public EventHandler UpdateFlushBinsHandler;
 
         public void ResultToJsonFile(ProcessTest processTest)
         {

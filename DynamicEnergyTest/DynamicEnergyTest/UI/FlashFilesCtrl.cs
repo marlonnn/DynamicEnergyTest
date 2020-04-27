@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using DynamicEnergyTest.SysSetting;
 using DynamicEnergyTest.Protocol;
+using System.IO;
+using System.IO.Compression;
 
 namespace DynamicEnergyTest.UI
 {
@@ -24,7 +26,8 @@ namespace DynamicEnergyTest.UI
         private FlashStatus _flashStatus;
 
         private Button flashButton;
-        private ExListView listView;
+        //private ExListView listView;
+        private RichTextBox richTextBox1;
 
         private const int TextBoxMargin = 20;
         private TextBox uidTxtBox;
@@ -32,12 +35,23 @@ namespace DynamicEnergyTest.UI
 
         private Timer logViewTimer;
         private string esptool;
-        private string _arguments;
-        public string Arguments
+        private string _args;
+        public string Args
         {
-            get { return _arguments; }
-            set { _arguments = value; }
+            get { return _args; }
+            set { _args = value; }
         }
+
+        protected readonly static string ExePath = Path.Combine(Directory.GetCurrentDirectory(), "tool-esptool");
+        public event EventHandler<CustomEventArgs> ConsoleEvent;
+        private delegate void SafeCallDelegate(object sender, CustomEventArgs a);
+
+        private readonly static string _exe = "esptool.exe";
+
+        //public string Com { get; set; }
+        //public string Baund { get; set; }
+        private StringBuilder _outStr = new StringBuilder();
+        private bool _useComArgs = true;
 
         private SysConfig sysConfig;
 
@@ -48,7 +62,11 @@ namespace DynamicEnergyTest.UI
             _flashStatus = FlashStatus.UnFlash;
             InitializeTextBox();
             InitializeLoadButton();
-            InitializeExListView();
+            //InitializeExListView();
+            InitializeRichTextBox();
+            //Com = "COM4";
+            //Baund = "115200";
+            this.ConsoleEvent += HandleCustomEvent;
         }
 
         private void InitializeTextBox()
@@ -76,33 +94,51 @@ namespace DynamicEnergyTest.UI
 
         private void InitializeExListView()
         {
-            this.listView = new ExListView();
-            this.listView.FullRowSelect = true;
-            this.listView.GridLines = true;
-            this.listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listView.HideSelection = false;
-            //this.listView.Location = new System.Drawing.Point(552, 138);
-            this.listView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.listView.MaxLogRecords = 300;
-            this.listView.MultiSelect = false;
-            this.listView.Name = "listView";
-            this.listView.ShowGroups = false;
-            //this.listView.Size = new System.Drawing.Size(547, 511);
-            this.listView.TabIndex = 2;
-            this.listView.Timer = null;
-            this.listView.UseCompatibleStateImageBehavior = false;
-            this.listView.View = System.Windows.Forms.View.Details;
+            //this.listView = new ExListView();
+            //this.listView.FullRowSelect = true;
+            //this.listView.GridLines = true;
+            //this.listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            //this.listView.HideSelection = false;
+            ////this.listView.Location = new System.Drawing.Point(552, 138);
+            //this.listView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            //this.listView.MaxLogRecords = 300;
+            //this.listView.MultiSelect = false;
+            //this.listView.Name = "listView";
+            //this.listView.ShowGroups = false;
+            ////this.listView.Size = new System.Drawing.Size(547, 511);
+            //this.listView.TabIndex = 2;
+            //this.listView.Timer = null;
+            //this.listView.UseCompatibleStateImageBehavior = false;
+            //this.listView.View = System.Windows.Forms.View.Details;
 
-            logViewTimer = new Timer();
-            logViewTimer.Interval = 300;
-            logViewTimer.Tick += Timer_Tick;
-            logViewTimer.Start();
+            //logViewTimer = new Timer();
+            //logViewTimer.Interval = 300;
+            //logViewTimer.Tick += Timer_Tick;
+            //logViewTimer.Start();
 
-            ColumnHeader columnHeader = new ColumnHeader();
-            columnHeader.Text = "Messages: ";
-            columnHeader.Width = 500;
-            this.listView.Columns.Add(columnHeader);
-            this.listView.Timer = logViewTimer;
+            //ColumnHeader columnHeader = new ColumnHeader();
+            //columnHeader.Text = "Messages: ";
+            //columnHeader.Width = 500;
+            //this.listView.Columns.Add(columnHeader);
+            //this.listView.Timer = logViewTimer;
+        }
+
+        private void InitializeRichTextBox()
+        {
+            richTextBox1 = new RichTextBox();
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            //this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox1.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richTextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
+            this.richTextBox1.Size = new System.Drawing.Size(822, 191);
+            this.richTextBox1.TabIndex = 1;
+            this.richTextBox1.Text = "Output: ";
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -115,27 +151,152 @@ namespace DynamicEnergyTest.UI
             try
             {
                 FormatParameter();
-                esptool = System.Environment.CurrentDirectory + "\\tool-esptool\\esptool.exe";
-                //ProtocolFactory
-                Process process = new Process()
+
+                string tempExeName = Path.Combine(ExePath, _exe);
+
+                if (!File.Exists(Path.Combine(ExePath, "python37.dll")) || !Directory.Exists(Path.Combine(ExePath, "lib")))
                 {
-                    StartInfo = new ProcessStartInfo()
-                    {
-                        FileName = esptool,
-                        Arguments = Arguments,
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        CreateNoWindow = true
-                    }
-                };
-                process.Start();
-                while (!process.StandardOutput.EndOfStream)
-                {
-                    var line = process.StandardOutput.ReadLine();
-                    this.listView.AppendLog(new string[] { line });
-                    Console.WriteLine(line);
+                    if (File.Exists(Path.Combine(ExePath, "python37.dll")))
+                        File.Delete(Path.Combine(ExePath, "python37.dll"));
+                    if (Directory.Exists(Path.Combine(ExePath, "lib")))
+                        Directory.Delete(Path.Combine(ExePath, "lib"), true);
+                    ZipFile.ExtractToDirectory(Path.Combine(ExePath, "cxfreeze.zip"), ExePath);
                 }
-                process.WaitForExit();
+
+                if (!File.Exists(Path.Combine(ExePath, "python37.dll")))
+                {
+                    ConsoleEvent?.Invoke(this, new CustomEventArgs { error = "Python DLL is not loaded." });
+                }
+                else if (!File.Exists(tempExeName))
+                {
+                    var errMsg = "[" + _exe + "] File '" + _exe + "' not found in directory " + ExePath + "! Unable to start request.";
+                    ConsoleEvent.Invoke(this, new CustomEventArgs { error = errMsg });
+                }
+                else if (sysConfig.Com.Length < 3)
+                {
+                    var errMsg = "[" + _exe + "] COM port is invalid (" + sysConfig.Com + ") - please select the right port and try again.";
+                    ConsoleEvent.Invoke(this, new CustomEventArgs { error = errMsg });
+                }
+                else
+                {
+                    int procId = 0;
+                    var stopwatch = new Stopwatch();
+                    stopwatch.Start();
+
+                    using (Process process = new Process())
+                    {
+                        _outStr.Clear();
+                        _outStr.Append(" >>> " + _exe + " " + GetComParam() + Args + "\r\n");
+                        ConsoleEvent.Invoke(this, new CustomEventArgs { input = _exe + " " + GetComParam() + Args });
+                        process.StartInfo = new ProcessStartInfo
+                        {
+                            FileName = tempExeName,
+                            UseShellExecute = false,
+                            WorkingDirectory = ExePath,
+                            WindowStyle = ProcessWindowStyle.Hidden,
+                            CreateNoWindow = true,
+                            Arguments = GetComParam() + Args,
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true
+                        };
+
+                        //p.StartInfo.RedirectStandardError = true;
+                        //p.OutputDataReceived += new DataReceivedEventHandler(OutputHandler);
+                        process.ErrorDataReceived += new DataReceivedEventHandler(ErrorHandler);
+                        process.Start();
+                        //p.BeginOutputReadLine();
+                        process.BeginErrorReadLine();
+                        procId = process.Id;
+
+                        int dataReceived = 0;
+                        var sTemp = "";
+
+                        var outputReadTask = Task.Run(() =>
+                        {
+                            int iCh = 0;
+                            var s2 = "";
+                            var s3 = "";
+                            try
+                            {
+                                do
+                                {
+                                    iCh = process.StandardOutput.Read();
+                                    if (iCh >= 0)
+                                    {
+                                        if (iCh == 8)
+                                        {
+                                            s3 = "\r\n";
+                                            s2 = " ";
+                                        }
+                                        else
+                                        {
+                                            s2 = s3 + char.ConvertFromUtf32(iCh);
+                                            if (s3.Length > 0) s3 = "";
+                                        }
+                                        sTemp += s2;
+                                    }
+                                } while (iCh >= 0);
+                            }
+                            catch (Exception ex)
+                            {
+                                var errMsg = "[" + _exe + "] Exception: " + ex.Message;
+                                ConsoleEvent.Invoke(this, new CustomEventArgs { error = errMsg });
+                            }
+                        });
+
+                        do
+                        {
+                            try
+                            {
+                                if (sTemp.Length > 0)
+                                {
+                                    dataReceived++;
+                                    var s = sTemp;
+                                    sTemp = "";
+                                    _outStr.Append(s);
+                                    ConsoleEvent.Invoke(this, new CustomEventArgs { output = s });
+                                }
+                                else
+                                {
+                                    process.WaitForExit(200);
+                                }
+                            }
+                            catch (Exception) { }
+
+                            if (dataReceived == 0 && stopwatch.ElapsedMilliseconds > 3000)
+                            {
+                                ConsoleEvent.Invoke(this, new CustomEventArgs { error = "Request timeout." });
+                                break;
+                            }
+                        } while (!process.HasExited);
+                        if (sTemp.Length > 0)
+                        {
+                            _outStr.Append(sTemp);
+                            ConsoleEvent.Invoke(this, new CustomEventArgs { output = sTemp });
+                        }
+                    }
+                }
+                //esptool = System.Environment.CurrentDirectory + "\\tool-esptool\\esptool.exe";
+                ////ProtocolFactory
+                //Process process = new Process()
+                //{
+                //    StartInfo = new ProcessStartInfo()
+                //    {
+                //        FileName = esptool,
+                //        Arguments = Arguments,
+                //        UseShellExecute = false,
+                //        RedirectStandardOutput = true,
+                //        CreateNoWindow = true
+                //    }
+                //};
+                //process.Start();
+                //while (!process.StandardOutput.EndOfStream)
+                //{
+                //    var line = process.StandardOutput.ReadLine();
+                //    this.listView.AppendLog(new string[] { line });
+                //    Console.WriteLine(line);
+                //}
+                //process.WaitForExit();
             }
             catch (Exception ex)
             {
@@ -143,18 +304,75 @@ namespace DynamicEnergyTest.UI
             }
         }
 
+        private void ErrorHandler(object sender, DataReceivedEventArgs e)
+        {
+            // Prepend line numbers to each line of the output.
+            if (e.Data != null)
+            {
+                ConsoleEvent.Invoke(this, new CustomEventArgs { error = e.Data });
+                _outStr.Append("\r\n" + e.Data);
+            }
+        }
+
+        private void HandleCustomEvent(object sender, CustomEventArgs a)
+        {
+            if (richTextBox1.InvokeRequired)
+            {
+                this.BeginInvoke(new SafeCallDelegate(HandleCustomEvent), new object[] { sender, a });
+                return;
+            }
+            if (a.input.Length > 0)
+            {
+                string txt;
+                txt = "\r\n > " + a.input + "\r\n";
+                richTextBox1.SelectionColor = Color.White;
+                richTextBox1.AppendText(txt);
+                richTextBox1.SelectionColor = richTextBox1.ForeColor;
+                richTextBox1.ScrollToCaret();
+            }
+            if (a.error.Length > 0)
+            {
+                string txt;
+                txt = "\r\n [E] " + a.error + "\r\n";
+                richTextBox1.SelectionColor = Color.LightCoral;
+                richTextBox1.AppendText(txt);
+                richTextBox1.SelectionColor = richTextBox1.ForeColor;
+                richTextBox1.ScrollToCaret();
+                //HasError = true;
+            }
+            if (a.output.Length > 0)
+            {
+                string txt;
+                txt = a.output;
+                //if (txt.Contains("fatal error")) HasError = true;
+                //else txt = a.output + "\r\n";
+                richTextBox1.AppendText(txt);
+                if (txt.Contains("\r\n")) richTextBox1.ScrollToCaret();
+            }
+
+        }
+        private String GetComParam()
+        {
+            if (_useComArgs)
+                return "--port " + sysConfig.Com + " --baud " + sysConfig.Baund + " ";
+            else
+                return "";
+        }
+
+
         public void FormatParameter()
         {
             StringBuilder sb = new StringBuilder();
-            string preFix = "--chip esp32 --port COM4 --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m " +
+            string preFix = "--chip esp32 --port " + sysConfig.Com + " --baud " + sysConfig.Baund + " --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m " +
                 "--flash_size detect";
             sb.Append(preFix);
-            for (int i=0; i<sysConfig.FlashBins.Count(); i++)
+            var sortedFlushBins = sysConfig.FlashBins.OrderBy(bin => bin.FlushOrder).ToList();
+            for (int i=0; i< sortedFlushBins.Count(); i++)
             {
-                string binParams = (" " + sysConfig.FlashBins[i].Address + " " + sysConfig.FlashBins[i].FullName);
+                string binParams = (" " + sortedFlushBins[i].Address + " " + sortedFlushBins[i].FullName);
                 sb.Append(binParams);
             }
-            Arguments = sb.ToString();
+            Args = sb.ToString();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -167,8 +385,11 @@ namespace DynamicEnergyTest.UI
             this.flashButton.Location = new Point((_flashOperate.Width - flashButton.Width) / 2, (_flashOperate.Height - flashButton.Height) / 2 - _flashOperate.Y);
             this.Controls.Add(flashButton);
 
-            this.listView.Bounds = _listViewRect;
-            this.Controls.Add(listView);
+            this.richTextBox1.Bounds = _listViewRect;
+            this.Controls.Add(richTextBox1);
+
+            //this.listView.Bounds = _listViewRect;
+            //this.Controls.Add(listView);
 
             uidTxtBoxRect = new Rectangle(TextBoxMargin, 60, _flashOperate.Width - 2 * TextBoxMargin, 21);
             uidTxtBox.Bounds = uidTxtBoxRect;
@@ -189,8 +410,10 @@ namespace DynamicEnergyTest.UI
                 uidTxtBox.Bounds = uidTxtBoxRect;
             }
 
-            if (this.listView != null)
-                this.listView.Bounds = _listViewRect;
+            if (this.richTextBox1 != null)
+                this.richTextBox1.Bounds = _listViewRect;
+            //if (this.listView != null)
+            //    this.listView.Bounds = _listViewRect;
             this.Invalidate();
         }
 

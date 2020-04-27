@@ -69,5 +69,6 @@ namespace DynamicEnergyTest.SysSetting
             get { return _highSleepCurrent; }
             set { this._highSleepCurrent = value; }
         }
+        public ParameterSetting() { }
     }
 }

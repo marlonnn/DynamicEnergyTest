@@ -18,6 +18,7 @@ namespace DynamicEnergyTest.UI
         public FlashBinFilesBroserCtrl()
         {
             sysConfig = SysConfig.GetConfig();
+            sysConfig.UpdateFlushBinsHandler += UpdateFlushBinsHandler;
             InitializeComponent();
         }
 
@@ -37,6 +38,43 @@ namespace DynamicEnergyTest.UI
             {
                 sysConfig.FlashBins.Add(bin);
             }
+            else
+            {
+                //update
+                sysConfig.FlashBins.Find(b => b.Name == bin.Name).FullName = bin.FullName;
+            }
+        }
+
+        private void UpdateFlushBinsHandler(object sender, EventArgs e)
+        {
+            if (sysConfig.FlashBins != null && sysConfig.FlashBins.Count() > 0)
+            {
+                var sortedFlushbins = sysConfig.FlashBins.OrderBy(b => b.FlushOrder).ToList();
+                for (int i=0; i<sortedFlushbins.Count(); i++)
+                {
+                    var binFileName = sortedFlushbins[i];
+                    TextBox textBox = GetTextBoxCtrl(i + 1);
+                    if (textBox != null)
+                    {
+                        textBox.Text = binFileName.Name;
+                    }
+                }
+            }
+        }
+
+        private TextBox GetTextBoxCtrl(int index)
+        {
+            TextBox tb = null;
+            foreach (var ctrl in this.Controls)
+            {
+                var textBox = ctrl as TextBox;
+                if (textBox != null && textBox.Name == string.Format("textBox{0}", index))
+                {
+                    tb = textBox;
+                    break;
+                }
+            }
+            return tb;
         }
 
         private void GetBinFileName(TextBox textBox)
@@ -48,12 +86,25 @@ namespace DynamicEnergyTest.UI
                 openFileDialog.Multiselect = true;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    textBox.Text = openFileDialog.FileName;
                     string fileName = openFileDialog.SafeFileName;
-                    if (sysConfig.BinAddressTable.Keys.Contains(fileName))
+
+                    foreach (var ctrl in this.Controls)
                     {
-                        string address = sysConfig.BinAddressTable[fileName];
-                        Bin bin = new Bin(address, fileName, openFileDialog.FileName);
+                        var tb = ctrl as TextBox;
+                        if (tb != null && tb.Name != textBox.Name)
+                        {
+                            if (fileName == tb.Text)
+                            {
+                                MessageBox.Show(string.Format("{0} 文件已存在，请重新选择。", fileName), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+                        }
+                    }
+                    textBox.Text = openFileDialog.SafeFileName;
+                    BinAddressTable binAddressTable = sysConfig.BinAddressTable.Find(bin => bin.Name == fileName);
+                    if (binAddressTable != null)
+                    {
+                        Bin bin = new Bin(binAddressTable.FlushOrder, binAddressTable.Address, fileName, openFileDialog.FileName);
                         AddBinFile(bin);
                     }
                 }

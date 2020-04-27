@@ -70,25 +70,19 @@ namespace DynamicEnergyTest.UI
                         for (int i=0; i<openFileDialog.FileNames.Count(); i++)
                         {
                             string fileName = openFileDialog.SafeFileNames[i];
-                            if (sysConfig.BinAddressTable.Keys.Contains(fileName))
+                            BinAddressTable binAddressTable = sysConfig.BinAddressTable.Find(bin => bin.Name == fileName);
+                            if (binAddressTable != null)
                             {
-                                string address = sysConfig.BinAddressTable[fileName];
-                                Bin bin = new Bin(address, fileName, openFileDialog.FileName);
+                                Bin bin = new Bin(binAddressTable.FlushOrder, binAddressTable.Address, fileName, openFileDialog.FileNames[i]);
                                 if (sysConfig.FlashBins.Find(b => b.Name == bin.Name) == null)
                                 {
                                     sysConfig.FlashBins.Add(bin);
                                 }
                             }
                         }
+                        sysConfig.FlashBins.OrderBy(bin => bin.FlushOrder).ToList();
+                        sysConfig.UpdateFlushBinsHandler?.Invoke(this, null);
                     }
-                    //textBox.Text = openFileDialog.FileName;
-                    //string fileName = openFileDialog.SafeFileName;
-                    //if (sysConfig.BinAddressTable.Keys.Contains(fileName))
-                    //{
-                    //    string address = sysConfig.BinAddressTable[fileName];
-                    //    Bin bin = new Bin(address, fileName, openFileDialog.FileName);
-                    //    AddBinFile(bin);
-                    //}
                 }
             }
         }

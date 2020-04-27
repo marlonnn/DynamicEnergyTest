@@ -1,7 +1,27 @@
-{
-   "ota_data_initial.bin" : "0xd000",
-   "bootloader.bin" : "0x1000",
-   "msocket.bin" : "0xa0000",
-   "partitions_two_ota.bin" : "0x8000",
-   "tt01.bin" : "0x10000"
-}
+[
+   {
+      "FlushOrder" : 1,
+      "Address" : "0xd000",
+      "Name" : "ota_data_initial.bin"
+   },
+   {
+      "FlushOrder" : 2,
+      "Address" : "0x1000",
+      "Name" : "bootloader.bin"
+   },
+   {
+      "FlushOrder" : 3,
+      "Address" : "0xa0000",
+      "Name" : "msocket.bin"
+   },
+   {
+      "FlushOrder" : 4,
+      "Address" : "0x8000",
+      "Name" : "partitions_two_ota.bin"
+   },
+   {
+      "FlushOrder" : 5,
+      "Address" : "0x10000",
+      "Name" : "tt01.bin"
+   }
+]

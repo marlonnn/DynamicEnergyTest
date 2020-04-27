@@ -80,18 +80,22 @@ namespace DynamicEnergyTest
         public static void InitializeBinAddressTable()
         {
             var binAddressTablesJson = File.ReadAllText(System.Environment.CurrentDirectory +  "\\Config\\BinAddressTable.json");
-            Type type = typeof(Dictionary<string, string>);
-            SysConfig.GetConfig().BinAddressTable = (Dictionary<string, string>)fastJSON.JSON.ToObject(binAddressTablesJson, type);
+            Type type = typeof(List<BinAddressTable>);
+            SysConfig.GetConfig().BinAddressTable = (List<BinAddressTable>)fastJSON.JSON.ToObject(binAddressTablesJson, type);
         }
 
         public static void InitializeParameters()
         {
-            using (var reader = new StreamReader("Paramaters.xml"))
-            {
-                XmlSerializer deserializer = new XmlSerializer(typeof(ParameterSetting));
-                var parameterSetting = (ParameterSetting)deserializer.Deserialize(reader);
-                SysConfig.GetConfig().ParameterSetting = parameterSetting;
-            }
+            //using (var reader = new StreamReader("Paramaters.xml"))
+            //{
+            //    XmlSerializer deserializer = new XmlSerializer(typeof(ParameterSetting));
+            //    var parameterSetting = (ParameterSetting)deserializer.Deserialize(reader);
+            //    SysConfig.GetConfig().ParameterSetting = parameterSetting;
+            //}
+
+            var ParamatersJson = File.ReadAllText(System.Environment.CurrentDirectory + "\\Config\\Paramaters.json");
+            Type type = typeof(ParameterSetting);
+            SysConfig.GetConfig().ParameterSetting = fastJSON.JSON.ToObject<ParameterSetting>(ParamatersJson);
         }
 
     }

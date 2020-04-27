@@ -24,32 +24,32 @@ namespace DynamicEnergyTest
             {
                 Dictionary<string, string> binAddressTablesDic = new Dictionary<string, string>();
                 List<BinAddressTable> binAddressTables = new List<BinAddressTable>();
-                BinAddressTable binT1 = new BinAddressTable("ota_data_initial.bin", "0xd000");
+                BinAddressTable binT1 = new BinAddressTable(1, "ota_data_initial.bin", "0xd000");
                 binAddressTables.Add(binT1);
                 //binAddressTablesDic["0xd000"] = "ota_data_initial.bin";
                 binAddressTablesDic["ota_data_initial.bin"] = "0xd000";
 
-                BinAddressTable binT2 = new BinAddressTable("bootloader.bin", "0x1000");
+                BinAddressTable binT2 = new BinAddressTable(2, "bootloader.bin", "0x1000");
                 binAddressTables.Add(binT2);
                 //binAddressTablesDic["0x1000"] = "bootloader.bin";
                 binAddressTablesDic["bootloader.bin"] = "0x1000";
 
-                BinAddressTable binT3 = new BinAddressTable("msocket.bin", "0xa0000");
+                BinAddressTable binT3 = new BinAddressTable(3, "msocket.bin", "0xa0000");
                 binAddressTables.Add(binT3);
                 binAddressTablesDic["msocket.bin"] = "0xa0000";
 
-                BinAddressTable binT4 = new BinAddressTable("partitions_two_ota.bin", "0x8000");
+                BinAddressTable binT4 = new BinAddressTable(4, "partitions_two_ota.bin", "0x8000");
                 binAddressTables.Add(binT4);
                 binAddressTablesDic["partitions_two_ota.bin"] = "0x8000";
 
-                BinAddressTable binT5 = new BinAddressTable("tt01.bin", "0x10000");
+                BinAddressTable binT5 = new BinAddressTable(5, "tt01.bin", "0x10000");
                 binAddressTables.Add(binT5);
                 binAddressTablesDic["tt01.bin"] = "0x10000";
 
                 string jsonFile = fastJSON.JSON.ToNiceJSON(binAddressTables, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });
                 var o = fastJSON.JSON.ToObject<List<BinAddressTable>>(jsonFile);
                 //var beautyJson = fastJSON.JSON.Beautify(jsonFile);
-                //File.WriteAllText(@"Config\\BinAddressTable.json", jsonFile);
+                File.WriteAllText(@"Config\\BinAddressTable.json", jsonFile);
             }
             catch (Exception ex)
             {
@@ -90,6 +90,10 @@ namespace DynamicEnergyTest
                 ser.Serialize(writer, serialPortSetting);
             }
 
+            SerialPortSetting serialPortSetting1 = new SerialPortSetting();
+            string jsonFile1 = fastJSON.JSON.ToNiceJSON(serialPortSetting1, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });
+            File.WriteAllText(@"Config\\SerialPortSetting.json", jsonFile1);
+
             using (var reader = new StreamReader("SerialPortSetting.xml"))
             {
                 XmlSerializer deserializer = new XmlSerializer(typeof(SerialPortSetting));
@@ -110,6 +114,8 @@ namespace DynamicEnergyTest
                 parameterSetting.LowSleepCurrent = 5;
                 parameterSetting.HighSleepCurrent = 5;
                 ser.Serialize(writer, parameterSetting);
+                string jsonFile2 = fastJSON.JSON.ToNiceJSON(parameterSetting, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });
+                File.WriteAllText(@"Config\\Paramaters.json", jsonFile2);
             }
             //// e.g. my test to create a file
             //using (var writer = new FileStream("ProcessItems.xml", FileMode.Create))

@@ -8,6 +8,7 @@ namespace DynamicEnergyTest.SysSetting
 {
     public class Bin
     {
+        public int FlushOrder { get; set; }
         public string Address { get; set; }
 
         public string Name { get; set; }
@@ -16,8 +17,9 @@ namespace DynamicEnergyTest.SysSetting
 
         public Bin() { }
 
-        public Bin(string address, string name, string fullName)
+        public Bin(int flushOrder, string address, string name, string fullName)
         {
+            this.FlushOrder = flushOrder;
             this.Address = address;
             this.Name = name;
             this.FullName = fullName;
