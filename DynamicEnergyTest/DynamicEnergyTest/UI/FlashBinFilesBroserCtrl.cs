@@ -111,31 +111,6 @@ namespace DynamicEnergyTest.UI
             }
         }
 
-        private void Btn1_Click(object sender, EventArgs e)
-        {
-            GetBinFileName(textBox1);
-        }
-
-        private void Btn2_Click(object sender, EventArgs e)
-        {
-            GetBinFileName(textBox2);
-        }
-
-        private void Btn3_Click(object sender, EventArgs e)
-        {
-            GetBinFileName(textBox3);
-        }
-
-        private void Btn4_Click(object sender, EventArgs e)
-        {
-            GetBinFileName(textBox4);
-        }
-
-        private void Btn5_Click(object sender, EventArgs e)
-        {
-            GetBinFileName(textBox5);
-        }
-
         public void UpdateBinFiles(List<string> binfileList)
         {
             if (binfileList != null && binfileList.Count > 0)

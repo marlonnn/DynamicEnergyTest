@@ -69,7 +69,6 @@
             this.comboPort.Name = "comboPort";
             this.comboPort.Size = new System.Drawing.Size(121, 20);
             this.comboPort.TabIndex = 13;
-            this.comboPort.SelectedIndexChanged += new System.EventHandler(this.ComboPort_SelectedIndexChanged);
             // 
             // label2
             // 
@@ -94,7 +93,6 @@
             this.comboBaudrate.Name = "comboBaudrate";
             this.comboBaudrate.Size = new System.Drawing.Size(121, 20);
             this.comboBaudrate.TabIndex = 15;
-            this.comboBaudrate.SelectedIndexChanged += new System.EventHandler(this.ComboBaudrate_SelectedIndexChanged);
             // 
             // button1
             // 

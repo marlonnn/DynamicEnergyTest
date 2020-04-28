@@ -12,6 +12,8 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -109,11 +111,13 @@
     <Compile Include="SysMode.cs" />
     <Compile Include="SysSetting\Bin.cs" />
     <Compile Include="SysSetting\BinAddressTable.cs" />
+    <Compile Include="SysSetting\FlushSetting.cs" />
     <Compile Include="SysSetting\ParameterSetting.cs" />
     <Compile Include="SysSetting\ProcessEntry.cs" />
     <Compile Include="SysSetting\ProcessTest.cs" />
     <Compile Include="SysSetting\SysConfig.cs" />
     <Compile Include="SysSetting\UID.cs" />
+    <Compile Include="SysSetting\UIDSecret.cs" />
     <Compile Include="TestModel\ProcessItem.cs" />
     <Compile Include="TestModel\ProcessCollection.cs" />
     <Compile Include="TestStatus.cs" />
@@ -348,6 +352,21 @@
     </None>
     <None Include="Config\Paramaters.json" />
     <None Include="Config\SerialPortSetting.json" />
+    <None Include="Firmware\bootloader.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Firmware\msocket.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Firmware\ota_data_initial.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Firmware\partitions_two_ota.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Firmware\sqdb.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

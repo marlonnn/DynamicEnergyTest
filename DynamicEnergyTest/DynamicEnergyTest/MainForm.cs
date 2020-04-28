@@ -18,10 +18,6 @@ namespace DynamicEnergyTest
     public partial class MainForm : Form
     {
         private readonly Communicator communicator = new Communicator(new SerialPort(), new Protocols());
-        //private TestPanelCtrl testPanelCtrl;
-        //private SettingPanelCtrl settingPanelCtrl;
-        //private ReportPanelCtrl reportPanelCtrl;
-        //private FlashPanelCtrl flashPanelCtrl;
         private MainUIFactory UIFactory;
         public MainForm()
         {
@@ -31,11 +27,6 @@ namespace DynamicEnergyTest
             };
             string result = System.Text.Encoding.UTF8.GetString(bytes);
             UIFactory = Program.UIFactory;
-
-            //testPanelCtrl = new TestPanelCtrl();
-            //reportPanelCtrl = new ReportPanelCtrl();
-            //settingPanelCtrl = new SettingPanelCtrl();
-            //flashPanelCtrl = new FlashPanelCtrl();
 
             this.toolBarCtrl1.EventHandler += SwitchPageEventHandler;
         }
@@ -70,12 +61,21 @@ namespace DynamicEnergyTest
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            //testPanelCtrl.Dock = DockStyle.Fill;
-            //reportPanelCtrl.Dock = DockStyle.Fill;
-            //settingPanelCtrl.Dock = DockStyle.Fill;
-            //flashPanelCtrl.Dock = DockStyle.Fill;
 
             this.panel.Controls.Add(UIFactory.TestPanelCtrl);
         }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            try
+            {
+                base.OnClosing(e);
+                SysSetting.SysConfig.GetConfig().WriteFlushConfig();
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
     }
 }

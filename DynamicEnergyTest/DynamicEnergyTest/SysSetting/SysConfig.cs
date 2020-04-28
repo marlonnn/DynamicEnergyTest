@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DynamicEnergyTest.DBClass;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -17,9 +18,12 @@ namespace DynamicEnergyTest.SysSetting
             ProductionMode,
             Exit
         }
-
-        public string Com { get; set; }
-        public string Baund { get; set; }
+        private FlushSetting _flushSetting;
+        public FlushSetting FlushSetting
+        {
+            get { return _flushSetting; }
+            set { _flushSetting = value; }
+        }
 
         private SysMode _sysMode;
         public SysMode SystemMode
@@ -65,12 +69,6 @@ namespace DynamicEnergyTest.SysSetting
             set { _uID = value; }
         }
 
-        //private Dictionary<string, string>_binAddressTables;
-        //public Dictionary<string, string> BinAddressTable
-        //{
-        //    get { return _binAddressTables; }
-        //    set { _binAddressTables = value; }
-        //}
         private List<BinAddressTable> _binAddressTables;
         public List<BinAddressTable> BinAddressTable
         {
@@ -98,8 +96,17 @@ namespace DynamicEnergyTest.SysSetting
             set { _parameterSetting = value; }
         }
 
+        private string _tempNvsBinFile;
+        public string TempNvsBinFile
+        {
+            get { return _tempNvsBinFile; }
+            set { _tempNvsBinFile = value; }
+        }
+
+        private const string configPath = "Config\\FlushConfig.json";
         public SysConfig()
         {
+            FlushSetting = new FlushSetting();
             SystemMode = SysMode.FullMode;
             SystemStatus = SysStatus.NotReady;
             FlushUIDs = new List<UID>();
@@ -135,5 +142,67 @@ namespace DynamicEnergyTest.SysSetting
         {
             return string.Format("TestResult\\{0}.json", uID.UIDCode);
         }
+
+        public bool WriteNvsBin(string socketName)
+        {
+            TempNvsBinFile = "";
+            if (string.IsNullOrEmpty(FlushSetting.DataFileName)) return false;
+            DBOperate dbOp = null;
+            try
+            {
+                dbOp = DBOperate.CreateDBOperator(FlushSetting.DataFileName);
+
+                //byte[] datas = null;
+                if (dbOp.Connect(false))
+                {
+                    string sql = string.Format("select nvs_bin from msockets where socket_name = '{0}'", socketName);
+                    var obj = dbOp.TryExecuteScalar(sql, null);
+                    if (obj != null && !(obj is DBNull))
+                    {
+                        byte[] datas = (byte[])obj;
+                        TempNvsBinFile = System.Environment.CurrentDirectory + "\\Firmware\\" + socketName + ".bin";
+                        File.WriteAllBytes(TempNvsBinFile, datas);
+                    }
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            finally
+            {
+                if (dbOp != null)
+                    dbOp.Close(true);
+            }
+            return true;
+        }
+
+        public void DeleteNvsBin()
+        {
+            if (!string.IsNullOrEmpty(TempNvsBinFile))
+                File.Delete(TempNvsBinFile);
+        }
+
+        public void WriteFlushConfig()
+        {
+            string jsonFile = fastJSON.JSON.ToNiceJSON(this.FlushSetting, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });
+
+            File.WriteAllText(configPath, jsonFile);
+        }
+
+        public FlushSetting LoadFlushConfig()
+        {
+            if (File.Exists(configPath))
+            {
+                var jsonStr = File.ReadAllText(configPath);
+                return fastJSON.JSON.ToObject<FlushSetting>(jsonStr);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
     }
 }

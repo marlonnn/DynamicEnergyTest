@@ -1,4 +1,5 @@
-﻿using DynamicEnergyTest.Protocol;
+﻿using DynamicEnergyTest.DBClass;
+using DynamicEnergyTest.Protocol;
 using DynamicEnergyTest.SysSetting;
 using DynamicEnergyTest.UI;
 using System;
@@ -67,6 +68,31 @@ namespace DynamicEnergyTest
             //catch (Exception ex)
             //{
             //}
+            try
+            {
+
+                var databasePath = Path.Combine(System.Environment.CurrentDirectory, "\\Firmware\\sqdb.db");
+                string dbFile = System.Environment.CurrentDirectory + "\\Firmware\\sqdb.db";
+                DBOperate dbOp = DBOperate.CreateDBOperator(dbFile);
+                var uid = "ZS012001000002";
+                byte[] datas = null;
+                if (dbOp.Connect(false))
+                {
+                    string sql = string.Format("select nvs_bin from msockets where socket_name = '{0}'", uid);
+                    var obj = dbOp.TryExecuteScalar(sql, null);
+                    if (obj != null && !(obj is DBNull))
+                    {
+                        datas = (byte[])obj;
+                    }
+                }
+                dbOp.Close(true);
+                //var db = new SQLiteConnection(string.Format("Data Source={0};Version=3;", dbFile));
+                //var va = db.CreateTable<UIDSecret>();
+            }
+            catch (Exception ee)
+            {
+
+            }
 
             InitializeParameters();
             InitializeBinAddressTable();

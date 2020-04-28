@@ -18,10 +18,5 @@
       "FlushOrder" : 4,
       "Address" : "0x8000",
       "Name" : "partitions_two_ota.bin"
-   },
-   {
-      "FlushOrder" : 5,
-      "Address" : "0x10000",
-      "Name" : "tt01.bin"
    }
 ]

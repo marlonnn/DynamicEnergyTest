@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DynamicEnergyTest.SysSetting;
+using System.IO;
 
 namespace DynamicEnergyTest.UI
 {
@@ -34,6 +35,49 @@ namespace DynamicEnergyTest.UI
             supportFile = "支持扩展名: .bin";
             InitializeLoadButton();
             InitializeBinBroserCtrl();
+
+            this.AllowDrop = true;
+            this.DragEnter += FlashBinFilesCtrl_DragEnter;
+            this.DragDrop += FlashBinFilesCtrl_DragDrop;
+        }
+
+        private void FlashBinFilesCtrl_DragDrop(object sender, DragEventArgs e)
+        {
+            var coordinates = this.Parent.PointToClient(Cursor.Position);
+            if (_dragRectangle.Contains(coordinates))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files != null && files.Length > 0)
+                {
+                    for (int i = 0; i < files.Length; i++)
+                    {
+                        string fileFullName = files[i];
+                        string fileName = Path.GetFileName(fileFullName);
+                        BinAddressTable binAddressTable = sysConfig.BinAddressTable.Find(bin => bin.Name == fileName);
+                        if (binAddressTable != null)
+                        {
+                            Bin bin = new Bin(binAddressTable.FlushOrder, binAddressTable.Address, fileName, fileFullName);
+                            if (sysConfig.FlashBins.Find(b => b.Name == bin.Name) == null)
+                            {
+                                sysConfig.FlashBins.Add(bin);
+                            }
+                        }
+                    }
+                    sysConfig.FlashBins.OrderBy(bin => bin.FlushOrder).ToList();
+                    sysConfig.UpdateFlushBinsHandler?.Invoke(this, null);
+                }
+            }
+        }
+
+        private void FlashBinFilesCtrl_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.None;
+
+            var coordinates = this.Parent.PointToClient(Cursor.Position);
+            if (_dragRectangle.Contains(coordinates))
+            {
+                if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+            }
         }
 
         private void InitializeLoadButton()

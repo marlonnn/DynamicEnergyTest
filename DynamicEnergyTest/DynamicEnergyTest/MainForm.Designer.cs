@@ -58,6 +58,7 @@
             this.Controls.Add(this.panel);
             this.Controls.Add(this.toolBarCtrl1);
             this.Name = "MainForm";
+            this.AllowDrop = true;
             this.ShowIcon = false;
             this.Text = "动态能量标识产测软件";
             this.ResumeLayout(false);

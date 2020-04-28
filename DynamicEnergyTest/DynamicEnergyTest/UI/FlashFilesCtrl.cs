@@ -32,6 +32,7 @@ namespace DynamicEnergyTest.UI
         private const int TextBoxMargin = 20;
         private TextBox uidTxtBox;
         private Rectangle uidTxtBoxRect;
+        private string _uid;
 
         private Timer logViewTimer;
         private string esptool;
@@ -76,6 +77,12 @@ namespace DynamicEnergyTest.UI
             this.uidTxtBox.Name = "textBox1";
             this.uidTxtBox.Size = new System.Drawing.Size(220, 21);
             this.uidTxtBox.TabIndex = 7;
+            this.uidTxtBox.TextChanged += UidTxtBox_TextChanged;
+        }
+
+        private void UidTxtBox_TextChanged(object sender, EventArgs e)
+        {
+            _uid = uidTxtBox.Text;
         }
 
         private void InitializeLoadButton()
@@ -138,7 +145,8 @@ namespace DynamicEnergyTest.UI
             this.richTextBox1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
             this.richTextBox1.Size = new System.Drawing.Size(822, 191);
             this.richTextBox1.TabIndex = 1;
-            this.richTextBox1.Text = "Output: ";
+            this.richTextBox1.ReadOnly = true;
+            //this.richTextBox1.Text = "Output: ";
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -150,6 +158,24 @@ namespace DynamicEnergyTest.UI
         {
             try
             {
+                if (string.IsNullOrEmpty(sysConfig.FlushSetting.DataFileName))
+                {
+                    MessageBox.Show("请导入设备有效的密钥清单。", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                //check uid
+                if (string.IsNullOrEmpty(_uid) || _uid.Length != 14 || !_uid.ToLower().StartsWith("zs"))
+                {
+                    MessageBox.Show("请输入有效的插座ID。", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (!sysConfig.WriteNvsBin(_uid))
+                {
+                    MessageBox.Show(string.Format("插座ID: {0} 不存在，请重新输入。", _uid), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 FormatParameter();
 
                 string tempExeName = Path.Combine(ExePath, _exe);
@@ -172,9 +198,9 @@ namespace DynamicEnergyTest.UI
                     var errMsg = "[" + _exe + "] File '" + _exe + "' not found in directory " + ExePath + "! Unable to start request.";
                     ConsoleEvent.Invoke(this, new CustomEventArgs { error = errMsg });
                 }
-                else if (sysConfig.Com.Length < 3)
+                else if (sysConfig.FlushSetting.Com.Length < 3)
                 {
-                    var errMsg = "[" + _exe + "] COM port is invalid (" + sysConfig.Com + ") - please select the right port and try again.";
+                    var errMsg = "[" + _exe + "] COM port is invalid (" + sysConfig.FlushSetting.Com + ") - please select the right port and try again.";
                     ConsoleEvent.Invoke(this, new CustomEventArgs { error = errMsg });
                 }
                 else
@@ -274,6 +300,7 @@ namespace DynamicEnergyTest.UI
                             _outStr.Append(sTemp);
                             ConsoleEvent.Invoke(this, new CustomEventArgs { output = sTemp });
                         }
+                        sysConfig.DeleteNvsBin();
                     }
                 }
                 //esptool = System.Environment.CurrentDirectory + "\\tool-esptool\\esptool.exe";
@@ -354,7 +381,7 @@ namespace DynamicEnergyTest.UI
         private String GetComParam()
         {
             if (_useComArgs)
-                return "--port " + sysConfig.Com + " --baud " + sysConfig.Baund + " ";
+                return "--port " + sysConfig.FlushSetting.Com + " --baud " + sysConfig.FlushSetting.Baund + " ";
             else
                 return "";
         }
@@ -363,7 +390,7 @@ namespace DynamicEnergyTest.UI
         public void FormatParameter()
         {
             StringBuilder sb = new StringBuilder();
-            string preFix = "--chip esp32 --port " + sysConfig.Com + " --baud " + sysConfig.Baund + " --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m " +
+            string preFix = "--chip esp32 --port " + sysConfig.FlushSetting.Com + " --baud " + sysConfig.FlushSetting.Baund + " --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m " +
                 "--flash_size detect";
             sb.Append(preFix);
             var sortedFlushBins = sysConfig.FlashBins.OrderBy(bin => bin.FlushOrder).ToList();
@@ -372,6 +399,7 @@ namespace DynamicEnergyTest.UI
                 string binParams = (" " + sortedFlushBins[i].Address + " " + sortedFlushBins[i].FullName);
                 sb.Append(binParams);
             }
+            sb.Append(" 0x10000 " + sysConfig.TempNvsBinFile);
             Args = sb.ToString();
         }
 

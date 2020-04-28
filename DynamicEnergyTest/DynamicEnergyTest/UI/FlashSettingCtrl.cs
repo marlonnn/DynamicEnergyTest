@@ -58,25 +58,54 @@ namespace DynamicEnergyTest.UI
         public FlashSettingCtrl()
         {
             sysConfig = SysConfig.GetConfig();
+            LoadFlushSetting();
             InitializeComponent();
             InitializeSerialPortSetting();
+            this.comboPort.SelectedIndexChanged += new System.EventHandler(this.ComboPort_SelectedIndexChanged);
+            this.comboBaudrate.SelectedIndexChanged += new System.EventHandler(this.ComboBaudrate_SelectedIndexChanged);
+
+        }
+
+        private void LoadFlushSetting()
+        {
+            var flushSetting = sysConfig.LoadFlushConfig();
+            if (flushSetting != null)
+            {
+                sysConfig.FlushSetting = flushSetting;
+            }
         }
 
         private void InitializeSerialPortSetting()
         {
             Ports = System.IO.Ports.SerialPort.GetPortNames().ToList();
             //Array.Sort(ports);
-            comboPort.SelectedIndex = comboPort.Items.Count > 0 ? 0 : -1;
-            comboBaudrate.SelectedIndex = 4;
+            if (sysConfig.FlushSetting != null && !string.IsNullOrEmpty(sysConfig.FlushSetting.Com))
+                if (Ports.Contains(sysConfig.FlushSetting.Com)) comboPort.SelectedItem = sysConfig.FlushSetting.Com;
+            else
+                    comboPort.SelectedIndex = comboPort.Items.Count > 0 ? 0 : -1;
 
-            sysConfig.Com = this.comboPort.SelectedItem.ToString();
-            sysConfig.Baund = this.comboBaudrate.SelectedItem.ToString();
+            if (sysConfig.FlushSetting != null && !string.IsNullOrEmpty(sysConfig.FlushSetting.Baund))
+            {
+                if (comboBaudrate.Items.Contains(sysConfig.FlushSetting.Baund)) comboBaudrate.SelectedItem = sysConfig.FlushSetting.Baund;
+            }
+            else
+            {
+                comboBaudrate.SelectedIndex = 4;
+            }
+
+            sysConfig.FlushSetting.Com = this.comboPort.SelectedItem.ToString();
+            sysConfig.FlushSetting.Baund = this.comboBaudrate.SelectedItem.ToString();
         }
 
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
             this.Invalidate();
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -92,13 +121,13 @@ namespace DynamicEnergyTest.UI
         private void ComboPort_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.Port = this.comboPort.SelectedItem.ToString();
-            sysConfig.Com = this.Port;
+            sysConfig.FlushSetting.Com = this.Port;
         }
 
         private void ComboBaudrate_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.Baudrate = this.comboBaudrate.SelectedItem.ToString();
-            sysConfig.Baund = this.Baudrate;
+            sysConfig.FlushSetting.Baund = this.Baudrate;
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
@@ -106,51 +135,17 @@ namespace DynamicEnergyTest.UI
             //Import Flush UID 
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.InitialDirectory = Environment.CurrentDirectory;
-                openFileDialog.Filter = @".xls Files(*.xls) | *.xls";
+                openFileDialog.InitialDirectory = Environment.CurrentDirectory + "\\Firmware";
+                openFileDialog.Filter = @".db Sqilte File(*.db) | *.db";
+                openFileDialog.Multiselect = false;
                 if (openFileDialog.ShowDialog(this.Parent) == DialogResult.OK)
                 {
                     try
                     {
-                        sysConfig.FlushUIDs.Clear();
-                        //SysConfig.UIDs
-                        string fileName = openFileDialog.FileName;
-                        using (FileStream stream = File.Open(fileName, FileMode.Open, FileAccess.Read))
-                        {
-                            //1. Reading from a binary Excel file ('97-2003 format; *.xls)
-                            IExcelDataReader excelReader = ExcelReaderFactory.CreateBinaryReader(stream);
-                            //...
-                            //2. Reading from a OpenXml Excel file (2007 format; *.xlsx)
-                            //IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(stream);
-                            //...
-                            //3. DataSet - The result of each spreadsheet will be created in the result.Tables
-                            DataSet result = excelReader.AsDataSet();
-                            //...
-                            //4. DataSet - Create column names from first row
-                            //excelReader.IsFirstRowAsColumnNames = true;
-                            //DataSet result = excelReader.AsDataSet();
+                        sysConfig.FlushSetting.DataFileName = openFileDialog.FileName;
+                        var msg = string.Format("密钥清单文件：{0} 已成功导入。", openFileDialog.SafeFileName);
+                        MessageBox.Show(msg, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                            //5. Data Reader methods
-                            while (excelReader.Read())
-                            {
-                                var sn = excelReader.GetString(0);
-                                var str = excelReader.GetString(0);
-                                if (!string.IsNullOrEmpty(sn) && sn.ToLower().StartsWith("zs"))
-                                {
-                                    UID uID = new UID(sn);
-                                    if (!sysConfig.FlushUIDs.Contains(uID))
-                                        sysConfig.FlushUIDs.Add(uID);
-                                }
-                            }
-
-                            //6. Free resources (IExcelDataReader is IDisposable)
-                            excelReader.Close();
-                            safeFileName = openFileDialog.SafeFileName;
-                            MessageBox.Show("文件： " + safeFileName + "已成功导入" + sysConfig.FlushUIDs.Count + " 个UID", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            //ImportedFile = "文件： " + openFileDialog.SafeFileName + " 已成功导入 " + SysConfig.UIDs.Count + " 个UID";
-                            //ProgressBarVisiable(true);
-                            //this.backgroundWorker.RunWorkerAsync();
-                        }
                     }
                     catch (Exception ex)
                     {
