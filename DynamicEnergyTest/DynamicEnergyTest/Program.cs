@@ -35,9 +35,9 @@ namespace DynamicEnergyTest
         {
             ProtocolsFactory = ProtocolFactory.GetFactory();
 
-            C00 c00 = new C00();
-            var v = c00.Encode();
-            var v2 = ByteHelper.Byte2ReadalbeXstring(v);
+            //C00 c00 = new C00();
+            //var v = c00.Encode();
+            //var v2 = ByteHelper.Byte2ReadalbeXstring(v);
             //var dataModels = ProtocolsFactory.DataModels;
             //foreach (var key in dataModels.Keys)
             //{
@@ -68,39 +68,46 @@ namespace DynamicEnergyTest
             //catch (Exception ex)
             //{
             //}
+            //try
+            //{
+
+            //    var databasePath = Path.Combine(System.Environment.CurrentDirectory, "\\Firmware\\sqdb.db");
+            //    string dbFile = System.Environment.CurrentDirectory + "\\Firmware\\sqdb.db";
+            //    DBOperate dbOp = DBOperate.CreateDBOperator(dbFile);
+            //    var uid = "ZS012001000002";
+            //    byte[] datas = null;
+            //    if (dbOp.Connect(false))
+            //    {
+            //        string sql = string.Format("select nvs_bin from msockets where socket_name = '{0}'", uid);
+            //        var obj = dbOp.TryExecuteScalar(sql, null);
+            //        if (obj != null && !(obj is DBNull))
+            //        {
+            //            datas = (byte[])obj;
+            //        }
+            //    }
+            //    dbOp.Close(true);
+            //    //var db = new SQLiteConnection(string.Format("Data Source={0};Version=3;", dbFile));
+            //    //var va = db.CreateTable<UIDSecret>();
+            //}
+            //catch (Exception ee)
+            //{
+
+            //}
+
             try
             {
-
-                var databasePath = Path.Combine(System.Environment.CurrentDirectory, "\\Firmware\\sqdb.db");
-                string dbFile = System.Environment.CurrentDirectory + "\\Firmware\\sqdb.db";
-                DBOperate dbOp = DBOperate.CreateDBOperator(dbFile);
-                var uid = "ZS012001000002";
-                byte[] datas = null;
-                if (dbOp.Connect(false))
-                {
-                    string sql = string.Format("select nvs_bin from msockets where socket_name = '{0}'", uid);
-                    var obj = dbOp.TryExecuteScalar(sql, null);
-                    if (obj != null && !(obj is DBNull))
-                    {
-                        datas = (byte[])obj;
-                    }
-                }
-                dbOp.Close(true);
-                //var db = new SQLiteConnection(string.Format("Data Source={0};Version=3;", dbFile));
-                //var va = db.CreateTable<UIDSecret>();
+                InitializeParameters();
+                InitializeBinAddressTable();
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                UIFactory = MainUIFactory.Get();
+                Application.Run(new MainForm());
+                //Application.Run(new Form1());
             }
-            catch (Exception ee)
+            catch (Exception ex)
             {
 
             }
-
-            InitializeParameters();
-            InitializeBinAddressTable();
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            UIFactory = MainUIFactory.Get();
-            Application.Run(new MainForm());
-            //Application.Run(new Form1());
         }
 
         public static void InitializeBinAddressTable()

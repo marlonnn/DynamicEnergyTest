@@ -34,7 +34,8 @@ namespace DynamicEnergyTest.UI
                     }
                     else
                     {
-                        comboPort.SelectedIndex = 0;
+                        if (value.Count() > 0)
+                            comboPort.SelectedIndex = 0;
                     }
                 }
             }
@@ -92,9 +93,11 @@ namespace DynamicEnergyTest.UI
             {
                 comboBaudrate.SelectedIndex = 4;
             }
-
-            sysConfig.FlushSetting.Com = this.comboPort.SelectedItem.ToString();
-            sysConfig.FlushSetting.Baund = this.comboBaudrate.SelectedItem.ToString();
+            
+            if (this.comboPort.SelectedItem != null)
+                sysConfig.FlushSetting.Com = this.comboPort.SelectedItem.ToString();
+            if (this.comboBaudrate.SelectedItem != null)
+                sysConfig.FlushSetting.Baund = this.comboBaudrate.SelectedItem.ToString();
         }
 
         protected override void OnResize(EventArgs e)
