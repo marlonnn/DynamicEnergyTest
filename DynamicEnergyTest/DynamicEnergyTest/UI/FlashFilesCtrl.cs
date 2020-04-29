@@ -22,11 +22,23 @@ namespace DynamicEnergyTest.UI
         private Rectangle _flashOperate;
         private Rectangle _flashLog;
         private Rectangle _listViewRect;
+        private RectangleF _botomRect; 
 
         private FlashStatus _flashStatus;
+        public FlashStatus FlashStatus
+        {
+            get { return _flashStatus; }
+            set
+            {
+                if (value != _flashStatus)
+                {
+                    _flashStatus = value;
+                    RefreshFlushStatus();
+                }
+            }
+        }
 
         private Button flashButton;
-        //private ExListView listView;
         private RichTextBox richTextBox1;
 
         private const int TextBoxMargin = 20;
@@ -34,8 +46,6 @@ namespace DynamicEnergyTest.UI
         private Rectangle uidTxtBoxRect;
         private string _uid;
 
-        private Timer logViewTimer;
-        private string esptool;
         private string _args;
         public string Args
         {
@@ -49,8 +59,6 @@ namespace DynamicEnergyTest.UI
 
         private readonly static string _exe = "esptool.exe";
 
-        //public string Com { get; set; }
-        //public string Baund { get; set; }
         private StringBuilder _outStr = new StringBuilder();
         private bool _useComArgs = true;
 
@@ -63,10 +71,9 @@ namespace DynamicEnergyTest.UI
             _flashStatus = FlashStatus.UnFlash;
             InitializeTextBox();
             InitializeLoadButton();
-            //InitializeExListView();
+
             InitializeRichTextBox();
-            //Com = "COM4";
-            //Baund = "115200";
+
             this.ConsoleEvent += HandleCustomEvent;
         }
 
@@ -80,6 +87,17 @@ namespace DynamicEnergyTest.UI
             this.uidTxtBox.TextChanged += UidTxtBox_TextChanged;
         }
 
+        private void RefreshFlushStatus()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(RefreshFlushStatus));
+            }
+            else
+            {
+                this.Invalidate(new Region(_botomRect));
+            }
+        }
         private void UidTxtBox_TextChanged(object sender, EventArgs e)
         {
             _uid = uidTxtBox.Text;
@@ -97,37 +115,6 @@ namespace DynamicEnergyTest.UI
             this.flashButton.Text = "开始烧录";
             this.flashButton.UseVisualStyleBackColor = false;
             this.flashButton.Click += FlashButton_Click;
-        }
-
-        private void InitializeExListView()
-        {
-            //this.listView = new ExListView();
-            //this.listView.FullRowSelect = true;
-            //this.listView.GridLines = true;
-            //this.listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            //this.listView.HideSelection = false;
-            ////this.listView.Location = new System.Drawing.Point(552, 138);
-            //this.listView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            //this.listView.MaxLogRecords = 300;
-            //this.listView.MultiSelect = false;
-            //this.listView.Name = "listView";
-            //this.listView.ShowGroups = false;
-            ////this.listView.Size = new System.Drawing.Size(547, 511);
-            //this.listView.TabIndex = 2;
-            //this.listView.Timer = null;
-            //this.listView.UseCompatibleStateImageBehavior = false;
-            //this.listView.View = System.Windows.Forms.View.Details;
-
-            //logViewTimer = new Timer();
-            //logViewTimer.Interval = 300;
-            //logViewTimer.Tick += Timer_Tick;
-            //logViewTimer.Start();
-
-            //ColumnHeader columnHeader = new ColumnHeader();
-            //columnHeader.Text = "Messages: ";
-            //columnHeader.Width = 500;
-            //this.listView.Columns.Add(columnHeader);
-            //this.listView.Timer = logViewTimer;
         }
 
         private void InitializeRichTextBox()
@@ -225,6 +212,7 @@ namespace DynamicEnergyTest.UI
                             RedirectStandardOutput = true,
                             RedirectStandardError = true
                         };
+                        FlashStatus = FlashStatus.Flashing;
 
                         //p.StartInfo.RedirectStandardError = true;
                         //p.OutputDataReceived += new DataReceivedEventHandler(OutputHandler);
@@ -267,6 +255,7 @@ namespace DynamicEnergyTest.UI
                             {
                                 var errMsg = "[" + _exe + "] Exception: " + ex.Message;
                                 ConsoleEvent.Invoke(this, new CustomEventArgs { error = errMsg });
+                                FlashStatus = FlashStatus.Failure;
                             }
                         });
 
@@ -287,11 +276,15 @@ namespace DynamicEnergyTest.UI
                                     process.WaitForExit(200);
                                 }
                             }
-                            catch (Exception) { }
+                            catch (Exception)
+                            {
+                                FlashStatus = FlashStatus.Failure;
+                            }
 
                             if (dataReceived == 0 && stopwatch.ElapsedMilliseconds > 3000)
                             {
                                 ConsoleEvent.Invoke(this, new CustomEventArgs { error = "Request timeout." });
+                                FlashStatus = FlashStatus.Failure;
                                 break;
                             }
                         } while (!process.HasExited);
@@ -299,31 +292,18 @@ namespace DynamicEnergyTest.UI
                         {
                             _outStr.Append(sTemp);
                             ConsoleEvent.Invoke(this, new CustomEventArgs { output = sTemp });
+                            if (sTemp.Contains("Hard resetting via RTS pin"))
+                            {
+                                FlashStatus = FlashStatus.Pass;
+                            }
+                            else
+                            {
+                                FlashStatus = FlashStatus.Failure;
+                            }
                         }
                         sysConfig.DeleteNvsBin();
                     }
                 }
-                //esptool = System.Environment.CurrentDirectory + "\\tool-esptool\\esptool.exe";
-                ////ProtocolFactory
-                //Process process = new Process()
-                //{
-                //    StartInfo = new ProcessStartInfo()
-                //    {
-                //        FileName = esptool,
-                //        Arguments = Arguments,
-                //        UseShellExecute = false,
-                //        RedirectStandardOutput = true,
-                //        CreateNoWindow = true
-                //    }
-                //};
-                //process.Start();
-                //while (!process.StandardOutput.EndOfStream)
-                //{
-                //    var line = process.StandardOutput.ReadLine();
-                //    this.listView.AppendLog(new string[] { line });
-                //    Console.WriteLine(line);
-                //}
-                //process.WaitForExit();
             }
             catch (Exception ex)
             {
@@ -338,6 +318,7 @@ namespace DynamicEnergyTest.UI
             {
                 ConsoleEvent.Invoke(this, new CustomEventArgs { error = e.Data });
                 _outStr.Append("\r\n" + e.Data);
+                FlashStatus = FlashStatus.Failure;
             }
         }
 
@@ -378,7 +359,8 @@ namespace DynamicEnergyTest.UI
             }
 
         }
-        private String GetComParam()
+
+        private string GetComParam()
         {
             if (_useComArgs)
                 return "--port " + sysConfig.FlushSetting.Com + " --baud " + sysConfig.FlushSetting.Baund + " ";
@@ -409,6 +391,7 @@ namespace DynamicEnergyTest.UI
             _flashOperate = new Rectangle(0, MARGINTOP, this.Width / 2, this.Height - MARGINTOP);
             _flashLog = new Rectangle(this.Width / 2, MARGINTOP, this.Width / 2, this.Height - MARGINTOP);
             _listViewRect = new Rectangle(this.Width / 2, MARGINTOP, this.Width / 2, this.Height - MARGINTOP);
+            _botomRect = new RectangleF(0, _flashOperate.Y + _flashOperate.Height / 2, _flashOperate.Width, this.Height / 2 );
 
             this.flashButton.Location = new Point((_flashOperate.Width - flashButton.Width) / 2, (_flashOperate.Height - flashButton.Height) / 2 - _flashOperate.Y);
             this.Controls.Add(flashButton);
@@ -429,6 +412,7 @@ namespace DynamicEnergyTest.UI
             _flashOperate = new Rectangle(0, MARGINTOP, this.Width / 2, this.Height - MARGINTOP);
             _flashLog = new Rectangle(this.Width / 2, MARGINTOP, this.Width / 2, this.Height - MARGINTOP);
             _listViewRect = new Rectangle(this.Width / 2, MARGINTOP, this.Width / 2, this.Height - MARGINTOP);
+            _botomRect = new RectangleF(0, _flashOperate.Y + _flashOperate.Height / 2, _flashOperate.Width, this.Height / 2);
 
             if (flashButton != null)
                 this.flashButton.Location = new Point((_flashOperate.Width - flashButton.Width) / 2, (_flashOperate.Height - flashButton.Height) / 2 - _flashOperate.Y);
@@ -440,8 +424,7 @@ namespace DynamicEnergyTest.UI
 
             if (this.richTextBox1 != null)
                 this.richTextBox1.Bounds = _listViewRect;
-            //if (this.listView != null)
-            //    this.listView.Bounds = _listViewRect;
+
             this.Invalidate();
         }
 
@@ -453,7 +436,7 @@ namespace DynamicEnergyTest.UI
 
             //flash operate
             SolidBrush topSolidBrush = new SolidBrush(GraphicFactory.DynamicGray);
-            g.FillRectangle(topSolidBrush, new RectangleF(0, MARGINTOP, _flashOperate.Width, this.Height - MARGINTOP));
+            g.FillRectangle(topSolidBrush, new RectangleF(0, MARGINTOP, _flashOperate.Width, this.Height / 2));
             Color bottomColor = GraphicFactory.DynamicOrange;
             switch (_flashStatus)
             {
@@ -461,7 +444,7 @@ namespace DynamicEnergyTest.UI
                     bottomColor = GraphicFactory.DynamicBlue;
                     break;
                 case FlashStatus.Flashing:
-                    bottomColor = GraphicFactory.DynamicBlue;
+                    bottomColor = GraphicFactory.DynamicOrange;
                     break;
                 case FlashStatus.Pass:
                     bottomColor = GraphicFactory.DynamicGreen;
@@ -472,12 +455,19 @@ namespace DynamicEnergyTest.UI
             }
 
             SolidBrush bottomSolidBrush = new SolidBrush(bottomColor);
-            g.FillRectangle(bottomSolidBrush, new RectangleF(0, _flashOperate.Y + _flashOperate.Height / 2, _flashOperate.Width, this.Height - MARGINTOP));
+            _botomRect = new RectangleF(0, _flashOperate.Y + _flashOperate.Height / 2, _flashOperate.Width, this.Height/ 2);
+            g.FillRectangle(bottomSolidBrush, _botomRect);
 
             g.DrawString("烧录操作", this.Font, Brushes.Black, 0, 0);
             g.DrawString("烧录日志", this.Font, Brushes.Black, _flashLog.X, 0);
 
             g.DrawString("动态能量标识UID", this.Font, Brushes.White, TextBoxMargin, TextBoxMargin + _flashOperate.Y);
+
+            using (Font font = GraphicFactory.CreateFont(40, FontStyle.Bold))
+            {
+                var size = g.MeasureString(FlashStatus.ToString(), font);
+                g.DrawString(FlashStatus.ToString(), font, Brushes.White, _botomRect.X + (_botomRect.Width - size.Width) / 2, _botomRect.Y + (_botomRect.Height - size.Height) / 2);
+            }
             topSolidBrush.Dispose();
             bottomSolidBrush.Dispose();
         }
@@ -488,7 +478,6 @@ namespace DynamicEnergyTest.UI
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (logViewTimer != null) logViewTimer.Stop();
             if (disposing && (components != null))
             {
                 components.Dispose();

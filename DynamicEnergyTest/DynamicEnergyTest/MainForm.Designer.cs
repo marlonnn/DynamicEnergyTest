@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.panel = new System.Windows.Forms.Panel();
             this.toolBarCtrl1 = new DynamicEnergyTest.UI.ToolBarCtrl();
             this.SuspendLayout();
@@ -52,14 +53,14 @@
             // 
             // MainForm
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1101, 738);
             this.Controls.Add(this.panel);
             this.Controls.Add(this.toolBarCtrl1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
-            this.AllowDrop = true;
-            this.ShowIcon = false;
             this.Text = "动态能量标识产测软件";
             this.ResumeLayout(false);
 

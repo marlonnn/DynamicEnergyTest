@@ -71,6 +71,7 @@ namespace DynamicEnergyTest
             {
                 base.OnClosing(e);
                 SysSetting.SysConfig.GetConfig().WriteFlushConfig();
+                SysSetting.SysConfig.GetConfig().WriteFlushBins();
             }
             catch (Exception ex)
             {

@@ -18,13 +18,27 @@ namespace DynamicEnergyTest.UI
         public FlashBinFilesBroserCtrl()
         {
             sysConfig = SysConfig.GetConfig();
+            LoadFlushBinsSetting();
             sysConfig.UpdateFlushBinsHandler += UpdateFlushBinsHandler;
             InitializeComponent();
+        }
+
+        private void LoadFlushBinsSetting()
+        {
+            var flushBins = sysConfig.LoadFlushBins();
+            if (flushBins != null)
+            {
+                sysConfig.FlashBins = flushBins;
+            }
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            if (sysConfig.FlashBins != null && sysConfig.FlashBins.Count > 0)
+            {
+                UpdateFlushBinsHandler(null, null);
+            }
         }
 
         protected override void OnResize(EventArgs e)

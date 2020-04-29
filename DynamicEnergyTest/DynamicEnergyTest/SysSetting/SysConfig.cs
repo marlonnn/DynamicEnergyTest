@@ -104,6 +104,8 @@ namespace DynamicEnergyTest.SysSetting
         }
 
         private const string configPath = "Config\\FlushConfig.json";
+        private const string flushBinsPath = "Config\\FlushBins.json";
+
         public SysConfig()
         {
             FlushSetting = new FlushSetting();
@@ -191,12 +193,32 @@ namespace DynamicEnergyTest.SysSetting
             File.WriteAllText(configPath, jsonFile);
         }
 
+        public void WriteFlushBins()
+        {
+            string jsonFile = fastJSON.JSON.ToNiceJSON(this.FlashBins, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });
+
+            File.WriteAllText(flushBinsPath, jsonFile);
+        }
+
         public FlushSetting LoadFlushConfig()
         {
             if (File.Exists(configPath))
             {
                 var jsonStr = File.ReadAllText(configPath);
                 return fastJSON.JSON.ToObject<FlushSetting>(jsonStr);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public List<Bin> LoadFlushBins()
+        {
+            if (File.Exists(flushBinsPath))
+            {
+                var jsonStr = File.ReadAllText(flushBinsPath);
+                return fastJSON.JSON.ToObject<List<Bin>>(jsonStr);
             }
             else
             {
