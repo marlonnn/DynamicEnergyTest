@@ -12,6 +12,7 @@ using DynamicEnergyTest.UI;
 using System.IO;
 using System.Xml;
 using DynamicEnergyTest.Protocol;
+using DynamicEnergyTest.SysSetting;
 
 namespace DynamicEnergyTest
 {
@@ -62,7 +63,10 @@ namespace DynamicEnergyTest
         {
             base.OnLoad(e);
 
-            this.panel.Controls.Add(UIFactory.TestPanelCtrl);
+            if (SysConfig.GetConfig().SystemMode == SysMode.FullMode)
+                this.panel.Controls.Add(UIFactory.TestPanelCtrl);
+            else
+                this.panel.Controls.Add(UIFactory.FlashPanelCtrl);
         }
 
         protected override void OnClosing(CancelEventArgs e)

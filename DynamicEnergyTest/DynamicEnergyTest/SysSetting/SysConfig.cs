@@ -109,7 +109,8 @@ namespace DynamicEnergyTest.SysSetting
         public SysConfig()
         {
             FlushSetting = new FlushSetting();
-            SystemMode = SysMode.FullMode;
+
+            SystemMode = Properties.Settings.Default.FlushMode ? SysMode.FlushMode: SysMode.FullMode;
             SystemStatus = SysStatus.NotReady;
             FlushUIDs = new List<UID>();
             UIDs = new List<UID>();

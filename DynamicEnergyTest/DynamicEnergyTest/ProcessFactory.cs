@@ -30,7 +30,7 @@ namespace DynamicEnergyTest
 
         public void GetProcessItems()
         {
-            using (var reader = new StreamReader("ProcessItems.xml"))
+            using (var reader = new StreamReader(System.Environment.CurrentDirectory + "\\Config\\ProcessItems.xml"))
             {
                 XmlSerializer deserializer = new XmlSerializer(typeof(List<ProcessItem>),
                     new XmlRootAttribute("ProcessCollection"));
