@@ -166,7 +166,7 @@ namespace DynamicEnergyTest.UI
                 case TestStatus.Testing:
                     if (!string.IsNullOrEmpty(ItemText))
                     {
-                        circleColor = GraphicFactory.DynamicBlue;
+                        circleColor = GraphicFactory.DynamicOrange;
                         using (Pen pen = new Pen(circleColor, 2f))
                         using (Font font = GraphicFactory.CreateFont())
                         using (SolidBrush solidBrush = new SolidBrush(circleColor))

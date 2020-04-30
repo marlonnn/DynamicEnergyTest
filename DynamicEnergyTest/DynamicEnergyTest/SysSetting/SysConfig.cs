@@ -103,8 +103,10 @@ namespace DynamicEnergyTest.SysSetting
             set { _tempNvsBinFile = value; }
         }
 
+        public readonly static string ApplicationName = "动态能量标识产测软件";
         private const string configPath = "Config\\FlushConfig.json";
         private const string flushBinsPath = "Config\\FlushBins.json";
+        private const string dynamicTestPath = "Firmware\\DynamicTest.db";
 
         public SysConfig()
         {
@@ -146,6 +148,36 @@ namespace DynamicEnergyTest.SysSetting
             return string.Format("TestResult\\{0}.json", uID.UIDCode);
         }
 
+        public bool ExecuteFlushStatus(string sql)
+        {
+            string dynamicDb = System.Environment.CurrentDirectory + dynamicTestPath;
+            if (string.IsNullOrEmpty(dynamicTestPath)) return false;
+            if (File.Exists(dynamicDb)) return false;
+            if (string.IsNullOrEmpty(sql)) return false;
+
+            DBOperate dbOp = null;
+
+            try
+            {
+                dbOp = DBOperate.CreateDBOperator(dynamicDb);
+                if (dbOp.Connect(false))
+                {
+                    //dbOp.TryExecuteScalar(sql);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                if (dbOp != null)
+                    dbOp.Close(true);
+            }
+
+
+            return true;
+        }
+
         public bool WriteNvsBin(string socketName)
         {
             TempNvsBinFile = "";
@@ -165,13 +197,16 @@ namespace DynamicEnergyTest.SysSetting
                         byte[] datas = (byte[])obj;
                         TempNvsBinFile = System.Environment.CurrentDirectory + "\\Firmware\\" + socketName + ".bin";
                         File.WriteAllBytes(TempNvsBinFile, datas);
+                        return true;
                     }
-                    return true;
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                return false;
             }
             finally
             {

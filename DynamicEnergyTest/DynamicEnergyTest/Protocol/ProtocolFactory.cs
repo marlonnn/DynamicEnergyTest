@@ -71,6 +71,9 @@ namespace DynamicEnergyTest.Protocol
                 case 0x00000000:
                     dm =  new C00();
                     break;
+                case 0x00710001:
+                    dm = new C01();
+                    break;
                 case 0x00710012:
                     dm = new C12();
                     break;
@@ -114,16 +117,24 @@ namespace DynamicEnergyTest.Protocol
             if (m.Valid)
             {
                 var funCode = m.Data.FunCode;
+                var v = ByteHelper.IntToBytes(funCode);
+                var vv1 =ByteHelper.Byte2ReadalbeXstring(v);
+                var v2 = ByteHelper.IntToBytes2(funCode);
+                var vv2 = ByteHelper.Byte2ReadalbeXstring(v2);
                 receiveDataModel = CreateByFuncCode(funCode);
-                receiveDataModel.Raw = m.Raw;
-                //decode data region
-                receiveDataModel.Decode(m.Data.DataRegion);
-
-                C00 c00 = receiveDataModel as C00;
-                if (c00 != null)
+                if (receiveDataModel != null)
                 {
-                    //收到数据则，进入产测模式
+                    receiveDataModel.Raw = m.Raw;
+                    //decode data region
+                    receiveDataModel.Decode(m.Data.DataRegion);
+
+                    C00 c00 = receiveDataModel as C00;
+                    if (c00 != null)
+                    {
+                        //收到数据则，进入产测模式
+                    }
                 }
+
             }
             else
             {
@@ -133,8 +144,8 @@ namespace DynamicEnergyTest.Protocol
 
         private void Communicator_OnRawDataReceived(byte[] bytes)
         {
-            //var v = ByteHelper.Byte2ReadalbeXstring(bytes);
-            //Console.WriteLine(v);
+            var v = ByteHelper.Byte2ReadalbeXstring(bytes);
+            Console.WriteLine(v);
 
             var v2 = System.Text.Encoding.UTF8.GetString(bytes);
             Console.WriteLine(v2);
@@ -146,7 +157,7 @@ namespace DynamicEnergyTest.Protocol
             return _protocolFactory;
         }
 
-        public ComCode Write(DataModel dataModel, int offset, int count)
+        public ComCode Write(DataModel dataModel)
         {
             receiveDataModel = null;
 
@@ -154,7 +165,7 @@ namespace DynamicEnergyTest.Protocol
             string readableBytes = ByteHelper.Byte2ReadalbeXstring(sendBytes);
             UpdateListViewHandler?.Invoke(readableBytes);
 
-            ComCode comCode = _communicator.Write(sendBytes, offset, count);
+            ComCode comCode = _communicator.Write(sendBytes, 0, sendBytes.Count());
             if (comCode == ComCode.SendOK)
             {
                 Stopwatch sw = new Stopwatch();
@@ -162,7 +173,7 @@ namespace DynamicEnergyTest.Protocol
                 while (true)
                 {
                     //Do 
-                    if (receiveDataModel != null)
+                    if (receiveDataModel != null && receiveDataModel.FunCode == dataModel.FunCode)
                     {
                         var raw = receiveDataModel.Raw;
                         var dataRegion = receiveDataModel.DataRegion;
@@ -187,38 +198,5 @@ namespace DynamicEnergyTest.Protocol
 
         public delegate void RefreshListViewDelegate(string info);
         public RefreshListViewDelegate UpdateListViewHandler;
-
-
-        public ComCode Write(byte[] buffer, int offset, int count)
-        {
-            receiveDataModel = null;
-            ComCode comCode = _communicator.Write(buffer, offset, count);
-            if (comCode == ComCode.SendOK)
-            {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                while (true)
-                {
-                    //Do 
-                    if (receiveDataModel != null)
-                    {
-                        var raw = receiveDataModel.Raw;
-                        var dataRegion = receiveDataModel.DataRegion;
-                        return ComCode.ReceivedOK;
-                    }
-                    if (sw.ElapsedMilliseconds > 3000)
-                    {
-                        return ComCode.TimeOut;
-                    }
-                    Thread.Sleep(1);
-                    System.Windows.Forms.Application.DoEvents();
-                }
-
-            }
-            else
-            {
-                return comCode;
-            }
-        }
     }
 }

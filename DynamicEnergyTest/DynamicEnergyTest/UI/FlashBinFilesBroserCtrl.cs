@@ -109,7 +109,7 @@ namespace DynamicEnergyTest.UI
                         {
                             if (fileName == tb.Text)
                             {
-                                MessageBox.Show(string.Format("{0} 文件已存在，请重新选择。", fileName), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBox.Show(string.Format("{0} 文件已存在，请重新选择。", fileName), SysConfig.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 return;
                             }
                         }

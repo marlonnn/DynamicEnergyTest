@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using DynamicEnergyTest.Protocol;
 using KoboldCom;
 using System.Text.RegularExpressions;
+using DynamicEnergyTest.SysSetting;
 
 namespace DynamicEnergyTest.UI
 {
@@ -71,6 +72,10 @@ namespace DynamicEnergyTest.UI
                     {
                         btnConnect.Text = "Disconnect";
                         btnConnect.Tag = "OnLine";
+                    }
+                    else
+                    {
+                        MessageBox.Show("串口连接失败，请检查串口是否被占用。", SysConfig.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else

@@ -45,7 +45,11 @@ namespace DynamicEnergyTest.Protocol
             data[0] = 0x7E;
             data[1] = (byte)datalength;
 
-            var tempData = ByteHelper.IntToBytes(this.FunCode);
+            //    //小端
+            //    var tempData = ByteHelper.IntToBytes(this.FunCode);
+            //    Array.Copy(tempData, 0, data, 8, 4);
+
+            var tempData = ByteHelper.IntToBytes2(this.FunCode);
             Array.Copy(tempData, 0, data, 8, 4);
             //check sum
             int sum = 0;

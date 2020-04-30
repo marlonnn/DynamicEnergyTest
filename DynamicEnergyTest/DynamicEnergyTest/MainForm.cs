@@ -18,7 +18,7 @@ namespace DynamicEnergyTest
 {
     public partial class MainForm : Form
     {
-        private readonly Communicator communicator = new Communicator(new SerialPort(), new Protocols());
+        //private readonly Communicator communicator = new Communicator(new SerialPort(), new Protocols());
         private MainUIFactory UIFactory;
         public MainForm()
         {

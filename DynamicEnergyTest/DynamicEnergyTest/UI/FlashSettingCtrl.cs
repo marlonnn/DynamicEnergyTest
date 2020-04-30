@@ -147,12 +147,12 @@ namespace DynamicEnergyTest.UI
                     {
                         sysConfig.FlushSetting.DataFileName = openFileDialog.FileName;
                         var msg = string.Format("密钥清单文件：{0} 已成功导入。", openFileDialog.SafeFileName);
-                        MessageBox.Show(msg, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(msg, SysConfig.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message + "\n" + ex.StackTrace, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(ex.Message + "\n" + ex.StackTrace, SysConfig.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }

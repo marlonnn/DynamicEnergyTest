@@ -111,7 +111,7 @@ namespace DynamicEnergyTest.UI
 
         private void ProcessTest(TestProcessItem testProcessItem)
         {
-            testProcessItem.TestStatus = TestStatus.Pass;
+            testProcessItem.TestStatus = TestStatus.Testing;
             TestPanelCtrl parentCtrl = this.Parent as TestPanelCtrl;
             if (parentCtrl != null)
             {
@@ -142,15 +142,11 @@ namespace DynamicEnergyTest.UI
             }
 
             var dm = protocolFactory.DataModels[0];
-            var bytes = dm.Encode();
 
             int testIndex = Int32.Parse(testProcessItem.ItemText);
             parentCtrl.UpdateListView(dm.TestItem);
 
-            string readablebytes = ByteHelper.Byte2ReadalbeXstring(bytes);
-            parentCtrl.UpdateListView(readablebytes);
-            //ComCode comCode = ComCode.ReceivedOK;
-            ComCode comCode = protocolFactory.Write(bytes, 0, bytes.Count());
+            ComCode comCode = protocolFactory.Write(dm);
             UpdateProcessItem(testIndex, comCode);
             parentCtrl.UpdateListView(comCode.GetComCodeDescription());
 
@@ -166,12 +162,8 @@ namespace DynamicEnergyTest.UI
                 {
                     string testItem = dm.TestItem;
                     parentCtrl.UpdateListView(testItem);
-                    var bytes = dm.Encode();
 
-                    string readablebytes = ByteHelper.Byte2ReadalbeXstring(bytes);
-                    parentCtrl.UpdateListView(readablebytes);
-                    //ComCode comCode = ComCode.ReceivedOK;
-                    ComCode comCode = protocolFactory.Write(bytes, 0, bytes.Count());
+                    ComCode comCode = protocolFactory.Write(dm);
 
                     UpdateProcessItem(testIndex, comCode);
                     parentCtrl.UpdateListView(comCode.GetComCodeDescription());

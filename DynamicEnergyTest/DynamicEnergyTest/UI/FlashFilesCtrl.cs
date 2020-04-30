@@ -85,6 +85,16 @@ namespace DynamicEnergyTest.UI
             this.uidTxtBox.Size = new System.Drawing.Size(220, 21);
             this.uidTxtBox.TabIndex = 7;
             this.uidTxtBox.TextChanged += UidTxtBox_TextChanged;
+            this.uidTxtBox.KeyPress += UidTxtBox_KeyPress;
+        }
+
+        private void UidTxtBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                FlashButton_Click(null, null);
+                e.Handled = true;
+            }
         }
 
         private void RefreshFlushStatus()
@@ -147,19 +157,19 @@ namespace DynamicEnergyTest.UI
             {
                 if (string.IsNullOrEmpty(sysConfig.FlushSetting.DataFileName))
                 {
-                    MessageBox.Show("请导入设备有效的密钥清单。", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("请导入设备有效的密钥清单。", SysConfig.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
                 //check uid
                 if (string.IsNullOrEmpty(_uid) || _uid.Length != 14 || !_uid.ToLower().StartsWith("zs"))
                 {
-                    MessageBox.Show("请输入有效的插座ID。", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("请输入有效的插座ID。", SysConfig.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
                 if (!sysConfig.WriteNvsBin(_uid))
                 {
-                    MessageBox.Show(string.Format("插座ID: {0} 不存在，请重新输入。", _uid), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(string.Format("插座ID: {0} 不存在，请重新输入。", _uid), SysConfig.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
