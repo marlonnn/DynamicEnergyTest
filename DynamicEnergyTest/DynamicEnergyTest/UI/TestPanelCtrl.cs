@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using KoboldCom;
 using DynamicEnergyTest.SysSetting;
 using static DynamicEnergyTest.SysSetting.SysConfig;
+using DynamicEnergyTest.Protocol;
 
 namespace DynamicEnergyTest.UI
 {
@@ -58,6 +59,8 @@ namespace DynamicEnergyTest.UI
 
             this.statusSwitchCtrl.SystemStatus = sysConfig.SystemStatus;
             this.statusSwitchCtrl.StartProcessHandler += StartProcessHandler;
+
+            ProtocolFactory.GetFactory().UpdateListViewHandler += UpdateListView;
         }
 
         private void StartProcessHandler(object sender, EventArgs e)

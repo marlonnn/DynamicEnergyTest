@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -47,6 +49,13 @@ namespace DynamicEnergyTest.SysSetting
         }
 
         private static SysConfig sysConfig;
+
+        private List<FlushBlock> _flushBlocks;
+        public List<FlushBlock> FlushBlocks
+        {
+            get { return _flushBlocks; }
+            set { _flushBlocks = value; }
+        }
 
         private List<UID> _uIDs;
         public List<UID> UIDs
@@ -106,11 +115,13 @@ namespace DynamicEnergyTest.SysSetting
         public readonly static string ApplicationName = "动态能量标识产测软件";
         private const string configPath = "Config\\FlushConfig.json";
         private const string flushBinsPath = "Config\\FlushBins.json";
-        private const string dynamicTestPath = "Firmware\\DynamicTest.db";
-
+        private const string dynamicTestPath = "\\Firmware\\DynamicTest.db";
+        private const string flushTable = "FlushTable";
+        private string dataBase;
         public SysConfig()
         {
             FlushSetting = new FlushSetting();
+            FlushBlocks = new List<FlushBlock>();
 
             SystemMode = Properties.Settings.Default.FlushMode ? SysMode.FlushMode: SysMode.FullMode;
             SystemStatus = SysStatus.NotReady;
@@ -121,6 +132,8 @@ namespace DynamicEnergyTest.SysSetting
 
             ProcessTests = new List<ProcessTest>();
             ParameterSetting = new ParameterSetting();
+
+            dataBase = System.Environment.CurrentDirectory + dynamicTestPath;
         }
 
         public static SysConfig GetConfig()
@@ -148,34 +161,70 @@ namespace DynamicEnergyTest.SysSetting
             return string.Format("TestResult\\{0}.json", uID.UIDCode);
         }
 
-        public bool ExecuteFlushStatus(string sql)
+        public void TestInserUpdateFlushStatus()
         {
-            string dynamicDb = System.Environment.CurrentDirectory + dynamicTestPath;
-            if (string.IsNullOrEmpty(dynamicTestPath)) return false;
-            if (File.Exists(dynamicDb)) return false;
-            if (string.IsNullOrEmpty(sql)) return false;
+            FlushBlock flushBlock = new FlushBlock();
 
-            DBOperate dbOp = null;
+            UID uID = new UID("ZS012001000198");
+            flushBlock.FlushUID = uID;
+            flushBlock.FlushTime = DateTime.Now;
+            flushBlock.FlushStatus = FlashStatus.Flashing;
+            flushBlock.ICCID = "";
+            flushBlock.IMEI = "";
+            UpdateFlushStatus(flushBlock);
+        }
 
+        //Insert or update flush block
+        public void UpdateFlushStatus(FlushBlock flushBlock)
+        {
+            SQLiteConnection conn = null;
             try
             {
-                dbOp = DBOperate.CreateDBOperator(dynamicDb);
-                if (dbOp.Connect(false))
+                string sql = "SELECT * FROM FlushTable WHERE DEVICE = @UID";
+
+                conn = new SQLiteConnection("data source = " + dataBase);
+                SQLiteCommand cmd = new SQLiteCommand();
+                cmd.Connection = conn;
+                conn.Open();
+
+                SQLiteHelper sh = new SQLiteHelper(cmd);
+
+                var dicData = new Dictionary<string, object>();
+                dicData["IMEI"] = flushBlock.IMEI;
+                dicData["ICCID"] = flushBlock.IMEI;
+                dicData["DEVICE"] = flushBlock.FlushUID.UIDCode;
+                dicData["STATUS"] = flushBlock.FlushStatus.ToString();
+                dicData["DATETIME"] = flushBlock.FlushTime.ToString("MM/dd/yyyy HH:mm"); 
+
+                //sh.Insert("FlushTable", dicData);
+                DataTable dt = sh.Select(sql, new SQLiteParameter[] {
+                        new SQLiteParameter("@UID", flushBlock.FlushUID.UIDCode)});
+                if (dt.Rows.Count == 1)
                 {
-                    //dbOp.TryExecuteScalar(sql);
+                    // do something...
+                    var dicCon = new Dictionary<string, object>();
+                    dicCon["DEVICE"] = flushBlock.FlushUID.UIDCode;
+
+                    sh.Update(flushTable, dicData, dicCon);
                 }
+                else
+                {
+                    var insertDicData = new Dictionary<string, object>();
+                    insertDicData["IMEI"] = flushBlock.IMEI;
+                    insertDicData["ICCID"] = flushBlock.ICCID;
+                    insertDicData["DEVICE"] = flushBlock.FlushUID.UIDCode;
+                    insertDicData["STATUS"] = flushBlock.FlushStatus.ToString();
+                    insertDicData["DATETIME"] = flushBlock.FlushTime.ToString("MM/dd/yyyy HH:mm");
+                    sh.Insert(flushTable, dicData);
+                }
+
+                conn.Close();
             }
             catch (Exception ex)
             {
+                if (conn != null)
+                    conn.Close();
             }
-            finally
-            {
-                if (dbOp != null)
-                    dbOp.Close(true);
-            }
-
-
-            return true;
         }
 
         public bool WriteNvsBin(string socketName)

@@ -108,9 +108,14 @@
     <Compile Include="Protocol\Protocols.cs" />
     <Compile Include="Protocol\ReturnCode.cs" />
     <Compile Include="DBClass\OleDBOperate.cs" />
+    <Compile Include="SQLiteHelper\SQLiteColumn.cs" />
+    <Compile Include="SQLiteHelper\SQLiteColumnList.cs" />
+    <Compile Include="SQLiteHelper\SQLiteHelper.cs" />
+    <Compile Include="SQLiteHelper\SQLiteTable.cs" />
     <Compile Include="SysMode.cs" />
     <Compile Include="SysSetting\Bin.cs" />
     <Compile Include="SysSetting\BinAddressTable.cs" />
+    <Compile Include="SysSetting\FlushBlock.cs" />
     <Compile Include="SysSetting\FlushSetting.cs" />
     <Compile Include="SysSetting\ParameterSetting.cs" />
     <Compile Include="SysSetting\ProcessEntry.cs" />
@@ -417,7 +422,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Config\ProcessItems.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Firmware\readme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

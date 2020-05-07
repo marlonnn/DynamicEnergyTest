@@ -4,14 +4,14 @@
     <Index>1</Index>
     <TestTitle>条码测试</TestTitle>
     <TestContent>扫描单板上条码,与PCBA主板上实际烧录的内容是否一致。</TestContent>
-    <FunCode>1</FunCode>
+    <FunCode>7405586</FunCode>
   </ProcessItem>
   <ProcessItem>
     <Index>2</Index>
     <TestTitle>版本测试</TestTitle>
     <TestContent>与设置预设版本一致进入下一环节测试；
  不一致则退出测试模式；</TestContent>
-    <FunCode>2</FunCode>
+    <FunCode>7405569</FunCode>
   </ProcessItem>
   <ProcessItem>
     <Index>3</Index>
@@ -30,7 +30,7 @@
   <ProcessItem>
     <Index>5</Index>
     <TestTitle>ICCID获取</TestTitle>
-    <TestContent>ICCID获取的文本请添加到配置文件中</TestContent>
+    <TestContent>John5</TestContent>
     <FunCode>7405586</FunCode>
   </ProcessItem>
   <ProcessItem>
