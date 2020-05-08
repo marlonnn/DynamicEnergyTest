@@ -81,7 +81,7 @@ namespace DynamicEnergyTest.UI
                     {
                         var sizeF = g.MeasureString(ItemText, font);
                         var x = (this.Width - sizeF.Width) / 2;
-                        var y = (this.Height - sizeF.Height) / 2;
+                        var y = (this.Height - sizeF.Height) / 2 + 20;
                         g.DrawString(ItemText, font, sb, x, y);
 
                     }

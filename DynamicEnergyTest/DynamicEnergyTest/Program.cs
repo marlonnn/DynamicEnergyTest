@@ -43,7 +43,7 @@ namespace DynamicEnergyTest
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 UIFactory = MainUIFactory.Get();
-                Application.Run(new MainForm());
+                Application.Run(new MainBaseForm());
                 //Application.Run(new Form1());
             }
             catch (Exception ex)
