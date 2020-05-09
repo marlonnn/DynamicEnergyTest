@@ -1,0 +1,22 @@
+[
+   {
+      "FlushOrder" : 1,
+      "Address" : "0xd000",
+      "Name" : "ota_data_initial.bin"
+   },
+   {
+      "FlushOrder" : 2,
+      "Address" : "0x1000",
+      "Name" : "bootloader.bin"
+   },
+   {
+      "FlushOrder" : 3,
+      "Address" : "0xa0000",
+      "Name" : "msocket.bin"
+   },
+   {
+      "FlushOrder" : 4,
+      "Address" : "0x8000",
+      "Name" : "partitions_two_ota.bin"
+   }
+]

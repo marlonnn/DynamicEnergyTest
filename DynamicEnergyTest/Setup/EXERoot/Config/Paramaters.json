@@ -1,0 +1,11 @@
+{
+   "Version" : "V1.0",
+   "LowVoltage" : 5,
+   "HighVoltage" : 5,
+   "LowCurrent" : 5,
+   "HighCurrent" : 5,
+   "LowPower" : 5,
+   "HighPower" : 5,
+   "LowSleepCurrent" : 5,
+   "HighSleepCurrent" : 5
+}
