@@ -57,13 +57,13 @@ namespace DynamicEnergyTest.UI
                         if (binAddressTable != null)
                         {
                             Bin bin = new Bin(binAddressTable.FlushOrder, binAddressTable.Address, fileName, fileFullName);
-                            if (sysConfig.FlashBins.Find(b => b.Name == bin.Name) == null)
+                            if (sysConfig.JsonConfig.FlashBins.Find(b => b.Name == bin.Name) == null)
                             {
-                                sysConfig.FlashBins.Add(bin);
+                                sysConfig.JsonConfig.FlashBins.Add(bin);
                             }
                         }
                     }
-                    sysConfig.FlashBins.OrderBy(bin => bin.FlushOrder).ToList();
+                    sysConfig.JsonConfig.FlashBins.OrderBy(bin => bin.FlushOrder).ToList();
                     sysConfig.UpdateFlushBinsHandler?.Invoke(this, null);
                 }
             }
@@ -118,13 +118,13 @@ namespace DynamicEnergyTest.UI
                             if (binAddressTable != null)
                             {
                                 Bin bin = new Bin(binAddressTable.FlushOrder, binAddressTable.Address, fileName, openFileDialog.FileNames[i]);
-                                if (sysConfig.FlashBins.Find(b => b.Name == bin.Name) == null)
+                                if (sysConfig.JsonConfig.FlashBins.Find(b => b.Name == bin.Name) == null)
                                 {
-                                    sysConfig.FlashBins.Add(bin);
+                                    sysConfig.JsonConfig.FlashBins.Add(bin);
                                 }
                             }
                         }
-                        sysConfig.FlashBins.OrderBy(bin => bin.FlushOrder).ToList();
+                        sysConfig.JsonConfig.FlashBins.OrderBy(bin => bin.FlushOrder).ToList();
                         sysConfig.UpdateFlushBinsHandler?.Invoke(this, null);
                     }
                 }

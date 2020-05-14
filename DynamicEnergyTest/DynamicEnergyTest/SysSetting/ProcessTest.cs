@@ -18,6 +18,24 @@ namespace DynamicEnergyTest.SysSetting
             set { _uID = value; }
         }
 
+        public TestStatus TestStatus
+        {
+            get
+            {
+                TestStatus testStatus = TestStatus.Fail;
+                if (ProcessEntrys != null && ProcessEntrys.Count > 0)
+                {
+                    int passCount = 0;
+                    for (int i=0; i<ProcessEntrys.Count; i++)
+                    {
+                        if (ProcessEntrys[i].TestStatus == TestStatus.Pass) passCount++;
+                    }
+                    if (passCount == ProcessEntrys.Count) testStatus = TestStatus.Pass;
+                }
+                return testStatus;
+            }
+        }
+
         private List<ProcessEntry> _processEntrys;
         public List<ProcessEntry> ProcessEntrys
         {
@@ -25,11 +43,16 @@ namespace DynamicEnergyTest.SysSetting
             set { _processEntrys = value; }
         }
 
+        public ProcessTest() { }
         public ProcessTest(UID uid)
         {
             this._uID = uid;
             this._processEntrys = new List<ProcessEntry>();
         }
-
+        public ProcessTest(UID uid, List<ProcessEntry> processEntries)
+        {
+            this._uID = uid;
+            this._processEntrys = processEntries;
+        }
     }
 }

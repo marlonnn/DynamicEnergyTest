@@ -113,6 +113,15 @@ namespace DynamicEnergyTest.UI
             this.listView.AppendLog(new string[] { info });
         }
 
+        public void ResetListView()
+        {
+            this.listView.Clear();
+            ColumnHeader columnHeader = new ColumnHeader();
+            columnHeader.Text = "消息日志";
+            columnHeader.Width = 500;
+            this.listView.Columns.Add(columnHeader);
+        }
+
         public void UpdateStatusSwitch(ComCode comCode)
         {
             switch (comCode)
@@ -132,6 +141,11 @@ namespace DynamicEnergyTest.UI
                     this.statusSwitchCtrl.TestStatus = TestStatus.Pass;
                     break;
             }
+        }
+
+        public void UpdateStatusSwitch(TestStatus testStatus)
+        {
+            this.statusSwitchCtrl.TestStatus = testStatus;
         }
 
         protected override void OnResize(EventArgs e)

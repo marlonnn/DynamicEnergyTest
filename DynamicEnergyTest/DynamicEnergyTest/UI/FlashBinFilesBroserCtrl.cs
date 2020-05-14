@@ -18,24 +18,15 @@ namespace DynamicEnergyTest.UI
         public FlashBinFilesBroserCtrl()
         {
             sysConfig = SysConfig.GetConfig();
-            LoadFlushBinsSetting();
+            //LoadFlushBinsSetting();
             sysConfig.UpdateFlushBinsHandler += UpdateFlushBinsHandler;
             InitializeComponent();
-        }
-
-        private void LoadFlushBinsSetting()
-        {
-            var flushBins = sysConfig.LoadFlushBins();
-            if (flushBins != null)
-            {
-                sysConfig.FlashBins = flushBins;
-            }
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            if (sysConfig.FlashBins != null && sysConfig.FlashBins.Count > 0)
+            if (sysConfig.JsonConfig != null && sysConfig.JsonConfig != null && sysConfig.JsonConfig.FlashBins != null && sysConfig.JsonConfig.FlashBins.Count > 0)
             {
                 UpdateFlushBinsHandler(null, null);
             }
@@ -48,22 +39,22 @@ namespace DynamicEnergyTest.UI
 
         public void AddBinFile(Bin bin)
         {
-            if (sysConfig.FlashBins.Find(b => b.Name == bin.Name) == null)
+            if (sysConfig.JsonConfig.FlashBins.Find(b => b.Name == bin.Name) == null)
             {
-                sysConfig.FlashBins.Add(bin);
+                sysConfig.JsonConfig.FlashBins.Add(bin);
             }
             else
             {
                 //update
-                sysConfig.FlashBins.Find(b => b.Name == bin.Name).FullName = bin.FullName;
+                sysConfig.JsonConfig.FlashBins.Find(b => b.Name == bin.Name).FullName = bin.FullName;
             }
         }
 
         private void UpdateFlushBinsHandler(object sender, EventArgs e)
         {
-            if (sysConfig.FlashBins != null && sysConfig.FlashBins.Count() > 0)
+            if (sysConfig.JsonConfig.FlashBins != null && sysConfig.JsonConfig.FlashBins.Count() > 0)
             {
-                var sortedFlushbins = sysConfig.FlashBins.OrderBy(b => b.FlushOrder).ToList();
+                var sortedFlushbins = sysConfig.JsonConfig.FlashBins.OrderBy(b => b.FlushOrder).ToList();
                 for (int i=0; i<sortedFlushbins.Count(); i++)
                 {
                     var binFileName = sortedFlushbins[i];

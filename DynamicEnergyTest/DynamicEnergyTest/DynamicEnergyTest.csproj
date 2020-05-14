@@ -89,6 +89,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ByteHelper.cs" />
+    <Compile Include="ChildForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChildForm.Designer.cs">
+      <DependentUpon>ChildForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="ConcurrentQueue.cs" />
     <Compile Include="CustomEventArgs.cs" />
     <Compile Include="DBClass\DBOperate.cs" />
@@ -103,6 +109,7 @@
     <Compile Include="MainBaseForm.designer.cs">
       <DependentUpon>MainBaseForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MiniDump.cs" />
     <Compile Include="Protocol\C00.cs" />
     <Compile Include="Protocol\C01.cs" />
     <Compile Include="Protocol\C08.cs" />
@@ -147,6 +154,7 @@
     <Compile Include="SysSetting\BinAddressTable.cs" />
     <Compile Include="SysSetting\FlushBlock.cs" />
     <Compile Include="SysSetting\FlushSetting.cs" />
+    <Compile Include="SysSetting\JsonConfig.cs" />
     <Compile Include="SysSetting\ParameterSetting.cs" />
     <Compile Include="SysSetting\ProcessEntry.cs" />
     <Compile Include="SysSetting\ProcessTest.cs" />
@@ -156,6 +164,12 @@
     <Compile Include="TestModel\ProcessItem.cs" />
     <Compile Include="TestModel\ProcessCollection.cs" />
     <Compile Include="TestStatus.cs" />
+    <Compile Include="UI\DetailForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\DetailForm.Designer.cs">
+      <DependentUpon>DetailForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\ExListView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -299,6 +313,9 @@
     <Compile Include="UI\ToolBarItem.Designer.cs">
       <DependentUpon>ToolBarItem.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ChildForm.resx">
+      <DependentUpon>ChildForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainBaseForm.resx">
       <DependentUpon>MainBaseForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -315,6 +332,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="UI\DetailForm.resx">
+      <DependentUpon>DetailForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\FlashBinFilesBroserCtrl.resx">
       <DependentUpon>FlashBinFilesBroserCtrl.cs</DependentUpon>
     </EmbeddedResource>
@@ -390,9 +410,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Config\Paramaters.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Config\SerialPortSetting.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Firmware\bootloader.bin">

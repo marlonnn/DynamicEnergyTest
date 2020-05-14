@@ -1,4 +1,5 @@
 ﻿using DynamicEnergyTest.DBClass;
+using KoboldCom;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,6 +21,14 @@ namespace DynamicEnergyTest.SysSetting
             ProductionMode,
             Exit
         }
+
+        private JsonConfig _jsonConfig;
+        public JsonConfig JsonConfig
+        {
+            get { return _jsonConfig; }
+            set { _jsonConfig = value; }
+        }
+
         private FlushSetting _flushSetting;
         public FlushSetting FlushSetting
         {
@@ -84,12 +93,6 @@ namespace DynamicEnergyTest.SysSetting
             get { return _binAddressTables; }
             set { _binAddressTables = value; }
         }
-        private List<Bin> _flashBins;
-        public List<Bin> FlashBins
-        {
-            get { return _flashBins; }
-            set { _flashBins = value; }
-        }
 
         private List<ProcessTest> _processTests;
         public List<ProcessTest> ProcessTests
@@ -114,9 +117,10 @@ namespace DynamicEnergyTest.SysSetting
 
         public readonly static string ApplicationName = "动态能量标识产测软件";
         private const string configPath = "Config\\FlushConfig.json";
-        private const string flushBinsPath = "Config\\FlushBins.json";
+        private const string jsonConfig = "Config\\JsonConfig.json";
         private const string dynamicTestPath = "\\Firmware\\DynamicTest.db";
         private const string flushTable = "FlushTable";
+        private const string testTable = "TestTable";
         private string dataBase;
         public SysConfig()
         {
@@ -128,12 +132,13 @@ namespace DynamicEnergyTest.SysSetting
             FlushUIDs = new List<UID>();
             UIDs = new List<UID>();
             BinAddressTable = new List<BinAddressTable>();
-            FlashBins = new List<Bin>();
 
             ProcessTests = new List<ProcessTest>();
             ParameterSetting = new ParameterSetting();
 
             dataBase = System.Environment.CurrentDirectory + dynamicTestPath;
+
+            JsonConfig = LoadJsonConfig();
         }
 
         public static SysConfig GetConfig()
@@ -172,6 +177,176 @@ namespace DynamicEnergyTest.SysSetting
             flushBlock.ICCID = "";
             flushBlock.IMEI = "";
             UpdateFlushStatus(flushBlock);
+        }
+
+
+        public void QueryUIDS()
+        {
+            SQLiteConnection conn = null;
+            try
+            {
+                string sql = "SELECT * FROM TestTable";
+                conn = new SQLiteConnection("data source = " + dataBase);
+                SQLiteCommand cmd = new SQLiteCommand();
+                cmd.Connection = conn;
+                conn.Open();
+                SQLiteHelper sh = new SQLiteHelper(cmd);
+                DataTable dt = sh.Select(sql);
+                if (dt.Rows.Count > 0)
+                {
+                    for (int i=0; i< dt.Rows.Count; i++)
+                    {
+                        var row = dt.Rows[i];
+                        UID uID = null;
+                        List<ProcessEntry> processEntries = null;
+                        for (int j=0; j<dt.Columns.Count; j++)
+                        {
+                            if (j == 0)
+                            {
+                                var colum = dt.Rows[i][j];
+                                uID = new UID(colum as string);
+                                if (uID != null)
+                                {
+                                    this.UIDs.Add(uID);
+                                }
+                            }
+                            else if (j == 2)
+                            {
+                                var jsonStr = dt.Rows[i][j] as string;
+                                processEntries = fastJSON.JSON.ToObject<List<ProcessEntry>>(jsonStr);
+                                if (uID != null && processEntries != null)
+                                {
+                                    this.ProcessTests.Add(new ProcessTest(uID, processEntries));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (conn != null) conn.Close();
+            }
+            catch (Exception ex)
+            {
+                if (conn != null) conn.Close();
+            }
+        }
+        public void UpdateTestTable()
+        {
+            SQLiteConnection conn = null;
+            try
+            {
+                string sql = "SELECT * FROM TestTable WHERE DEVICE = @UID";
+                conn = new SQLiteConnection("data source = " + dataBase);
+                SQLiteCommand cmd = new SQLiteCommand();
+                cmd.Connection = conn;
+                conn.Open();
+
+                SQLiteHelper sh = new SQLiteHelper(cmd);
+
+                for (int i=0; i<sysConfig.ProcessTests.Count; i++)
+                {
+                    var processTest = sysConfig.ProcessTests[i];
+                    var dicData = new Dictionary<string, object>();
+                    dicData["DEVICE"] = processTest.UID.UIDCode;
+                    dicData["STATUS"] = processTest.TestStatus.ToString();
+
+                    if (processTest.ProcessEntrys != null && processTest.ProcessEntrys.Count > 0)
+                    {
+                        var stringProcessEntrys = fastJSON.JSON.ToNiceJSON(processTest.ProcessEntrys, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });
+                        dicData["PROCESSENTRYS"] = stringProcessEntrys;
+
+                    }
+                    DataTable dt = sh.Select(sql, new SQLiteParameter[] {
+                        new SQLiteParameter("@UID", processTest.UID.UIDCode)});
+                    if (dt.Rows.Count == 1)
+                    {
+                        // do update...
+                        var dicCon = new Dictionary<string, object>();
+                        dicCon["DEVICE"] = processTest.UID.UIDCode;
+
+                        sh.Update(testTable, dicData, dicCon);
+                    }
+                    else
+                    {
+                        var insertDicData = new Dictionary<string, object>();
+                        insertDicData["DEVICE"] = processTest.UID.UIDCode;
+                        insertDicData["STATUS"] = processTest.TestStatus.ToString();
+
+                        if (processTest.ProcessEntrys != null && processTest.ProcessEntrys.Count > 0)
+                        {
+                            var stringProcessEntrys = fastJSON.JSON.ToNiceJSON(processTest.ProcessEntrys, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });
+                            insertDicData["PROCESSENTRYS"] = stringProcessEntrys;
+
+                        }
+                        sh.Insert(testTable, insertDicData);
+                    }
+                }
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                if (conn != null)
+                    conn.Close();
+            }
+        }
+
+        public void UpdateTestTable(ProcessTest processTest, bool needUpdate = true)
+        {
+            SQLiteConnection conn = null;
+
+            try
+            {
+                string sql = "SELECT * FROM TestTable WHERE DEVICE = @UID";
+                conn = new SQLiteConnection("data source = " + dataBase);
+                SQLiteCommand cmd = new SQLiteCommand();
+                cmd.Connection = conn;
+                conn.Open();
+
+                SQLiteHelper sh = new SQLiteHelper(cmd);
+                var dicData = new Dictionary<string, object>();
+                dicData["DEVICE"] = processTest.UID.UIDCode;
+                dicData["STATUS"] = processTest.TestStatus.ToString();
+
+                if (processTest.ProcessEntrys != null && processTest.ProcessEntrys.Count > 0)
+                {
+                    var stringProcessEntrys = fastJSON.JSON.ToNiceJSON(processTest.ProcessEntrys, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });
+                    dicData["PROCESSENTRYS"] = stringProcessEntrys;
+
+                }
+                DataTable dt = sh.Select(sql, new SQLiteParameter[] {
+                        new SQLiteParameter("@UID", processTest.UID.UIDCode)});
+                if (dt.Rows.Count == 1)
+                {
+                    // do update...
+                    if (needUpdate)
+                    {
+                        var dicCon = new Dictionary<string, object>();
+                        dicCon["DEVICE"] = processTest.UID.UIDCode;
+
+                        sh.Update(testTable, dicData, dicCon);
+                    }
+                }
+                else
+                {
+                    var insertDicData = new Dictionary<string, object>();
+                    insertDicData["DEVICE"] = processTest.UID.UIDCode;
+                    insertDicData["STATUS"] = processTest.TestStatus.ToString();
+
+                    if (processTest.ProcessEntrys != null && processTest.ProcessEntrys.Count > 0)
+                    {
+                        var stringProcessEntrys = fastJSON.JSON.ToNiceJSON(processTest.ProcessEntrys, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });
+                        insertDicData["PROCESSENTRYS"] = stringProcessEntrys;
+
+                    }
+                    sh.Insert(testTable, insertDicData);
+                }
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                if (conn != null)
+                    conn.Close();
+            }
         }
 
         //Insert or update flush block
@@ -215,7 +390,7 @@ namespace DynamicEnergyTest.SysSetting
                     insertDicData["DEVICE"] = flushBlock.FlushUID.UIDCode;
                     insertDicData["STATUS"] = flushBlock.FlushStatus.ToString();
                     insertDicData["DATETIME"] = flushBlock.FlushTime.ToString("MM/dd/yyyy HH:mm");
-                    sh.Insert(flushTable, dicData);
+                    sh.Insert(flushTable, insertDicData);
                 }
 
                 conn.Close();
@@ -278,11 +453,10 @@ namespace DynamicEnergyTest.SysSetting
             File.WriteAllText(configPath, jsonFile);
         }
 
-        public void WriteFlushBins()
+        public void WriteJsonConfig()
         {
-            string jsonFile = fastJSON.JSON.ToNiceJSON(this.FlashBins, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });
-
-            File.WriteAllText(flushBinsPath, jsonFile);
+            string jsonFile = fastJSON.JSON.ToNiceJSON(JsonConfig, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });
+            File.WriteAllText(jsonConfig, jsonFile);
         }
 
         public FlushSetting LoadFlushConfig()
@@ -298,16 +472,16 @@ namespace DynamicEnergyTest.SysSetting
             }
         }
 
-        public List<Bin> LoadFlushBins()
+        public JsonConfig LoadJsonConfig()
         {
-            if (File.Exists(flushBinsPath))
+            if (File.Exists(jsonConfig))
             {
-                var jsonStr = File.ReadAllText(flushBinsPath);
-                return fastJSON.JSON.ToObject<List<Bin>>(jsonStr);
+                var jsonStr = File.ReadAllText(jsonConfig);
+                return fastJSON.JSON.ToObject<JsonConfig>(jsonStr);
             }
             else
             {
-                return null;
+                return new JsonConfig();
             }
         }
 

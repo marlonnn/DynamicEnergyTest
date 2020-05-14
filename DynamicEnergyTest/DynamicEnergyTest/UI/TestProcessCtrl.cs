@@ -48,6 +48,7 @@ namespace DynamicEnergyTest.UI
             base.OnLoad(e);
             processItems = ProcessFactory.Instance().ProcessItems;
             InitializeProcessItemCtrl();
+            this.checkTimer.Start();
         }
 
         protected override void OnResize(EventArgs e)
@@ -94,17 +95,34 @@ namespace DynamicEnergyTest.UI
             TestProcessItem testProcessItem = sender as TestProcessItem;
             if (testProcessItem != null)
             {
-                if (testProcessItem.ItemText == "1")
+                //if (testProcessItem.ItemText == "1")
+                //{
+                //    //Test00(testProcessItem);
+                //    if (sysConfig.TestUID == null)
+                //    {
+                //        if (ScanOrInputSN(testProcessItem))
+                //        {
+                //            ProcessTest(testProcessItem);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        ProcessTest(testProcessItem);
+                //    }
+                //}
+                //else
                 {
-                    Test00(testProcessItem);
-                    //if (ScanOrInputSN(testProcessItem) && sysConfig.TestUID == null)
-                    //{
-                    //    ProcessTest(testProcessItem);
-                    //}
-                }
-                else
-                {
-                    ProcessTest(testProcessItem);
+                    if (sysConfig.TestUID == null)
+                    {
+                        if (ScanOrInputSN(testProcessItem))
+                        {
+                            ProcessTest(testProcessItem);
+                        }
+                    }
+                    else
+                    {
+                        ProcessTest(testProcessItem);
+                    }
                 }
             }
         }
@@ -112,6 +130,7 @@ namespace DynamicEnergyTest.UI
         private void ProcessTest(TestProcessItem testProcessItem)
         {
             testProcessItem.TestStatus = TestStatus.Testing;
+            UpdateSysProcessStatus(testProcessItem);
             TestPanelCtrl parentCtrl = this.Parent as TestPanelCtrl;
             if (parentCtrl != null)
             {
@@ -160,6 +179,8 @@ namespace DynamicEnergyTest.UI
             {
                 if (dm.TestIndex == testIndex)
                 {
+                    parentCtrl.UpdateStatusSwitch(TestStatus.Testing);
+
                     string testItem = dm.TestItem;
                     parentCtrl.UpdateListView(testItem);
 
@@ -198,10 +219,18 @@ namespace DynamicEnergyTest.UI
                             testProcessItem.TestStatus = TestStatus.Pass;
                             break;
                     }
+                    UpdateSysProcessStatus(testProcessItem);
                     UpdateTestProcessLineStatus(testIndex, testProcessItem.TestStatus);
                 }
 
             }
+        }
+
+        private void UpdateSysProcessStatus(TestProcessItem testProcessItem)
+        {
+            var processTest = sysConfig.ProcessTests.FirstOrDefault(p => p.UID == sysConfig.TestUID);
+            var item = processTest.ProcessEntrys.FirstOrDefault(p => p.ItemIndex.ToString() == testProcessItem.ItemText);
+            item.TestStatus = testProcessItem.TestStatus;
         }
 
         private TestProcessLine GetProcessLineName(int processItemIndex)
@@ -236,6 +265,76 @@ namespace DynamicEnergyTest.UI
                     new XmlRootAttribute("ProcessCollection"));
                 processItems = (List<ProcessItem>)deserializer.Deserialize(reader);
             }
+        }
+
+        private void CheckTimer_Tick(object sender, EventArgs e)
+        {
+            int untestCount = 0;
+            var uid = sysConfig.TestUID;
+            if (uid != null && sysConfig.ProcessTests != null)
+            {
+                var processTest = sysConfig.ProcessTests.FirstOrDefault(p => p.UID == uid);
+                if (processTest != null)
+                {
+                    for (int i = 0; i < processTest.ProcessEntrys.Count; i++)
+                    {
+                        if (processTest.ProcessEntrys[i].TestStatus == TestStatus.UnTest)
+                        {
+                            untestCount++;
+                            if (untestCount > 0)
+                                break;
+                        }
+                    }
+                    if (untestCount == 0)
+                    {
+                        if (!this.linkLabel1.Visible)
+                        {
+                            this.linkLabel1.Text = "全部测试完毕，点击提交测试结果。";
+                            this.linkLabel1.Visible = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (MessageBox.Show("全部测试项目已测试完毕，是否结束并提交本轮测试结果? \r\n确认请点击 OK 按钮，并开始新一轮的测试。", SysConfig.ApplicationName, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
+            {
+                FlushProcessTestToDB();
+                ReSetAllProcessItems();
+            }
+        }
+
+        public void ReSetAllProcessItems()
+        {
+            this.linkLabel1.Visible = false;
+            foreach (var ctrl in this.Controls)
+            {
+                var processItem = ctrl as TestProcessItem;
+                if (processItem != null)
+                {
+                    processItem.TestStatus = TestStatus.UnTest;
+                }
+                var line = ctrl as TestProcessLine;
+                if (line != null)
+                {
+                    line.TestStatus = TestStatus.UnTest;
+                }
+            }
+            TestPanelCtrl parentCtrl = this.Parent as TestPanelCtrl;
+            if (parentCtrl != null)
+            {
+                parentCtrl.StatusSwitchCtrl.ResetProcessItem();
+                parentCtrl.ResetListView();
+            }
+            sysConfig.TestUID = null;
+        }
+
+        private void FlushProcessTestToDB()
+        {
+            var processTest = sysConfig.ProcessTests.FirstOrDefault(p => p.UID == sysConfig.TestUID);
+            if (processTest != null) sysConfig.UpdateTestTable(processTest, true);
         }
     }
 }

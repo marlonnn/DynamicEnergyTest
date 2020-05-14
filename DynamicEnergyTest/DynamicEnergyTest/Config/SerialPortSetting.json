@@ -1,8 +1,0 @@
-{
-   "Baudrate" : 115200,
-   "Handshake" : "None",
-   "NewLine" : "\r\n",
-   "Parity" : "None",
-   "Port" : 1,
-   "StopBits" : "One"
-}

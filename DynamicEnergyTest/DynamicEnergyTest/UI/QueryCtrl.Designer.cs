@@ -45,12 +45,14 @@
             this.dataGridView.RowTemplate.Height = 23;
             this.dataGridView.Size = new System.Drawing.Size(920, 570);
             this.dataGridView.TabIndex = 6;
+            this.dataGridView.ReadOnly = true;
+            this.dataGridView.CellClick += DataGridView_CellClick;
             // 
             // querySettingCtrl1
             // 
             this.querySettingCtrl1.Dock = System.Windows.Forms.DockStyle.Top;
             this.querySettingCtrl1.Location = new System.Drawing.Point(0, 0);
-            this.querySettingCtrl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.querySettingCtrl1.Margin = new System.Windows.Forms.Padding(4);
             this.querySettingCtrl1.Name = "querySettingCtrl1";
             this.querySettingCtrl1.Size = new System.Drawing.Size(949, 61);
             this.querySettingCtrl1.TabIndex = 7;

@@ -157,6 +157,40 @@ namespace DynamicEnergyTest.Protocol
             return _protocolFactory;
         }
 
+        public void Close()
+        {
+            if (Communicator.Com != null && Communicator.Com.IsOpen)
+            {
+                Communicator.Com.Close();
+            }
+        }
+
+        private bool Open()
+        {
+            bool isOpen = false;
+            try
+            {
+                Close();
+                SerialPortSetting sps = new SerialPortSetting();
+                var config = SysSetting.SysConfig.GetConfig();
+                if (config != null && config.JsonConfig != null && config.JsonConfig.SerialPortSetting != null)
+                {
+                    sps.Baudrate = config.JsonConfig.SerialPortSetting.Baudrate;
+                    sps.Port = config.JsonConfig.SerialPortSetting.Port;
+                    sps.Parity = System.IO.Ports.Parity.None;
+                    sps.StopBits = System.IO.Ports.StopBits.One;
+                    sps.DataBits = config.JsonConfig.SerialPortSetting.DataBits;
+
+                    isOpen = Communicator.Com.Open(sps);
+                }
+            }
+            catch (Exception ex)
+            {
+                isOpen = false;
+            }
+            return isOpen;
+        }
+
         public ComCode Write(DataModel dataModel)
         {
             receiveDataModel = null;
@@ -165,34 +199,42 @@ namespace DynamicEnergyTest.Protocol
             string readableBytes = ByteHelper.Byte2ReadalbeXstring(sendBytes);
             UpdateListViewHandler?.Invoke(readableBytes);
 
-            ComCode comCode = _communicator.Write(sendBytes, 0, sendBytes.Count());
-            if (comCode == ComCode.SendOK)
+            //close and reopen com port
+            if (Open())
             {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                while (true)
+                ComCode comCode = _communicator.Write(sendBytes, 0, sendBytes.Count());
+                if (comCode == ComCode.SendOK)
                 {
-                    //Do 
-                    if (receiveDataModel != null && receiveDataModel.FunCode == dataModel.FunCode)
+                    Stopwatch sw = new Stopwatch();
+                    sw.Start();
+                    while (true)
                     {
-                        var raw = receiveDataModel.Raw;
-                        var dataRegion = receiveDataModel.DataRegion;
-                        if (receiveDataModel.CheckLegal())
-                            return ComCode.ReceivedOK;
-                        else
-                            return ComCode.ReceivedMessageError;
+                        //Do 
+                        if (receiveDataModel != null && receiveDataModel.FunCode == dataModel.FunCode)
+                        {
+                            var raw = receiveDataModel.Raw;
+                            var dataRegion = receiveDataModel.DataRegion;
+                            if (receiveDataModel.CheckLegal())
+                                return ComCode.ReceivedOK;
+                            else
+                                return ComCode.ReceivedMessageError;
+                        }
+                        if (sw.ElapsedMilliseconds > 3000)
+                        {
+                            return ComCode.TimeOut;
+                        }
+                        Thread.Sleep(1);
+                        System.Windows.Forms.Application.DoEvents();
                     }
-                    if (sw.ElapsedMilliseconds > 3000)
-                    {
-                        return ComCode.TimeOut;
-                    }
-                    Thread.Sleep(1);
-                    System.Windows.Forms.Application.DoEvents();
+                }
+                else
+                {
+                    return comCode;
                 }
             }
             else
             {
-                return comCode;
+                return ComCode.ComNotOpen;
             }
         }
 

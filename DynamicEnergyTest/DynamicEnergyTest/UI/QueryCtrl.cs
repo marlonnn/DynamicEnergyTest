@@ -80,5 +80,21 @@ namespace DynamicEnergyTest.UI
             base.OnResize(e);
             this.dataGridView.Bounds = new Rectangle(10, this.querySettingCtrl1.Location.Y + this.querySettingCtrl1.Height, this.Width - 20, this.Height - this.querySettingCtrl1.Location.Y - this.querySettingCtrl1.Height -10);
         }
+
+        private void DataGridView_CellClick(object sender, System.Windows.Forms.DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 2)
+            {
+                var row = e.RowIndex;
+                if (sysConfig.UIDs != null && row < sysConfig.UIDs.Count - 1)
+                {
+                    var uid = sysConfig.UIDs[row];
+                    Console.WriteLine("UID: " + uid.UIDCode + " TestStatus: " + uid.TestStatus.ToString());
+
+                    DetailForm detailForm = new DetailForm();
+                    detailForm.ShowDialog();
+                }
+            }
+        }
     }
 }

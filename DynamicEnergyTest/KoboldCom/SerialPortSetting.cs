@@ -21,6 +21,7 @@ namespace KoboldCom
             this.StopBits = StopBits.One;
             this.Parity = Parity.None;
             this.Handshake = Handshake.None;
+            this.DataBits = 8;
             this.NewLine = "\r\n";
         }
 
@@ -78,6 +79,11 @@ namespace KoboldCom
         /// 串口号
         /// </summary>
         public int Port;
+
+        /// <summary>
+        /// 数据位
+        /// </summary>
+        public int DataBits;
 
         /// <summary>
         /// 停止位

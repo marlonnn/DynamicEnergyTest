@@ -47,6 +47,7 @@ namespace DynamicEnergyTest.SysSetting
             }
         }
 
+        public ProcessEntry() { }
         public ProcessEntry(int itemIndex, string infoText, TestStatus testStatus)
         {
             this.ItemIndex = itemIndex;

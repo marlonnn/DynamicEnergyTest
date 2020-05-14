@@ -39,7 +39,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(12, 19);
+            this.label1.Location = new System.Drawing.Point(12, 30);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(161, 12);
             this.label1.TabIndex = 0;
@@ -47,9 +47,9 @@
             // 
             // txtSN
             // 
-            this.txtSN.Location = new System.Drawing.Point(14, 47);
+            this.txtSN.Location = new System.Drawing.Point(14, 58);
             this.txtSN.Name = "txtSN";
-            this.txtSN.Size = new System.Drawing.Size(391, 21);
+            this.txtSN.Size = new System.Drawing.Size(444, 21);
             this.txtSN.TabIndex = 1;
             this.txtSN.TextChanged += new System.EventHandler(this.TxtSN_TextChanged);
             // 
@@ -59,7 +59,7 @@
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnOK.ForeColor = System.Drawing.Color.White;
-            this.btnOK.Location = new System.Drawing.Point(212, 101);
+            this.btnOK.Location = new System.Drawing.Point(265, 86);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(86, 30);
             this.btnOK.TabIndex = 12;
@@ -73,7 +73,7 @@
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.ForeColor = System.Drawing.Color.White;
-            this.btnCancel.Location = new System.Drawing.Point(319, 101);
+            this.btnCancel.Location = new System.Drawing.Point(372, 86);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(86, 30);
             this.btnCancel.TabIndex = 13;
@@ -94,16 +94,23 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(417, 143);
+            this.ClientSize = new System.Drawing.Size(465, 120);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.txtSN);
             this.Controls.Add(this.label1);
+            this.Location = new System.Drawing.Point(0, 0);
             this.Name = "SNForm";
+            this.NewClientSize = new System.Drawing.Size(465, 120);
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "SN条码输入窗口";
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.txtSN, 0);
+            this.Controls.SetChildIndex(this.btnOK, 0);
+            this.Controls.SetChildIndex(this.btnCancel, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 

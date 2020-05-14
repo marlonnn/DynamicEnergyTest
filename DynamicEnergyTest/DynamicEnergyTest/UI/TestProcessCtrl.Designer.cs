@@ -15,6 +15,7 @@
         {
             if (disposing && (components != null))
             {
+                this.checkTimer.Stop();
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -28,6 +29,17 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            DynamicEnergyTest.TestModel.ProcessItem processItem1 = new DynamicEnergyTest.TestModel.ProcessItem();
+            DynamicEnergyTest.TestModel.ProcessItem processItem2 = new DynamicEnergyTest.TestModel.ProcessItem();
+            DynamicEnergyTest.TestModel.ProcessItem processItem3 = new DynamicEnergyTest.TestModel.ProcessItem();
+            DynamicEnergyTest.TestModel.ProcessItem processItem4 = new DynamicEnergyTest.TestModel.ProcessItem();
+            DynamicEnergyTest.TestModel.ProcessItem processItem5 = new DynamicEnergyTest.TestModel.ProcessItem();
+            DynamicEnergyTest.TestModel.ProcessItem processItem6 = new DynamicEnergyTest.TestModel.ProcessItem();
+            DynamicEnergyTest.TestModel.ProcessItem processItem7 = new DynamicEnergyTest.TestModel.ProcessItem();
+            DynamicEnergyTest.TestModel.ProcessItem processItem8 = new DynamicEnergyTest.TestModel.ProcessItem();
+            DynamicEnergyTest.TestModel.ProcessItem processItem9 = new DynamicEnergyTest.TestModel.ProcessItem();
+            DynamicEnergyTest.TestModel.ProcessItem processItem10 = new DynamicEnergyTest.TestModel.ProcessItem();
             this.testProcessLine1 = new DynamicEnergyTest.UI.TestProcessLine();
             this.testProcessItemBar = new DynamicEnergyTest.UI.TestProcessItem();
             this.testProcessItemVersion = new DynamicEnergyTest.UI.TestProcessItem();
@@ -47,6 +59,8 @@
             this.testProcessItemBattery = new DynamicEnergyTest.UI.TestProcessItem();
             this.testProcessLine9 = new DynamicEnergyTest.UI.TestProcessLine();
             this.testProcessItemSleep = new DynamicEnergyTest.UI.TestProcessItem();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.checkTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // testProcessLine1
@@ -64,6 +78,11 @@
             this.testProcessItemBar.ItemText = "1";
             this.testProcessItemBar.Location = new System.Drawing.Point(0, 0);
             this.testProcessItemBar.Name = "testProcessItemBar";
+            processItem1.FunCode = 0;
+            processItem1.Index = 0;
+            processItem1.TestContent = null;
+            processItem1.TestTitle = null;
+            this.testProcessItemBar.ProcessItem = processItem1;
             this.testProcessItemBar.Size = new System.Drawing.Size(100, 100);
             this.testProcessItemBar.TabIndex = 0;
             // 
@@ -74,6 +93,11 @@
             this.testProcessItemVersion.ItemText = "2";
             this.testProcessItemVersion.Location = new System.Drawing.Point(109, 0);
             this.testProcessItemVersion.Name = "testProcessItemVersion";
+            processItem2.FunCode = 0;
+            processItem2.Index = 0;
+            processItem2.TestContent = null;
+            processItem2.TestTitle = null;
+            this.testProcessItemVersion.ProcessItem = processItem2;
             this.testProcessItemVersion.Size = new System.Drawing.Size(100, 100);
             this.testProcessItemVersion.TabIndex = 2;
             // 
@@ -92,6 +116,11 @@
             this.testProcessItemLight.ItemText = "3";
             this.testProcessItemLight.Location = new System.Drawing.Point(218, 0);
             this.testProcessItemLight.Name = "testProcessItemLight";
+            processItem3.FunCode = 0;
+            processItem3.Index = 0;
+            processItem3.TestContent = null;
+            processItem3.TestTitle = null;
+            this.testProcessItemLight.ProcessItem = processItem3;
             this.testProcessItemLight.Size = new System.Drawing.Size(100, 100);
             this.testProcessItemLight.TabIndex = 4;
             // 
@@ -110,6 +139,11 @@
             this.testProcessItemMeasure.ItemText = "4";
             this.testProcessItemMeasure.Location = new System.Drawing.Point(327, 0);
             this.testProcessItemMeasure.Name = "testProcessItemMeasure";
+            processItem4.FunCode = 0;
+            processItem4.Index = 0;
+            processItem4.TestContent = null;
+            processItem4.TestTitle = null;
+            this.testProcessItemMeasure.ProcessItem = processItem4;
             this.testProcessItemMeasure.Size = new System.Drawing.Size(100, 100);
             this.testProcessItemMeasure.TabIndex = 6;
             // 
@@ -128,6 +162,11 @@
             this.testProcessItemICCID.ItemText = "5";
             this.testProcessItemICCID.Location = new System.Drawing.Point(436, 0);
             this.testProcessItemICCID.Name = "testProcessItemICCID";
+            processItem5.FunCode = 0;
+            processItem5.Index = 0;
+            processItem5.TestContent = null;
+            processItem5.TestTitle = null;
+            this.testProcessItemICCID.ProcessItem = processItem5;
             this.testProcessItemICCID.Size = new System.Drawing.Size(100, 100);
             this.testProcessItemICCID.TabIndex = 8;
             // 
@@ -146,6 +185,11 @@
             this.testProcessItemNB.ItemText = "6";
             this.testProcessItemNB.Location = new System.Drawing.Point(545, 0);
             this.testProcessItemNB.Name = "testProcessItemNB";
+            processItem6.FunCode = 0;
+            processItem6.Index = 0;
+            processItem6.TestContent = null;
+            processItem6.TestTitle = null;
+            this.testProcessItemNB.ProcessItem = processItem6;
             this.testProcessItemNB.Size = new System.Drawing.Size(100, 100);
             this.testProcessItemNB.TabIndex = 10;
             // 
@@ -164,6 +208,11 @@
             this.testProcessItemWIFI.ItemText = "7";
             this.testProcessItemWIFI.Location = new System.Drawing.Point(654, 0);
             this.testProcessItemWIFI.Name = "testProcessItemWIFI";
+            processItem7.FunCode = 0;
+            processItem7.Index = 0;
+            processItem7.TestContent = null;
+            processItem7.TestTitle = null;
+            this.testProcessItemWIFI.ProcessItem = processItem7;
             this.testProcessItemWIFI.Size = new System.Drawing.Size(100, 100);
             this.testProcessItemWIFI.TabIndex = 12;
             // 
@@ -182,6 +231,11 @@
             this.testProcessItemBlueTooth.ItemText = "8";
             this.testProcessItemBlueTooth.Location = new System.Drawing.Point(763, 0);
             this.testProcessItemBlueTooth.Name = "testProcessItemBlueTooth";
+            processItem8.FunCode = 0;
+            processItem8.Index = 0;
+            processItem8.TestContent = null;
+            processItem8.TestTitle = null;
+            this.testProcessItemBlueTooth.ProcessItem = processItem8;
             this.testProcessItemBlueTooth.Size = new System.Drawing.Size(100, 100);
             this.testProcessItemBlueTooth.TabIndex = 14;
             // 
@@ -200,6 +254,11 @@
             this.testProcessItemBattery.ItemText = "9";
             this.testProcessItemBattery.Location = new System.Drawing.Point(872, 0);
             this.testProcessItemBattery.Name = "testProcessItemBattery";
+            processItem9.FunCode = 0;
+            processItem9.Index = 0;
+            processItem9.TestContent = null;
+            processItem9.TestTitle = null;
+            this.testProcessItemBattery.ProcessItem = processItem9;
             this.testProcessItemBattery.Size = new System.Drawing.Size(100, 100);
             this.testProcessItemBattery.TabIndex = 16;
             // 
@@ -218,14 +277,37 @@
             this.testProcessItemSleep.ItemText = "10";
             this.testProcessItemSleep.Location = new System.Drawing.Point(981, 0);
             this.testProcessItemSleep.Name = "testProcessItemSleep";
+            processItem10.FunCode = 0;
+            processItem10.Index = 0;
+            processItem10.TestContent = null;
+            processItem10.TestTitle = null;
+            this.testProcessItemSleep.ProcessItem = processItem10;
             this.testProcessItemSleep.Size = new System.Drawing.Size(100, 100);
             this.testProcessItemSleep.TabIndex = 18;
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(870, 118);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(59, 12);
+            this.linkLabel1.TabIndex = 19;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "linkLabel";
+            this.linkLabel1.Visible = false;
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1_LinkClicked);
+            // 
+            // checkTimer
+            // 
+            this.checkTimer.Interval = 1000;
+            this.checkTimer.Tick += new System.EventHandler(this.CheckTimer_Tick);
             // 
             // TestProcessCtrl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
+            this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.testProcessLine9);
             this.Controls.Add(this.testProcessLine8);
             this.Controls.Add(this.testProcessLine7);
@@ -248,6 +330,7 @@
             this.Name = "TestProcessCtrl";
             this.Size = new System.Drawing.Size(1086, 130);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -272,5 +355,7 @@
         private TestProcessItem testProcessItemBattery;
         private TestProcessLine testProcessLine9;
         private TestProcessItem testProcessItemSleep;
+        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.Timer checkTimer;
     }
 }

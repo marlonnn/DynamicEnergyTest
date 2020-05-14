@@ -75,6 +75,14 @@ namespace DynamicEnergyTest.UI
             }
         }
 
+        public void ResetProcessItem()
+        {
+            this._index = 0;
+            this.switchIndexCtrl.SwitchIndex = "";
+            this.switchIndexCtrl.SwitchText = "";
+            this.TestContent = "";
+            this.TestStatus = TestStatus.UnTest;
+        }
         public void UpdateProcessItem(ProcessItem processItem)
         {
             this._index = processItem.Index;

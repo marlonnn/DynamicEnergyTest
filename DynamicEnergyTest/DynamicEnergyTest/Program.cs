@@ -38,6 +38,8 @@ namespace DynamicEnergyTest
 
             try
             {
+                MiniDumper.Init();
+
                 InitializeParameters();
                 InitializeBinAddressTable();
                 Application.EnableVisualStyles();

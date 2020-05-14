@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace DynamicEnergyTest.UI
 {
-    public partial class SNForm : Form
+    public partial class SNForm : ChildForm
     {
         private string _sn;
         public string SN
@@ -24,6 +24,7 @@ namespace DynamicEnergyTest.UI
         public SNForm()
         {
             InitializeComponent();
+            this.EnableMin = this.EnableMax = false;
             sysConfig = SysConfig.GetConfig();
             waringInfo = "请输入合法的SN条码！";
             legalInfo = "设备SN检查通过，请点击确定进行测试。";
@@ -49,17 +50,23 @@ namespace DynamicEnergyTest.UI
         {
             //Check SN is legal
             this.SN = this.txtSN.Text;
-            UID findUid = sysConfig.UIDs.Find(uid => uid.UIDCode == SN);
-            if (findUid != null)
+            if (sysConfig.UIDs.Count > 0)
             {
-                sysConfig.TestUID = findUid;
-                this.label2.Text = legalInfo;
+                UID findUid = sysConfig.UIDs.Find(uid => uid.UIDCode == SN);
+                if (findUid != null)
+                {
+                    sysConfig.TestUID = findUid;
+                    this.label2.Text = legalInfo;
+                }
+                else
+                {
+                    this.label2.Text = waringInfo;
+                }
             }
             else
             {
-                this.label2.Text = waringInfo;
+                MessageBox.Show("请先导入测试的 UID 设备列表。", SysConfig.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-
         }
     }
 }

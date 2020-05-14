@@ -1,20 +1,58 @@
-﻿using DynamicEnergyTest.SysSetting;
-using DynamicEnergyTest.UI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DynamicEnergyTest
 {
-    public partial class MainBaseForm : FormBase
+    public partial class ChildForm : FormBase
     {
-        private MainUIFactory UIFactory;
+        private Size _clientSize;
+        public Size NewClientSize
+        {
+            get { return _clientSize; }
+            set
+            {
+                if (value != _clientSize)
+                {
+                    _clientSize = value;
+                    this.Invalidate();
+                }
+            }
+        }
+
+        private bool _enableMin;
+        public bool EnableMin
+        {
+            get { return _enableMin; }
+            set
+            {
+                if (value != _enableMin)
+                {
+                    _enableMin = value;
+                    this.MinimizeLabel.Visible = value;
+                }
+            }
+        }
+
+        private bool _enableMax;
+        public bool EnableMax
+        {
+            get { return _enableMax; }
+            set
+            {
+                if (value != _enableMax)
+                {
+                    _enableMax = value;
+                    this.MaximizeLabel.Visible = value;
+                }
+            }
+        }
 
         private FormWindowState previousWindowState;
 
@@ -58,7 +96,7 @@ namespace DynamicEnergyTest
             set { normalBackColor = value; }
         }
 
-        public enum MouseState 
+        public enum MouseState
         {
             Normal,
             Hover,
@@ -88,14 +126,16 @@ namespace DynamicEnergyTest
             control.BackColor = backColor;
         }
 
-        public MainBaseForm()
+        public ChildForm()
         {
             InitializeComponent();
+            this.EnableMax = this.EnableMin = true;
+            this.NewClientSize = this.ClientSize;
 
             Activated += MainForm_Activated;
             Deactivate += MainForm_Deactivate;
 
-            foreach (var control in new[] {/* SystemLabel, */MinimizeLabel, MaximizeLabel, CloseLabel })
+            foreach (var control in new[] { SystemLabel, MinimizeLabel, MaximizeLabel, CloseLabel })
             {
                 control.MouseEnter += (s, e) => SetLabelColors((Control)s, MouseState.Hover);
                 control.MouseLeave += (s, e) => SetLabelColors((Control)s, MouseState.Normal);
@@ -112,8 +152,8 @@ namespace DynamicEnergyTest
             RightBorderPanel.MouseDown += (s, e) => DecorationMouseDown(e, HitTestValues.HTRIGHT);
             BottomBorderPanel.MouseDown += (s, e) => DecorationMouseDown(e, HitTestValues.HTBOTTOM);
 
-            //SystemLabel.MouseDown += SystemLabel_MouseDown;
-            //SystemLabel.MouseUp += SystemLabel_MouseUp;
+            SystemLabel.MouseDown += SystemLabel_MouseDown;
+            SystemLabel.MouseUp += SystemLabel_MouseUp;
 
             TitleLabel.MouseDown += TitleLabel_MouseDown;
             TitleLabel.MouseUp += (s, e) => { if (e.Button == MouseButtons.Right && TitleLabel.ClientRectangle.Contains(e.Location)) ShowSystemMenu(MouseButtons); };
@@ -125,80 +165,22 @@ namespace DynamicEnergyTest
             MinimizeLabel.Font = marlett;
             MaximizeLabel.Font = marlett;
             CloseLabel.Font = marlett;
-            //SystemLabel.Font = marlett;
+            SystemLabel.Font = marlett;
 
             MinimizeLabel.MouseClick += (s, e) => { if (e.Button == MouseButtons.Left) WindowState = FormWindowState.Minimized; };
             MaximizeLabel.MouseClick += (s, e) => { if (e.Button == MouseButtons.Left) ToggleMaximize(); };
             previousWindowState = MinMaxState;
             SizeChanged += MainForm_SizeChanged;
             CloseLabel.MouseClick += (s, e) => Close(e);
-
-            UIFactory = Program.UIFactory;
-
-            this.toolBarCtrl1.EventHandler += SwitchPageEventHandler;
-        }
-
-        private void SwitchPageEventHandler(object sender, EventArgs e)
-        {
-            ToolBarItem toolBarItem = sender as ToolBarItem;
-            if (toolBarItem != null)
-            {
-                switch (toolBarItem.ItemIndex)
-                {
-                    case 1:
-                        this.panel.Controls.Clear();
-                        this.panel.Controls.Add(UIFactory.TestPanelCtrl);
-                        break;
-                    case 2:
-                        this.panel.Controls.Clear();
-                        this.panel.Controls.Add(UIFactory.ReportPanelCtrl);
-                        break;
-                    case 3:
-                        this.panel.Controls.Clear();
-                        this.panel.Controls.Add(UIFactory.SettingPanelCtrl);
-                        break;
-                    case 4:
-                        this.panel.Controls.Clear();
-                        this.panel.Controls.Add(UIFactory.FlashPanelCtrl);
-                        break;
-                }
-            }
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
-            if (SysConfig.GetConfig().SystemMode == SysMode.FullMode)
+            this.NewClientSize = this.ClientSize;
+            if (previousWindowState == FormWindowState.Normal)
             {
-                this.TitleLabel.Text = "动态能量标识产测软件";
-                this.panel.Controls.Add(UIFactory.TestPanelCtrl);
-            }
-            else
-            {
-                this.TitleLabel.Text = "烧录软件";
-                this.panel.Controls.Add(UIFactory.FlashPanelCtrl);
-            }
-        }
-
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            try
-            {
-                if (MessageBox.Show("确定关闭并且退出吗？", SysConfig.ApplicationName, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
-                {
-                    base.OnClosing(e);
-                    SysSetting.SysConfig.GetConfig().WriteFlushConfig();
-                    SysSetting.SysConfig.GetConfig().WriteJsonConfig();
-                }
-                else
-                {
-                    e.Cancel = true;
-                    return;
-                }
-            }
-            catch (Exception ex)
-            {
+                SetNormalLayout();
             }
         }
 
@@ -210,25 +192,25 @@ namespace DynamicEnergyTest
         private DateTime systemClickTime = DateTime.MinValue;
         private DateTime systemMenuCloseTime = DateTime.MinValue;
 
-        //void SystemLabel_MouseDown(object sender, MouseEventArgs e)
-        //{
-        //    if (e.Button == MouseButtons.Left)
-        //    {
-        //        var clickTime = (DateTime.Now - systemClickTime).TotalMilliseconds;
-        //        if (clickTime < SystemInformation.DoubleClickTime)
-        //            Close();
-        //        else
-        //        {
-        //            systemClickTime = DateTime.Now;
-        //            if ((systemClickTime - systemMenuCloseTime).TotalMilliseconds > 200)
-        //            {
-        //                SetLabelColors(SystemLabel, MouseState.Normal);
-        //                ShowSystemMenu(MouseButtons, PointToScreen(new Point(8, 32)));
-        //                systemMenuCloseTime = DateTime.Now;
-        //            }
-        //        }
-        //    }
-        //}
+        void SystemLabel_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                var clickTime = (DateTime.Now - systemClickTime).TotalMilliseconds;
+                if (clickTime < SystemInformation.DoubleClickTime)
+                    Close();
+                else
+                {
+                    systemClickTime = DateTime.Now;
+                    if ((systemClickTime - systemMenuCloseTime).TotalMilliseconds > 200)
+                    {
+                        SetLabelColors(SystemLabel, MouseState.Normal);
+                        ShowSystemMenu(MouseButtons, PointToScreen(new Point(8, 32)));
+                        systemMenuCloseTime = DateTime.Now;
+                    }
+                }
+            }
+        }
 
         void Close(MouseEventArgs e)
         {
@@ -283,7 +265,7 @@ namespace DynamicEnergyTest
             get { return inactiveTextColor; }
             set { inactiveTextColor = value; }
         }
-        
+
         protected void SetBorderColor(Color color)
         {
             TopLeftCornerPanel.BackColor = color;
@@ -298,7 +280,7 @@ namespace DynamicEnergyTest
 
         protected void SetTextColor(Color color)
         {
-            //SystemLabel.ForeColor = color;
+            SystemLabel.ForeColor = color;
             TitleLabel.ForeColor = color;
             MinimizeLabel.ForeColor = color;
             MaximizeLabel.ForeColor = color;
@@ -322,8 +304,8 @@ namespace DynamicEnergyTest
             {
                 if (maximized)
                 {
-                    SystemIcon.Left = 0;
-                    SystemIcon.Top = 0;
+                    SystemLabel.Left = 0;
+                    SystemLabel.Top = 0;
                     CloseLabel.Left += RightBorderPanel.Width;
                     CloseLabel.Top = 0;
                     MaximizeLabel.Left += RightBorderPanel.Width;
@@ -336,8 +318,8 @@ namespace DynamicEnergyTest
                 }
                 else if (previousWindowState == FormWindowState.Maximized)
                 {
-                    SystemIcon.Left = LeftBorderPanel.Width;
-                    SystemIcon.Top = TopBorderPanel.Height;
+                    SystemLabel.Left = LeftBorderPanel.Width;
+                    SystemLabel.Top = TopBorderPanel.Height;
                     CloseLabel.Left -= RightBorderPanel.Width;
                     CloseLabel.Top = TopBorderPanel.Height;
                     MaximizeLabel.Left -= RightBorderPanel.Width;
@@ -351,6 +333,33 @@ namespace DynamicEnergyTest
 
                 previousWindowState = MinMaxState;
             }
+            else if (previousWindowState == FormWindowState.Normal)
+            {
+                SetNormalLayout();
+            }
+        }
+
+        private void SetNormalLayout()
+        {
+            this.NewClientSize = this.ClientSize;
+            this.TopLeftCornerPanel.Location = new System.Drawing.Point(0, 0);
+            this.TopRightCornerPanel.Location = new System.Drawing.Point(this.NewClientSize.Width - 1, 0);
+            this.TopBorderPanel.Location = new System.Drawing.Point(1, 0);
+            this.TopBorderPanel.Size = new System.Drawing.Size(this.NewClientSize.Width - 2, 1);
+
+            this.BottomLeftCornerPanel.Location = new System.Drawing.Point(0, this.NewClientSize.Height - 1);
+            this.BottomRightCornerPanel.Location = new System.Drawing.Point(this.NewClientSize.Width - 1, this.NewClientSize.Height - 1);
+            this.BottomBorderPanel.Location = new System.Drawing.Point(1, this.NewClientSize.Height - 1);
+            this.BottomBorderPanel.Size = new System.Drawing.Size(this.NewClientSize.Width - 2, 1);
+
+            this.LeftBorderPanel.Size = new System.Drawing.Size(1, this.NewClientSize.Height - 2);
+            this.RightBorderPanel.Location = new System.Drawing.Point(this.NewClientSize.Width - 1, 1);
+            this.RightBorderPanel.Size = new System.Drawing.Size(1, this.NewClientSize.Height - 2);
+
+            this.MinimizeLabel.Location = new System.Drawing.Point(this.NewClientSize.Width - 73, 1);
+            this.MaximizeLabel.Location = new System.Drawing.Point(this.NewClientSize.Width - 49, 1);
+            this.CloseLabel.Location = new System.Drawing.Point(this.NewClientSize.Width - 25, 1);
+            this.TitleLabel.Size = new Size(this.NewClientSize.Width - 2, 22);
         }
 
         private FormWindowState ToggleMaximize()

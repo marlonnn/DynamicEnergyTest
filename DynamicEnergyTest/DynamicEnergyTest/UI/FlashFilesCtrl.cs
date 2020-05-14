@@ -385,7 +385,7 @@ namespace DynamicEnergyTest.UI
             string preFix = "--chip esp32 --port " + sysConfig.FlushSetting.Com + " --baud " + sysConfig.FlushSetting.Baund + " --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m " +
                 "--flash_size detect";
             sb.Append(preFix);
-            var sortedFlushBins = sysConfig.FlashBins.OrderBy(bin => bin.FlushOrder).ToList();
+            var sortedFlushBins = sysConfig.JsonConfig.FlashBins.OrderBy(bin => bin.FlushOrder).ToList();
             for (int i=0; i< sortedFlushBins.Count(); i++)
             {
                 string binParams = (" " + sortedFlushBins[i].Address + " " + sortedFlushBins[i].FullName);

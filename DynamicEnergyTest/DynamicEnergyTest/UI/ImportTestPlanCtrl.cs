@@ -33,6 +33,13 @@ namespace DynamicEnergyTest.UI
         {
             InitializeComponent();
             SysConfig = SysConfig.GetConfig();
+
+            SysConfig.QueryUIDS();
+            if (SysConfig.JsonConfig != null && !string.IsNullOrEmpty(SysConfig.JsonConfig.ImportedUIDFile))
+            {
+                var fileName = Path.GetFileName(SysConfig.JsonConfig.ImportedUIDFile);
+                ImportedFile = "文件： " + fileName + " 已成功导入 " + SysConfig.UIDs.Count + " 个UID";
+            }
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
@@ -44,7 +51,7 @@ namespace DynamicEnergyTest.UI
                 openFileDialog.Filter = @".xls Files(*.xls) | *.xls";
                 if (openFileDialog.ShowDialog(this.Parent) == DialogResult.OK)
                 {
-                    SysConfig.UIDs.Clear();
+                    //SysConfig.UIDs.Clear();
                     //SysConfig.UIDs
                     string fileName = openFileDialog.FileName;
                     using (FileStream stream = File.Open(fileName, FileMode.Open, FileAccess.Read))
@@ -70,7 +77,8 @@ namespace DynamicEnergyTest.UI
                             if (!string.IsNullOrEmpty(sn) && sn.ToLower().StartsWith("zs"))
                             {
                                 UID uID = new UID(sn);
-                                if (!SysConfig.UIDs.Contains(uID))
+                                var findUID = SysConfig.UIDs.FirstOrDefault(u => u.UIDCode == sn);
+                                if (/*!SysConfig.UIDs.Contains(uID)*/findUID == null)
                                     SysConfig.UIDs.Add(uID);
                             }
                         }
@@ -78,6 +86,7 @@ namespace DynamicEnergyTest.UI
                         //6. Free resources (IExcelDataReader is IDisposable)
                         excelReader.Close();
                         safeFileName = openFileDialog.SafeFileName;
+                        SysConfig.JsonConfig.ImportedUIDFile = openFileDialog.FileName;
                         //ImportedFile = "文件： " + openFileDialog.SafeFileName + " 已成功导入 " + SysConfig.UIDs.Count + " 个UID";
                         ProgressBarVisiable(true);
                         this.backgroundWorker.RunWorkerAsync();
@@ -95,12 +104,19 @@ namespace DynamicEnergyTest.UI
             var testPanelCtrl = Program.UIFactory.TestPanelCtrl;
             var processEntries = testPanelCtrl.GetProcessEntrys();
             List<UID> UIDs = SysConfig.UIDs;
+
             for (int i = 0; i < UIDs.Count; i++)
             {
-                ProcessTest processTest = new ProcessTest(UIDs[i]);
-                processTest.ProcessEntrys = processEntries;
-                SysConfig.ProcessTests.Add(processTest);
-                bgw.ReportProgress((i * 100) / UIDs.Count);
+                var findProcessTest = SysConfig.ProcessTests.FirstOrDefault(p => p.UID.UIDCode == UIDs[i].UIDCode);
+                if (findProcessTest == null)
+                {
+                    ProcessTest processTest = new ProcessTest(UIDs[i]);
+
+                    processTest.ProcessEntrys = processEntries;
+                    SysConfig.ProcessTests.Add(processTest);
+                    SysConfig.UpdateTestTable(processTest, false);
+                    bgw.ReportProgress((i * 100) / UIDs.Count);
+                }
             }
         }
 
@@ -113,6 +129,7 @@ namespace DynamicEnergyTest.UI
         {
             // TODO: do something with final calculation.
             ProgressBarVisiable(false);
+            //SysConfig.UpdateTestTable();
         }
 
         private void ProgressBarVisiable(bool visiable)

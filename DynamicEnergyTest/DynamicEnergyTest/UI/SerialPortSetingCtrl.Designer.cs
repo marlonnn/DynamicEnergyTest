@@ -141,8 +141,9 @@
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(173, 38);
             this.btnConnect.TabIndex = 17;
-            this.btnConnect.Tag = "OffLine";
-            this.btnConnect.Text = "Connect";
+            this.btnConnect.Text = "保存";
+            //this.btnConnect.Tag = "OffLine";
+            //this.btnConnect.Text = "Connect";
             this.btnConnect.UseVisualStyleBackColor = false;
             this.btnConnect.Click += new System.EventHandler(this.BtnConnect_Click);
             // 

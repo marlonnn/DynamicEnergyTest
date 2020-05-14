@@ -190,6 +190,7 @@ namespace KoboldCom
             {
                 return new SerialPortSetting
                 {
+                    DataBits = this._serialPort.DataBits,
                     StopBits = this._serialPort.StopBits,
                     Baudrate = this._serialPort.BaudRate,
                     Handshake = this._serialPort.Handshake,
@@ -212,6 +213,7 @@ namespace KoboldCom
                 this._serialPort.Handshake = setting.Handshake;
                 this._serialPort.BaudRate = setting.Baudrate;
                 this._serialPort.StopBits = setting.StopBits;
+                this._serialPort.DataBits = setting.DataBits;
             }
         }
     }
