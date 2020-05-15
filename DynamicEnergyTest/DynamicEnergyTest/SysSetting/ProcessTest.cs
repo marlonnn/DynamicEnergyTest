@@ -22,15 +22,18 @@ namespace DynamicEnergyTest.SysSetting
         {
             get
             {
-                TestStatus testStatus = TestStatus.Fail;
+                TestStatus testStatus = TestStatus.UnTest;
                 if (ProcessEntrys != null && ProcessEntrys.Count > 0)
                 {
                     int passCount = 0;
+                    int failCount = 0;
                     for (int i=0; i<ProcessEntrys.Count; i++)
                     {
                         if (ProcessEntrys[i].TestStatus == TestStatus.Pass) passCount++;
+                        else if (ProcessEntrys[i].TestStatus == TestStatus.Fail) failCount++;
                     }
                     if (passCount == ProcessEntrys.Count) testStatus = TestStatus.Pass;
+                    if (failCount > 0) testStatus = TestStatus.Fail;
                 }
                 return testStatus;
             }

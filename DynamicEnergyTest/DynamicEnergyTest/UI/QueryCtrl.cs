@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DynamicEnergyTest.SysSetting;
+using System.Data.SqlClient;
 
 namespace DynamicEnergyTest.UI
 {
@@ -21,16 +22,19 @@ namespace DynamicEnergyTest.UI
             InitializeComponent();
 
             sysConfig = SysConfig.GetConfig();
-
+            //dataAdapter = new SqlDataAdapter();
             BindDataToGridView();
 
-            sysConfig.UpdateDataGridViewHandler += UpdateDataGridViewHandler;
+            //sysConfig.UpdateDataGridViewHandler += UpdateDataGridViewHandler;
+
+            //var v = sysConfig.QueryProcessTests();
         }
 
 
         private void BindDataToGridView()
         {
-            dataTable = sysConfig.UIDs.ToDataTable();
+            dataTable = sysConfig.QueryProcessTests();
+            //dataTable = sysConfig.UIDs.ToDataTable();
 
             this.dataGridView.DataSource = dataTable;
 
@@ -91,7 +95,7 @@ namespace DynamicEnergyTest.UI
                     var uid = sysConfig.UIDs[row];
                     Console.WriteLine("UID: " + uid.UIDCode + " TestStatus: " + uid.TestStatus.ToString());
 
-                    DetailForm detailForm = new DetailForm();
+                    DetailForm detailForm = new DetailForm(uid);
                     detailForm.ShowDialog();
                 }
             }

@@ -179,6 +179,55 @@ namespace DynamicEnergyTest.SysSetting
             UpdateFlushStatus(flushBlock);
         }
 
+        public List<ProcessEntry> QueryProcessEntrys(UID uID)
+        {
+            SQLiteConnection conn = null;
+            try
+            {
+                string sql = "SELECT * FROM TestTable WHERE DEVICE = @UID";
+                conn = new SQLiteConnection("data source = " + dataBase);
+                SQLiteCommand cmd = new SQLiteCommand();
+                cmd.Connection = conn;
+                conn.Open();
+                SQLiteHelper sh = new SQLiteHelper(cmd);
+                DataTable dt = sh.Select(sql, new SQLiteParameter[] {
+                        new SQLiteParameter("@UID", uID.UIDCode)});
+                if (dt.Rows.Count > 0)
+                {
+                    var jsonStr = dt.Rows[0][3] as string;
+                    var entrys = fastJSON.JSON.ToObject<List<ProcessEntry>>(jsonStr);
+                    return entrys;
+                }
+                if (conn != null) conn.Close();
+            }
+            catch (Exception ex)
+            {
+                if (conn != null) conn.Close();
+            }
+            return null;
+        }
+
+        public DataTable QueryProcessTests()
+        {
+            SQLiteConnection conn = null;
+            try
+            {
+                string sql = "SELECT DEVICE, STATUS, OPERATE FROM TestTable";
+                conn = new SQLiteConnection("data source = " + dataBase);
+                SQLiteCommand cmd = new SQLiteCommand();
+                cmd.Connection = conn;
+                conn.Open();
+                SQLiteHelper sh = new SQLiteHelper(cmd);
+                DataTable dt = sh.Select(sql);
+                if (conn != null) conn.Close();
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                if (conn != null) conn.Close();
+            }
+            return null;
+        }
 
         public void QueryUIDS()
         {
@@ -210,7 +259,7 @@ namespace DynamicEnergyTest.SysSetting
                                     this.UIDs.Add(uID);
                                 }
                             }
-                            else if (j == 2)
+                            else if (j == 3)
                             {
                                 var jsonStr = dt.Rows[i][j] as string;
                                 processEntries = fastJSON.JSON.ToObject<List<ProcessEntry>>(jsonStr);
@@ -249,7 +298,7 @@ namespace DynamicEnergyTest.SysSetting
                     var dicData = new Dictionary<string, object>();
                     dicData["DEVICE"] = processTest.UID.UIDCode;
                     dicData["STATUS"] = processTest.TestStatus.ToString();
-
+                    dicData["OPERATE"] = "查看测试日志";
                     if (processTest.ProcessEntrys != null && processTest.ProcessEntrys.Count > 0)
                     {
                         var stringProcessEntrys = fastJSON.JSON.ToNiceJSON(processTest.ProcessEntrys, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });
@@ -271,7 +320,7 @@ namespace DynamicEnergyTest.SysSetting
                         var insertDicData = new Dictionary<string, object>();
                         insertDicData["DEVICE"] = processTest.UID.UIDCode;
                         insertDicData["STATUS"] = processTest.TestStatus.ToString();
-
+                        insertDicData["OPERATE"] = "查看测试日志";
                         if (processTest.ProcessEntrys != null && processTest.ProcessEntrys.Count > 0)
                         {
                             var stringProcessEntrys = fastJSON.JSON.ToNiceJSON(processTest.ProcessEntrys, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });
@@ -306,7 +355,7 @@ namespace DynamicEnergyTest.SysSetting
                 var dicData = new Dictionary<string, object>();
                 dicData["DEVICE"] = processTest.UID.UIDCode;
                 dicData["STATUS"] = processTest.TestStatus.ToString();
-
+                dicData["OPERATE"] = "查看测试日志";
                 if (processTest.ProcessEntrys != null && processTest.ProcessEntrys.Count > 0)
                 {
                     var stringProcessEntrys = fastJSON.JSON.ToNiceJSON(processTest.ProcessEntrys, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });
@@ -331,7 +380,7 @@ namespace DynamicEnergyTest.SysSetting
                     var insertDicData = new Dictionary<string, object>();
                     insertDicData["DEVICE"] = processTest.UID.UIDCode;
                     insertDicData["STATUS"] = processTest.TestStatus.ToString();
-
+                    insertDicData["OPERATE"] = "查看测试日志";
                     if (processTest.ProcessEntrys != null && processTest.ProcessEntrys.Count > 0)
                     {
                         var stringProcessEntrys = fastJSON.JSON.ToNiceJSON(processTest.ProcessEntrys, new fastJSON.JSONParameters() { UseExtensions = false, ShowReadOnlyProperties = true });

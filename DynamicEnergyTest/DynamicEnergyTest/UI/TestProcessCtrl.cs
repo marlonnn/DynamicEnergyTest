@@ -293,6 +293,13 @@ namespace DynamicEnergyTest.UI
                             this.linkLabel1.Visible = true;
                         }
                     }
+                    else
+                    {
+                        if (this.linkLabel1.Visible)
+                        {
+                            this.linkLabel1.Visible = false;
+                        }
+                    }
                 }
             }
         }
