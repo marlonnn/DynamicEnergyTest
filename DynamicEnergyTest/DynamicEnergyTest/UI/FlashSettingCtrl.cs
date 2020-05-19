@@ -138,7 +138,7 @@ namespace DynamicEnergyTest.UI
             //Import Flush UID 
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.InitialDirectory = Environment.CurrentDirectory + "\\Firmware";
+                openFileDialog.InitialDirectory = Environment.CurrentDirectory + "\\DataBase";
                 openFileDialog.Filter = @".db Sqilte File(*.db) | *.db";
                 openFileDialog.Multiselect = false;
                 if (openFileDialog.ShowDialog(this.Parent) == DialogResult.OK)

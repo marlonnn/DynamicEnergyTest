@@ -412,10 +412,13 @@
     <None Include="Config\Paramaters.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Firmware\bootloader.bin">
+    <None Include="DataBase\DynamicTest.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Firmware\DynamicTest.db">
+    <None Include="DataBase\sqdb.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Firmware\bootloader.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Firmware\msocket.bin">
@@ -425,9 +428,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Firmware\partitions_two_ota.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Firmware\sqdb.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Firmware\UID列表.xls" />
@@ -475,6 +475,9 @@
   <ItemGroup>
     <Content Include="Config\ProcessItems.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DataBase\readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="dynamicTest.ico" />
     <Content Include="Firmware\readme.txt">

@@ -64,6 +64,7 @@ namespace DynamicEnergyTest.UI
                         textBox.Text = binFileName.Name;
                     }
                 }
+                sysConfig.WriteJsonConfig();
             }
         }
 
@@ -87,7 +88,7 @@ namespace DynamicEnergyTest.UI
             using (openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Filter = "Flush Bin Files (*.bin) | *.bin";
-                openFileDialog.InitialDirectory = System.Environment.CurrentDirectory + "\\Firmware";
+                openFileDialog.InitialDirectory = @"C:\FlushTool\Firmware";
                 openFileDialog.Multiselect = true;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {

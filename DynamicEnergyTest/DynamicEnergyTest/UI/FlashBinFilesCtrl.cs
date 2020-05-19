@@ -57,8 +57,14 @@ namespace DynamicEnergyTest.UI
                         if (binAddressTable != null)
                         {
                             Bin bin = new Bin(binAddressTable.FlushOrder, binAddressTable.Address, fileName, fileFullName);
-                            if (sysConfig.JsonConfig.FlashBins.Find(b => b.Name == bin.Name) == null)
+                            Bin findBin = sysConfig.JsonConfig.FlashBins.Find(b => b.Name == bin.Name);
+                            if (findBin == null)
                             {
+                                sysConfig.JsonConfig.FlashBins.Add(bin);
+                            }
+                            else
+                            {
+                                sysConfig.JsonConfig.FlashBins.Remove(findBin);
                                 sysConfig.JsonConfig.FlashBins.Add(bin);
                             }
                         }
@@ -105,7 +111,7 @@ namespace DynamicEnergyTest.UI
             using (OpenFileDialog  openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Filter = "Flush Bin Files (*.bin) | *.bin";
-                openFileDialog.InitialDirectory = System.Environment.CurrentDirectory + "\\Firmware";
+                openFileDialog.InitialDirectory = @"C:\FlushTool\Firmware";//C:\FlushTool\Firmware
                 openFileDialog.Multiselect = true;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -118,8 +124,15 @@ namespace DynamicEnergyTest.UI
                             if (binAddressTable != null)
                             {
                                 Bin bin = new Bin(binAddressTable.FlushOrder, binAddressTable.Address, fileName, openFileDialog.FileNames[i]);
-                                if (sysConfig.JsonConfig.FlashBins.Find(b => b.Name == bin.Name) == null)
+                                Bin findBin = sysConfig.JsonConfig.FlashBins.Find(b => b.Name == bin.Name);
+                                if (findBin == null)
                                 {
+                                    sysConfig.JsonConfig.FlashBins.Add(bin);
+                                }
+                                else
+                                {
+                                    //update 
+                                    sysConfig.JsonConfig.FlashBins.Remove(findBin);
                                     sysConfig.JsonConfig.FlashBins.Add(bin);
                                 }
                             }

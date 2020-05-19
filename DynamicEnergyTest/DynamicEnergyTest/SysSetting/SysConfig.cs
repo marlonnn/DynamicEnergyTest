@@ -118,7 +118,7 @@ namespace DynamicEnergyTest.SysSetting
         public readonly static string ApplicationName = "动态能量标识产测软件";
         private const string configPath = "Config\\FlushConfig.json";
         private const string jsonConfig = "Config\\JsonConfig.json";
-        private const string dynamicTestPath = "\\Firmware\\DynamicTest.db";
+        private const string dynamicTestPath = "\\DataBase\\DynamicTest.db";
         private const string flushTable = "FlushTable";
         private const string testTable = "TestTable";
         private string dataBase;
@@ -468,7 +468,7 @@ namespace DynamicEnergyTest.SysSetting
                     if (obj != null && !(obj is DBNull))
                     {
                         byte[] datas = (byte[])obj;
-                        TempNvsBinFile = System.Environment.CurrentDirectory + "\\Firmware\\" + socketName + ".bin";
+                        TempNvsBinFile = @"C:\FlushTool\Firmware\" + socketName + ".bin";
                         File.WriteAllBytes(TempNvsBinFile, datas);
                         return true;
                     }
