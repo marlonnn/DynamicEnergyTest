@@ -376,5 +376,15 @@ namespace DynamicEnergyTest
                 }
             }
         }
+
+        private void MainBaseForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.Alt && e.KeyCode == Keys.A)
+            {
+                EnterDynamicForm enterDynamicForm = new EnterDynamicForm(UIFactory.TestPanelCtrl.LogViewTimer);
+                enterDynamicForm.ShowDialog(this);
+                enterDynamicForm.Dispose();
+            }
+        }
     }
 }

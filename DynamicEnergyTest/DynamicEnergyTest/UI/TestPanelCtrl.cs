@@ -17,6 +17,10 @@ namespace DynamicEnergyTest.UI
     public partial class TestPanelCtrl : UserControl
     {
         private Timer logViewTimer;
+        public Timer LogViewTimer
+        {
+            get { return logViewTimer; }
+        }
         private Timer processTimer;
 
         private SysConfig sysConfig;

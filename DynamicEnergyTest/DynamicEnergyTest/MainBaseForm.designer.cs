@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.resources = new System.ComponentModel.ComponentResourceManager(typeof(MainBaseForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainBaseForm));
             this.TopLeftCornerPanel = new System.Windows.Forms.Panel();
             this.TopRightCornerPanel = new System.Windows.Forms.Panel();
             this.BottomLeftCornerPanel = new System.Windows.Forms.Panel();
@@ -46,6 +46,7 @@
             this.DecorationToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panel = new System.Windows.Forms.Panel();
             this.toolBarCtrl1 = new DynamicEnergyTest.UI.ToolBarCtrl();
+            ((System.ComponentModel.ISupportInitialize)(this.SystemIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // TopLeftCornerPanel
@@ -184,15 +185,15 @@
             this.TitleLabel.Text = "Title";
             this.TitleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // SystemLabel
+            // SystemIcon
             // 
             this.SystemIcon.BackColor = System.Drawing.Color.White;
             this.SystemIcon.Location = new System.Drawing.Point(1, 1);
             this.SystemIcon.Name = "SystemIcon";
             this.SystemIcon.Size = new System.Drawing.Size(24, 22);
             this.SystemIcon.TabIndex = 11;
+            this.SystemIcon.TabStop = false;
             this.SystemIcon.Text = "g";
-            //this.SystemIcon.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // panel
             // 
@@ -234,9 +235,12 @@
             this.Controls.Add(this.panel);
             this.Controls.Add(this.toolBarCtrl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.Location = new System.Drawing.Point(0, 0);
             this.Name = "MainBaseForm";
             this.Text = "Title";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainBaseForm_KeyDown);
+            ((System.ComponentModel.ISupportInitialize)(this.SystemIcon)).EndInit();
             this.ResumeLayout(false);
 
         }

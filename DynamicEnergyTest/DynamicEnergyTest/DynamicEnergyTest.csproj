@@ -170,6 +170,12 @@
     <Compile Include="UI\DetailForm.Designer.cs">
       <DependentUpon>DetailForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\EnterDynamicForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\EnterDynamicForm.Designer.cs">
+      <DependentUpon>EnterDynamicForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\ExListView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -316,6 +322,9 @@
     <EmbeddedResource Include="ChildForm.resx">
       <DependentUpon>ChildForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormBase.resx">
+      <DependentUpon>FormBase.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainBaseForm.resx">
       <DependentUpon>MainBaseForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -334,6 +343,9 @@
     </Compile>
     <EmbeddedResource Include="UI\DetailForm.resx">
       <DependentUpon>DetailForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\EnterDynamicForm.resx">
+      <DependentUpon>EnterDynamicForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\FlashBinFilesBroserCtrl.resx">
       <DependentUpon>FlashBinFilesBroserCtrl.cs</DependentUpon>

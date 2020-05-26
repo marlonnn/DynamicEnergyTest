@@ -220,5 +220,18 @@ namespace DynamicEnergyTest
                 msg.Result = NativeConstants.TRUE;
             }
         }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // FormBase
+            // 
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.KeyPreview = true;
+            this.Name = "FormBase";
+            this.ResumeLayout(false);
+
+        }
     }
 }

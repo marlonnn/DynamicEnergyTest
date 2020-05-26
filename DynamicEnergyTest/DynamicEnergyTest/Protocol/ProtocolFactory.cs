@@ -149,7 +149,11 @@ namespace DynamicEnergyTest.Protocol
 
             var v2 = System.Text.Encoding.UTF8.GetString(bytes);
             Console.WriteLine(v2);
+            RawDataHandler?.Invoke(bytes);
         }
+
+        public RawDataDelegate RawDataHandler;
+        public delegate void RawDataDelegate(byte[] bytes);
 
         public static ProtocolFactory GetFactory()
         {
@@ -191,13 +195,55 @@ namespace DynamicEnergyTest.Protocol
             return isOpen;
         }
 
-        public ComCode Write(DataModel dataModel)
+        public ComCode Write(byte[] sendBytes, int funCode)
+        {
+            //close and reopen com port
+            if (Open())
+            {
+                ComCode comCode = _communicator.Write(sendBytes, 0, sendBytes.Count());
+                if (comCode == ComCode.SendOK)
+                {
+                    Stopwatch sw = new Stopwatch();
+                    sw.Start();
+                    while (true)
+                    {
+                        //Do 
+                        if (receiveDataModel != null && receiveDataModel.FunCode == funCode)
+                        {
+                            var raw = receiveDataModel.Raw;
+                            var dataRegion = receiveDataModel.DataRegion;
+                            if (receiveDataModel.CheckLegal())
+                                return ComCode.ReceivedOK;
+                            else
+                                return ComCode.ReceivedMessageError;
+                        }
+                        if (sw.ElapsedMilliseconds > 3000)
+                        {
+                            return ComCode.TimeOut;
+                        }
+                        Thread.Sleep(1);
+                        System.Windows.Forms.Application.DoEvents();
+                    }
+                }
+                else
+                {
+                    return comCode;
+                }
+            }
+            else
+            {
+                return ComCode.ComNotOpen;
+            }
+        }
+
+        public ComCode Write(DataModel dataModel, bool needInvoke = true)
         {
             receiveDataModel = null;
 
             var sendBytes = dataModel.Encode();
             string readableBytes = ByteHelper.Byte2ReadalbeXstring(sendBytes);
-            UpdateListViewHandler?.Invoke(readableBytes);
+            if (needInvoke)
+                UpdateListViewHandler?.Invoke(readableBytes);
 
             //close and reopen com port
             if (Open())
