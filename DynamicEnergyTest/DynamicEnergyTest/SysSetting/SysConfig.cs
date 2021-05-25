@@ -101,18 +101,18 @@ namespace DynamicEnergyTest.SysSetting
             set { _processTests = value; }
         }
 
-        private ParameterSetting _parameterSetting;
-        public ParameterSetting ParameterSetting
-        {
-            get { return _parameterSetting; }
-            set { _parameterSetting = value; }
-        }
-
         private string _tempNvsBinFile;
         public string TempNvsBinFile
         {
             get { return _tempNvsBinFile; }
             set { _tempNvsBinFile = value; }
+        }
+
+        private string _version;
+        public string McuVersion
+        {
+            get { return _version; }
+            set { this._version = value; }
         }
 
         public readonly static string ApplicationName = "动态能量标识产测软件";
@@ -122,19 +122,21 @@ namespace DynamicEnergyTest.SysSetting
         private const string flushTable = "FlushTable";
         private const string testTable = "TestTable";
         private string dataBase;
+
+        public EventHandler UpdateQueryUIDItemHandler;
         public SysConfig()
         {
             FlushSetting = new FlushSetting();
             FlushBlocks = new List<FlushBlock>();
 
             SystemMode = Properties.Settings.Default.FlushMode ? SysMode.FlushMode: SysMode.FullMode;
+
             SystemStatus = SysStatus.NotReady;
             FlushUIDs = new List<UID>();
             UIDs = new List<UID>();
             BinAddressTable = new List<BinAddressTable>();
 
             ProcessTests = new List<ProcessTest>();
-            ParameterSetting = new ParameterSetting();
 
             dataBase = System.Environment.CurrentDirectory + dynamicTestPath;
 
@@ -207,6 +209,36 @@ namespace DynamicEnergyTest.SysSetting
             return null;
         }
 
+        public DataTable QueryProcessTestsItem(string uidCode)
+        {
+            SQLiteConnection conn = null;
+
+            try
+            {
+                string sql = "SELECT DEVICE, STATUS, OPERATE FROM TestTable WHERE DEVICE = @UID";
+                conn = new SQLiteConnection("data source = " + dataBase);
+                SQLiteCommand cmd = new SQLiteCommand();
+                cmd.Connection = conn;
+                conn.Open();
+
+                SQLiteHelper sh = new SQLiteHelper(cmd);
+                var dicData = new Dictionary<string, object>();
+                dicData["DEVICE"] = uidCode;
+                //dicData["STATUS"] = status;
+                DataTable dt = sh.Select(sql, new SQLiteParameter[] {
+                        new SQLiteParameter("@UID", uidCode)});
+
+                if (conn != null) conn.Close();
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                if (conn != null) conn.Close();
+            }
+            return null;
+
+        }
+
         public DataTable QueryProcessTests()
         {
             SQLiteConnection conn = null;
@@ -248,12 +280,18 @@ namespace DynamicEnergyTest.SysSetting
                         var row = dt.Rows[i];
                         UID uID = null;
                         List<ProcessEntry> processEntries = null;
+                        string uidCode = "";
+                        string testStatus = "";
                         for (int j=0; j<dt.Columns.Count; j++)
                         {
                             if (j == 0)
                             {
-                                var colum = dt.Rows[i][j];
-                                uID = new UID(colum as string);
+                                uidCode = dt.Rows[i][j] as string;
+                            }
+                            else if (j == 1)
+                            {
+                                testStatus = dt.Rows[i][j] as string;
+                                uID = new UID(uidCode, testStatus);
                                 if (uID != null)
                                 {
                                     this.UIDs.Add(uID);

@@ -23,17 +23,25 @@ namespace DynamicEnergyTest.UI
 
             sysConfig = SysConfig.GetConfig();
             //dataAdapter = new SqlDataAdapter();
-            BindDataToGridView();
 
-            //sysConfig.UpdateDataGridViewHandler += UpdateDataGridViewHandler;
+            dataTable = sysConfig.QueryProcessTests();
+            BindDataToGridView(dataTable);
+
+            sysConfig.UpdateDataGridViewHandler += UpdateDataGridViewHandler;
 
             //var v = sysConfig.QueryProcessTests();
+            sysConfig.UpdateQueryUIDItemHandler += UpdateQueryUIDItemHandler;
         }
 
-
-        private void BindDataToGridView()
+        private void UpdateQueryUIDItemHandler(object sender, EventArgs e)
         {
-            dataTable = sysConfig.QueryProcessTests();
+            DataTable dataTable = sender as DataTable;
+            BindDataToGridView(dataTable);
+
+        }
+
+        private void BindDataToGridView(DataTable dataTable)
+        {
             //dataTable = sysConfig.UIDs.ToDataTable();
 
             this.dataGridView.DataSource = dataTable;
@@ -60,7 +68,8 @@ namespace DynamicEnergyTest.UI
         }
         private void UpdateDataGridViewHandler(object sender, EventArgs e)
         {
-            BindDataToGridView();
+            dataTable = sysConfig.QueryProcessTests();
+            BindDataToGridView(dataTable);
 
             this.dataGridView.Refresh();
         }
@@ -90,13 +99,21 @@ namespace DynamicEnergyTest.UI
             if (e.ColumnIndex == 2)
             {
                 var row = e.RowIndex;
-                if (sysConfig.UIDs != null && row < sysConfig.UIDs.Count - 1)
+                if (sysConfig.UIDs != null && row < sysConfig.UIDs.Count - 1 && row > -1)
                 {
-                    var uid = sysConfig.UIDs[row];
-                    Console.WriteLine("UID: " + uid.UIDCode + " TestStatus: " + uid.TestStatus.ToString());
+                    //var uid = sysConfig.UIDs[row];
+                    var uidCode = this.dataGridView.CurrentRow.Cells[0].Value.ToString().ToUpper();
+                    if (!string.IsNullOrEmpty(uidCode))
+                    {
+                        UID findUid = sysConfig.UIDs.FirstOrDefault(u => u.UIDCode == uidCode);
+                        if (findUid != null)
+                        {
+                            Console.WriteLine("UID: " + findUid.UIDCode + " TestStatus: " + findUid.TestStatus.ToString());
 
-                    DetailForm detailForm = new DetailForm(uid);
-                    detailForm.ShowDialog();
+                            DetailForm detailForm = new DetailForm(findUid);
+                            detailForm.ShowDialog();
+                        }
+                    }
                 }
             }
         }

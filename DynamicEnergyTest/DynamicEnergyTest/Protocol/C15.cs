@@ -27,5 +27,10 @@ namespace DynamicEnergyTest.Protocol
             }
             return false;
         }
+
+        public override bool CheckLegal()
+        {
+            return !string.IsNullOrEmpty(this.ICCID);
+        }
     }
 }

@@ -66,12 +66,12 @@ namespace DynamicEnergyTest.Protocol
         public override bool CheckLegal()
         {
             bool legal = false;
-            var parameter = SysConfig.GetConfig().ParameterSetting;
+            var parameter = SysConfig.GetConfig().JsonConfig.ParameterSetting;
             if (parameter != null)
             {
-                legal = (this.Voltage > parameter.LowVoltage && this.Voltage < parameter.HighVoltage) &&
-                    (this.Current > parameter.LowCurrent && this.Current < parameter.HighCurrent) &&
-                    (this.Power > parameter.LowPower && this.Power < parameter.HighPower);
+                legal = (this.Voltage >= parameter.LowVoltage && this.Voltage <= parameter.HighVoltage) &&
+                    (this.Current >= parameter.LowCurrent && this.Current <= parameter.HighCurrent) &&
+                    (this.Power >= parameter.LowPower && this.Power <= parameter.HighPower);
             }
             return legal;
         }

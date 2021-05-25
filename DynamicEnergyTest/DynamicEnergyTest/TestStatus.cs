@@ -11,6 +11,7 @@ namespace DynamicEnergyTest
         UnTest,
         Testing,
         Pass,
-        Fail
+        Fail,
+        UnKnow
     }
 }

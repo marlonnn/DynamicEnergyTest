@@ -71,6 +71,34 @@ namespace DynamicEnergyTest.SysSetting
             this._testStatus = TestStatus.UnTest;
             this._operate = "查看测试日志";
         }
+
+        public UID (string sn, string testStatus)
+        {
+            this._uidCode = sn;
+            this._testStatus = GetTestStatus(testStatus);
+            this._operate = "查看测试日志";
+        }
+
+        private TestStatus GetTestStatus(string testStatus)
+        {
+            if (testStatus == TestStatus.UnTest.ToString())
+            {
+                return TestStatus.UnTest;
+            }
+            else if (testStatus == TestStatus.Pass.ToString())
+            {
+                return TestStatus.Pass;
+            }
+            else if (testStatus == TestStatus.Fail.ToString())
+            {
+                return TestStatus.Fail;
+            }
+            else if (testStatus == TestStatus.Testing.ToString())
+            {
+                return TestStatus.Testing;
+            }
+            return TestStatus.UnKnow;
+        }
     }
 
     //public class UIDS : IEnumerable<UID>

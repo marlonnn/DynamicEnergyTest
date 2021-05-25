@@ -25,10 +25,20 @@ namespace DynamicEnergyTest.UI
         public EnterDynamicForm(Timer timer)
         {
             protocolFactory = Program.ProtocolsFactory;
-            protocolFactory.RawDataHandler += RawDataHandler;
+            //protocolFactory.RawDataHandler += RawDataHandler;
+            protocolFactory.DataAnalyzedHandler += DataAnalyzedHandler;
             InitializeComponent();
             InitializeListView();
             this.exListView.Timer = timer;
+        }
+
+        private void DataAnalyzedHandler(DataModel dataModel)
+        {
+            C01 c01 = dataModel as C01;
+            if (c01 != null)
+            {
+                AppendLog(c01.mcuVersion.MCUVersion);
+            }
         }
 
         private void RawDataHandler(byte[] bytes)
@@ -73,6 +83,8 @@ namespace DynamicEnergyTest.UI
         {
             if (MessageBox.Show("设备是否已经进入产测模式？\r\n 点击确定进入测试，取消则继续发送命令。", SysConfig.ApplicationName, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
             {
+                protocolFactory.Close();
+                protocolFactory.DataAnalyzedHandler -= DataAnalyzedHandler;
                 base.OnClosing(e);
             }
             else

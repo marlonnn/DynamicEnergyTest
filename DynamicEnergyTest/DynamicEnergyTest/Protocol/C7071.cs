@@ -33,5 +33,15 @@ namespace DynamicEnergyTest.Protocol
             }
             return false;
         }
+
+        public override bool CheckLegal()
+        {
+            bool legal = false;
+            if (this.BTInfomation != null)
+            {
+                legal = !string.IsNullOrEmpty(this.BTInfomation.MAC) && !string.IsNullOrEmpty(this.BTInfomation.RSSI);
+            }
+            return legal;
+        }
     }
 }

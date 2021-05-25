@@ -93,7 +93,7 @@ namespace DynamicEnergyTest.UI
             if (lastLvi != null)
                 lastLvi.Selected = true;
             this.EndUpdate();
-            this.EnsureVisible(this.Items.Count - 1);
+            //this.EnsureVisible(this.Items.Count - 1);
         }
 
         protected ListViewItem AppendItem(string[] msg)

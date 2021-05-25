@@ -116,6 +116,7 @@ namespace DynamicEnergyTest.UI
             _testPlanRectangle = new Rectangle(MARGIN, MARGIN, SUBITEMWIDTH, this.Height - 2 * MARGIN);
             _unTestRectangle = new Rectangle(_testPlanRectangle.X + SUBITEMWIDTH + MARGIN, MARGIN, SUBITEMWIDTH, this.Height - 2 * MARGIN);
             _testedRectangle = new Rectangle(_unTestRectangle.X + SUBITEMWIDTH + MARGIN, MARGIN, this.Width - 4 * MARGIN - 2 * SUBITEMWIDTH, this.Height - 2 * MARGIN);
+            UpdateTestInfos();
         }
 
         protected override void OnPaint(PaintEventArgs e)

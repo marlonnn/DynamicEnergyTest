@@ -32,6 +32,7 @@ namespace DynamicEnergyTest.UI
                 this.toolBarItemFlash.Bounds = this.toolBarItemTest.Bounds;
                 this.toolBarItemFlash.EnableFocus = true;
             }
+            this.toolBarItemFlash.Visible = !isFullMode;
         }
 
         private void ClickEvent(object sender, EventArgs e)

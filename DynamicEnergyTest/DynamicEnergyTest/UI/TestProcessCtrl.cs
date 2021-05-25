@@ -22,6 +22,7 @@ namespace DynamicEnergyTest.UI
         private List<ProcessItem> processItems;
         private ProtocolFactory protocolFactory;
         private SysConfig sysConfig;
+
         public TestProcessCtrl()
         {
             InitializeComponent();
@@ -72,21 +73,57 @@ namespace DynamicEnergyTest.UI
 
         public void AutoProcess()
         {
-            for (int i = 0; i < this.Controls.Count; i++)
+            if (sysConfig.TestUID == null)
             {
-                TestProcessItem testProcessItem = this.Controls[i] as TestProcessItem;
-                if (testProcessItem != null)
+                if (!ScanOrInputSN()) return;
+
+            }
+            if (CheckEnterDynamicTest())
+            {
+                for (int i = 0; i < this.Controls.Count; i++)
                 {
-                    TestPanelCtrl parentCtrl = this.Parent as TestPanelCtrl;
-                    if (parentCtrl != null)
+                    if (!enableAutoTest) break;
+                    TestProcessItem testProcessItem = this.Controls[i] as TestProcessItem;
+                    if (testProcessItem != null)
                     {
-                        parentCtrl.StatusSwitchCtrl.UpdateProcessItem(testProcessItem.ProcessItem);
+
+                        ProcessTest(testProcessItem);
                     }
-
-                    int testIndex = Int32.Parse(testProcessItem.ItemText);
-                    UpdateListView(testIndex, parentCtrl);
-
                 }
+            }
+            else
+            {
+                MessageBox.Show("测试失败，请重新开始测试并确认主板测试状态。", SysConfig.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                sysConfig.TestUID = null;
+            }
+        }
+
+        private bool CheckEnterDynamicTest()
+        {
+            TestPanelCtrl parentCtrl = this.Parent as TestPanelCtrl;
+
+            var dataModel = protocolFactory.DataModels[0];
+
+            var sendBytes = dataModel.Encode();
+            string readableBytes = ByteHelper.Byte2ReadalbeXstring(sendBytes);
+            parentCtrl.UpdateListView("发送产测命令： " + readableBytes);
+            ComCode comCode = protocolFactory.Write(sendBytes, dataModel.FunCode);
+            parentCtrl.UpdateListView(comCode.GetComCodeDescription());
+            if (comCode == ComCode.ReceivedOK)
+                return true;
+            else
+            {
+                for (int i=0; i< 9; i++)
+                {
+                    parentCtrl.UpdateListView("发送产测命令： " + readableBytes);
+                    ComCode retComCode = protocolFactory.Write(sendBytes, dataModel.FunCode);
+                    parentCtrl.UpdateListView(comCode.GetComCodeDescription());
+                    if (retComCode == ComCode.ReceivedOK)
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
 
@@ -95,34 +132,16 @@ namespace DynamicEnergyTest.UI
             TestProcessItem testProcessItem = sender as TestProcessItem;
             if (testProcessItem != null)
             {
-                //if (testProcessItem.ItemText == "1")
-                //{
-                //    //Test00(testProcessItem);
-                //    if (sysConfig.TestUID == null)
-                //    {
-                //        if (ScanOrInputSN(testProcessItem))
-                //        {
-                //            ProcessTest(testProcessItem);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        ProcessTest(testProcessItem);
-                //    }
-                //}
-                //else
+                if (sysConfig.TestUID == null)
                 {
-                    if (sysConfig.TestUID == null)
-                    {
-                        if (ScanOrInputSN(testProcessItem))
-                        {
-                            ProcessTest(testProcessItem);
-                        }
-                    }
-                    else
+                    if (ScanOrInputSN(testProcessItem))
                     {
                         ProcessTest(testProcessItem);
                     }
+                }
+                else
+                {
+                    ProcessTest(testProcessItem);
                 }
             }
         }
@@ -140,7 +159,7 @@ namespace DynamicEnergyTest.UI
             UpdateListView(testIndex, parentCtrl);
         }
 
-        private bool ScanOrInputSN(TestProcessItem testProcessItem)
+        private bool ScanOrInputSN(TestProcessItem testProcessItem = null)
         {
             bool scanOK = false;
             SNForm sNForm = new SNForm();
@@ -152,46 +171,74 @@ namespace DynamicEnergyTest.UI
             return scanOK;
         }
 
-        private void Test00(TestProcessItem testProcessItem)
-        {
-            TestPanelCtrl parentCtrl = this.Parent as TestPanelCtrl;
-            if (parentCtrl != null)
-            {
-                parentCtrl.StatusSwitchCtrl.UpdateProcessItem(testProcessItem.ProcessItem);
-            }
-
-            var dm = protocolFactory.DataModels[0];
-
-            int testIndex = Int32.Parse(testProcessItem.ItemText);
-            parentCtrl.UpdateListView(dm.TestItem);
-
-            ComCode comCode = protocolFactory.Write(dm);
-            UpdateProcessItem(testIndex, comCode);
-            parentCtrl.UpdateListView(comCode.GetComCodeDescription());
-
-            parentCtrl.UpdateStatusSwitch(comCode);
-        }
         private void UpdateListView(int testIndex, TestPanelCtrl parentCtrl)
         {
             var dataModels = protocolFactory.DataModels;
-
-            foreach (var dm in dataModels.Values)
+            if (testIndex == 9)
             {
-                if (dm.TestIndex == testIndex)
+                if (MessageBox.Show("电池供电测试是否成功？", SysConfig.ApplicationName, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
-                    parentCtrl.UpdateStatusSwitch(TestStatus.Testing);
+                    parentCtrl.UpdateStatusSwitch(TestStatus.Pass);
 
-                    string testItem = dm.TestItem;
-                    parentCtrl.UpdateListView(testItem);
-
-                    ComCode comCode = protocolFactory.Write(dm);
-
-                    UpdateProcessItem(testIndex, comCode);
-                    parentCtrl.UpdateListView(comCode.GetComCodeDescription());
-                    
-                    parentCtrl.UpdateStatusSwitch(comCode);
+                    UpdateProcessItem(testIndex, ComCode.ReceivedOK);
                 }
+                else
+                {
+                    parentCtrl.UpdateStatusSwitch(TestStatus.Fail);
 
+                    UpdateProcessItem(testIndex, ComCode.ReceivedMessageError);
+                }
+            }
+            else
+            {
+                foreach (var dm in dataModels.Values)
+                {
+                    if (dm.TestIndex == testIndex)
+                    {
+                        C01 c01 = dm as C01;
+                        if (dm.FunCode == 0x00710001)
+                        {
+                            //版本测试
+                            if (!string.IsNullOrEmpty(sysConfig.JsonConfig.ParameterSetting.Version) && !string.IsNullOrEmpty(sysConfig.McuVersion))
+                            {
+                                if (sysConfig.JsonConfig.ParameterSetting.Version == sysConfig.McuVersion)
+                                {
+                                    parentCtrl.UpdateStatusSwitch(TestStatus.Pass);
+
+                                    UpdateProcessItem(testIndex, ComCode.ReceivedOK);
+                                }
+                                else
+                                {
+                                    parentCtrl.UpdateStatusSwitch(TestStatus.Fail);
+
+                                    UpdateProcessItem(testIndex, ComCode.ReceivedMessageError);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            parentCtrl.UpdateStatusSwitch(TestStatus.Testing);
+
+                            string testItem = dm.TestItem;
+                            parentCtrl.UpdateListView(testItem);
+
+                            ComCode comCode = protocolFactory.Write(dm);
+
+                            if (comCode == ComCode.ReceivedOK && protocolFactory.ReceiveDataModel != null)
+                            {
+                                var rdm = protocolFactory.ReceiveDataModel;
+                                string readableBytes = ByteHelper.Byte2ReadalbeXstring(rdm.Raw);
+                                parentCtrl.UpdateListView(readableBytes);
+
+                            }
+                            UpdateProcessItem(testIndex, comCode);
+                            parentCtrl.UpdateListView(comCode.GetComCodeDescription());
+
+                            parentCtrl.UpdateStatusSwitch(comCode);
+                        }
+                    }
+
+                }
             }
         }
 
@@ -211,6 +258,9 @@ namespace DynamicEnergyTest.UI
                             testProcessItem.TestStatus = TestStatus.Fail;
                             break;
                         case ComCode.TimeOut:
+                            testProcessItem.TestStatus = TestStatus.Fail;
+                            break;
+                        case ComCode.ReceivedMessageError:
                             testProcessItem.TestStatus = TestStatus.Fail;
                             break;
                         case ComCode.SendOK:
@@ -310,6 +360,7 @@ namespace DynamicEnergyTest.UI
             {
                 FlushProcessTestToDB();
                 ReSetAllProcessItems();
+                ResetStartTestLabel();
             }
         }
 
@@ -342,6 +393,23 @@ namespace DynamicEnergyTest.UI
         {
             var processTest = sysConfig.ProcessTests.FirstOrDefault(p => p.UID == sysConfig.TestUID);
             if (processTest != null) sysConfig.UpdateTestTable(processTest, true);
+        }
+
+        bool enableAutoTest = true;
+        private void lblStartTest_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            enableAutoTest = true;
+            AutoProcess();
+        }
+
+        private void ResetStartTestLabel()
+        {
+            enableAutoTest = true;
+        }
+
+        private void LblStopTest_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            enableAutoTest = false;
         }
     }
 }

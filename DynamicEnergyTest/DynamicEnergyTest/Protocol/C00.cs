@@ -50,23 +50,12 @@ namespace DynamicEnergyTest.Protocol
 
         public override bool Decode(byte[] buf)
         {
-            base.Decode(buf);
-            if (buf != null && buf.Count() == 15)
-            {
-                Manufacture = System.Text.Encoding.UTF8.GetString(buf);
-                return true;
-            }
-            return false;
+            return true;
         }
 
         public override bool CheckLegal()
         {
-            bool legal = false;
-            if (!string.IsNullOrEmpty(Manufacture))
-            {
-                legal = Manufacture == key;
-            }
-            return legal;
+            return true;
         }
     }
 }

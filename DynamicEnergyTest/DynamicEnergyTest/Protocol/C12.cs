@@ -28,7 +28,7 @@ namespace DynamicEnergyTest.Protocol
         public override bool Decode(byte[] buf)
         {
             base.Decode(buf);
-            if (buf.Count() == 14)
+            if (buf.Count() == 15)
             {
                 DevID = System.Text.Encoding.UTF8.GetString(buf, 1, 14);
                 return true;

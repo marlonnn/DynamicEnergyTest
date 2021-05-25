@@ -23,6 +23,13 @@ namespace DynamicEnergyTest.SysSetting
             set { _flashBins = value; }
         }
 
+        private ParameterSetting _parameterSetting;
+        public ParameterSetting ParameterSetting
+        {
+            get { return _parameterSetting; }
+            set { _parameterSetting = value; }
+        }
+
         private SerialPortSetting _serialPortSetting;
         public SerialPortSetting SerialPortSetting
         {
@@ -33,6 +40,7 @@ namespace DynamicEnergyTest.SysSetting
         public JsonConfig()
         {
             FlashBins = new List<Bin>();
+            ParameterSetting = new ParameterSetting();
         }
 
     }

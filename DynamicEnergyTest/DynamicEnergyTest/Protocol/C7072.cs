@@ -34,5 +34,16 @@ namespace DynamicEnergyTest.Protocol
             }
             return false;
         }
+
+        public override bool CheckLegal()
+        {
+            bool legal = false;
+            if (this.WifiInfomation != null)
+            {
+                legal = !string.IsNullOrEmpty(this.WifiInfomation.SSID) && this.WifiInfomation.SSID == "medatc_socket" &&
+                    !string.IsNullOrEmpty(this.WifiInfomation.MAC) && !string.IsNullOrEmpty(this.WifiInfomation.RSSI);
+            }
+            return legal;
+        }
     }
 }

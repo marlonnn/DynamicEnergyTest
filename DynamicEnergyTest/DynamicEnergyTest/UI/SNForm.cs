@@ -68,5 +68,14 @@ namespace DynamicEnergyTest.UI
                 MessageBox.Show("请先导入测试的 UID 设备列表。", SysConfig.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
+        private void TxtSN_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                BtnOK_Click(sender, e);
+                e.Handled = true;
+            }
+        }
     }
 }

@@ -105,6 +105,11 @@ namespace DynamicEnergyTest.UI
             }
             else
             {
+                if (FlashStatus == FlashStatus.Pass)
+                {
+                    this.uidTxtBox.Clear();
+                    this.uidTxtBox.Focus();
+                }
                 this.Invalidate(new Region(_botomRect));
             }
         }

@@ -20,7 +20,7 @@ namespace DynamicEnergyTest.UI
         public ParameterSettingCtrl()
         {
             InitializeComponent();
-            parameterSetting = SysConfig.GetConfig().ParameterSetting;
+            parameterSetting = SysConfig.GetConfig().JsonConfig.ParameterSetting;
             InitializeSetting();
         }
 
@@ -58,22 +58,18 @@ namespace DynamicEnergyTest.UI
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            using (var writer = new FileStream("Paramaters.xml", FileMode.Create))
-            {
-                XmlSerializer ser = new XmlSerializer(typeof(ParameterSetting));
-                ParameterSetting parameterSetting = new ParameterSetting();
-                parameterSetting.Version = this.txtVersion.Text;
-                parameterSetting.LowVoltage = (double)this.lowInputVoltage.Value;
-                parameterSetting.HighVoltage = (double)this.highInputVoltage.Value;
-                parameterSetting.LowCurrent = (double)this.lowCurrent.Value;
-                parameterSetting.HighCurrent = (double)this.highCurrent.Value;
-                parameterSetting.LowPower = (double)this.lowPower.Value;
-                parameterSetting.HighPower = (double)this.highPower.Value;
-                parameterSetting.LowSleepCurrent = (double)this.lowSleepCurrent.Value;
-                parameterSetting.HighSleepCurrent = (double)this.highSleepCurrent.Value;
-                SysConfig.GetConfig().ParameterSetting = parameterSetting;
-                ser.Serialize(writer, parameterSetting);
-            }
+            ParameterSetting parameterSetting = new ParameterSetting();
+            parameterSetting.Version = this.txtVersion.Text;
+            parameterSetting.LowVoltage = (double)this.lowInputVoltage.Value;
+            parameterSetting.HighVoltage = (double)this.highInputVoltage.Value;
+            parameterSetting.LowCurrent = (double)this.lowCurrent.Value;
+            parameterSetting.HighCurrent = (double)this.highCurrent.Value;
+            parameterSetting.LowPower = (double)this.lowPower.Value;
+            parameterSetting.HighPower = (double)this.highPower.Value;
+            parameterSetting.LowSleepCurrent = (double)this.lowSleepCurrent.Value;
+            parameterSetting.HighSleepCurrent = (double)this.highSleepCurrent.Value;
+            SysConfig.GetConfig().JsonConfig.ParameterSetting = parameterSetting;
+            SysConfig.GetConfig().WriteJsonConfig();
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)

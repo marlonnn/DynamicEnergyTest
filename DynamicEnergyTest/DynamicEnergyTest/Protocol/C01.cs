@@ -10,8 +10,12 @@ namespace DynamicEnergyTest.Protocol
     //版本测试
     public class C01 : DataModel
     {
-        public string MCUVersion { get; set; }
-
+        public class Version
+        {
+            public string MCUVersion { get; set; }
+        }
+        public string MCUVersionString { get; set; }
+        public Version mcuVersion { get; set; }
         public C01()
         {
             this.TestIndex = 2;
@@ -23,7 +27,9 @@ namespace DynamicEnergyTest.Protocol
         {
             if (buf != null && buf.Count() > 0)
             {
-                MCUVersion = System.Text.Encoding.UTF8.GetString(buf);
+                MCUVersionString = System.Text.Encoding.UTF8.GetString(buf);
+                this.mcuVersion = ParseHelpers.ParseJSON<Version>(MCUVersionString);
+                SysConfig.GetConfig().McuVersion = this.mcuVersion.MCUVersion;
                 return true;
             }
             return false;
@@ -32,10 +38,11 @@ namespace DynamicEnergyTest.Protocol
         public override bool CheckLegal()
         {
             bool legal = false;
-            var parameter = SysConfig.GetConfig().ParameterSetting;
-            if (!string.IsNullOrEmpty(MCUVersion) && parameter != null && !string.IsNullOrEmpty(parameter.Version))
+            var parameter = SysConfig.GetConfig().JsonConfig.ParameterSetting;
+            if (!string.IsNullOrEmpty(MCUVersionString) && parameter != null && !string.IsNullOrEmpty(parameter.Version))
             {
-                legal = MCUVersion == parameter.Version;
+                //legal = MCUVersion == parameter.Version;
+                legal = true;
             }
             return legal;
         }

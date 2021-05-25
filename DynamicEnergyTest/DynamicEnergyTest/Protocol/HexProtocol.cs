@@ -22,7 +22,14 @@ namespace DynamicEnergyTest.Protocol
             this.Data.Mac = new byte[MacLength];
             Array.Copy(Raw, offset, this.Data.Mac, 0, this.Data.Mac.Length);
             this.Data.FunCode = ByteHelper.BytesToInt2(Raw, offset + this.Data.Mac.Length);
-            if (Raw.Length > 13)
+            if (Raw.Length == 13)
+            {
+                if (this.Data.FunCode == 0)
+                {
+                    this.Valid = true;
+                }
+            }
+            else if (Raw.Length > 13)
             {
                 int dataRegionLength = Raw.Length - offset - this.Data.Mac.Length - 4 - 1;
                 this.Data.DataRegion = new byte[dataRegionLength];

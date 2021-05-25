@@ -40,7 +40,7 @@ namespace DynamicEnergyTest
             {
                 MiniDumper.Init();
 
-                InitializeParameters();
+                //InitializeParameters();
                 InitializeBinAddressTable();
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
@@ -72,7 +72,7 @@ namespace DynamicEnergyTest
 
             var ParamatersJson = File.ReadAllText(System.Environment.CurrentDirectory + "\\Config\\Paramaters.json");
             Type type = typeof(ParameterSetting);
-            SysConfig.GetConfig().ParameterSetting = fastJSON.JSON.ToObject<ParameterSetting>(ParamatersJson);
+            SysConfig.GetConfig().JsonConfig.ParameterSetting = fastJSON.JSON.ToObject<ParameterSetting>(ParamatersJson);
         }
 
     }

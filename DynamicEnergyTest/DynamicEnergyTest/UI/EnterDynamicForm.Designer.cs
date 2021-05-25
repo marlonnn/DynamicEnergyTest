@@ -85,6 +85,7 @@
             this.Controls.Add(this.exListView);
             this.Controls.Add(this.btnSend);
             this.Location = new System.Drawing.Point(0, 0);
+            this.MinimizeBox = false;
             this.Name = "EnterDynamicForm";
             this.NewClientSize = new System.Drawing.Size(542, 500);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

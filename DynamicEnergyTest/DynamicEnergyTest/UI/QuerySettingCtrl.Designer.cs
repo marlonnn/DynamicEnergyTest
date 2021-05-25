@@ -30,9 +30,9 @@
         {
             this.button1 = new System.Windows.Forms.Button();
             this.btnImport = new System.Windows.Forms.Button();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.txtStatus = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtUID = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -41,31 +41,34 @@
             this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(144)))), ((int)(((byte)(255)))));
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(755, 15);
+            this.button1.Location = new System.Drawing.Point(432, 12);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(88, 30);
             this.button1.TabIndex = 11;
             this.button1.Text = "重置";
             this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // btnImport
             // 
             this.btnImport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(144)))), ((int)(((byte)(255)))));
             this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnImport.ForeColor = System.Drawing.Color.White;
-            this.btnImport.Location = new System.Drawing.Point(629, 15);
+            this.btnImport.Location = new System.Drawing.Point(306, 12);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(88, 30);
             this.btnImport.TabIndex = 10;
             this.btnImport.Text = "查询";
             this.btnImport.UseVisualStyleBackColor = false;
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
-            // textBox2
+            // txtStatus
             // 
-            this.textBox2.Location = new System.Drawing.Point(369, 21);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(220, 21);
-            this.textBox2.TabIndex = 9;
+            this.txtStatus.Location = new System.Drawing.Point(369, 21);
+            this.txtStatus.Name = "txtStatus";
+            this.txtStatus.Size = new System.Drawing.Size(220, 21);
+            this.txtStatus.TabIndex = 9;
+            this.txtStatus.Visible = false;
             // 
             // label2
             // 
@@ -77,12 +80,13 @@
             this.label2.TabIndex = 8;
             this.label2.Text = "测试状态:";
             // 
-            // textBox1
+            // txtUID
             // 
-            this.textBox1.Location = new System.Drawing.Point(57, 21);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(220, 21);
-            this.textBox1.TabIndex = 7;
+            this.txtUID.Location = new System.Drawing.Point(57, 21);
+            this.txtUID.Name = "txtUID";
+            this.txtUID.Size = new System.Drawing.Size(220, 21);
+            this.txtUID.TabIndex = 7;
+            this.txtUID.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtUID_KeyPress);
             // 
             // label1
             // 
@@ -100,9 +104,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btnImport);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtUID);
             this.Controls.Add(this.label1);
             this.Name = "QuerySettingCtrl";
             this.Size = new System.Drawing.Size(841, 61);
@@ -115,9 +119,9 @@
 
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button btnImport;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox txtStatus;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtUID;
         private System.Windows.Forms.Label label1;
     }
 }

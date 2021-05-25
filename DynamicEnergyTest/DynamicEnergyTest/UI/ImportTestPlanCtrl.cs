@@ -45,55 +45,59 @@ namespace DynamicEnergyTest.UI
         private void BtnImport_Click(object sender, EventArgs e)
         {
             //Import UID test plan
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            try
             {
-                openFileDialog.InitialDirectory = Environment.CurrentDirectory;
-                openFileDialog.Filter = @".xls Files(*.xls) | *.xls";
-                if (openFileDialog.ShowDialog(this.Parent) == DialogResult.OK)
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
                 {
-                    //SysConfig.UIDs.Clear();
-                    //SysConfig.UIDs
-                    string fileName = openFileDialog.FileName;
-                    using (FileStream stream = File.Open(fileName, FileMode.Open, FileAccess.Read))
+                    openFileDialog.InitialDirectory = Environment.CurrentDirectory;
+                    openFileDialog.Filter = @".xls Files(*.xls) | *.xls";
+                    if (openFileDialog.ShowDialog(this.Parent) == DialogResult.OK)
                     {
-                        //1. Reading from a binary Excel file ('97-2003 format; *.xls)
-                        IExcelDataReader excelReader = ExcelReaderFactory.CreateBinaryReader(stream);
-                        //...
-                        //2. Reading from a OpenXml Excel file (2007 format; *.xlsx)
-                        //IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(stream);
-                        //...
-                        //3. DataSet - The result of each spreadsheet will be created in the result.Tables
-                        DataSet result = excelReader.AsDataSet();
-                        //...
-                        //4. DataSet - Create column names from first row
-                        //excelReader.IsFirstRowAsColumnNames = true;
-                        //DataSet result = excelReader.AsDataSet();
-
-                        //5. Data Reader methods
-                        while (excelReader.Read())
+                        //SysConfig.UIDs.Clear();
+                        //SysConfig.UIDs
+                        string fileName = openFileDialog.FileName;
+                        using (FileStream stream = File.Open(fileName, FileMode.Open, FileAccess.Read))
                         {
-                            var sn = excelReader.GetString(0);
-                            var str = excelReader.GetString(0);
-                            if (!string.IsNullOrEmpty(sn) && sn.ToLower().StartsWith("zs"))
-                            {
-                                UID uID = new UID(sn);
-                                var findUID = SysConfig.UIDs.FirstOrDefault(u => u.UIDCode == sn);
-                                if (/*!SysConfig.UIDs.Contains(uID)*/findUID == null)
-                                    SysConfig.UIDs.Add(uID);
-                            }
-                        }
+                            //1. Reading from a binary Excel file ('97-2003 format; *.xls)
+                            IExcelDataReader excelReader = ExcelReaderFactory.CreateBinaryReader(stream);
+                            //...
+                            //2. Reading from a OpenXml Excel file (2007 format; *.xlsx)
+                            //IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                            //...
+                            //3. DataSet - The result of each spreadsheet will be created in the result.Tables
+                            DataSet result = excelReader.AsDataSet();
+                            //...
+                            //4. DataSet - Create column names from first row
+                            //excelReader.IsFirstRowAsColumnNames = true;
+                            //DataSet result = excelReader.AsDataSet();
 
-                        //6. Free resources (IExcelDataReader is IDisposable)
-                        excelReader.Close();
-                        safeFileName = openFileDialog.SafeFileName;
-                        SysConfig.JsonConfig.ImportedUIDFile = openFileDialog.FileName;
-                        //ImportedFile = "文件： " + openFileDialog.SafeFileName + " 已成功导入 " + SysConfig.UIDs.Count + " 个UID";
-                        ProgressBarVisiable(true);
-                        this.backgroundWorker.RunWorkerAsync();
+                            //5. Data Reader methods
+                            while (excelReader.Read())
+                            {
+                                var sn = excelReader.GetString(0);
+                                var str = excelReader.GetString(0);
+                                if (!string.IsNullOrEmpty(sn) && sn.ToLower().StartsWith("zs"))
+                                {
+                                    UID uID = new UID(sn);
+                                    var findUID = SysConfig.UIDs.FirstOrDefault(u => u.UIDCode == sn);
+                                    if (/*!SysConfig.UIDs.Contains(uID)*/findUID == null)
+                                        SysConfig.UIDs.Add(uID);
+                                }
+                            }
+
+                            //6. Free resources (IExcelDataReader is IDisposable)
+                            excelReader.Close();
+                            safeFileName = openFileDialog.SafeFileName;
+                            SysConfig.JsonConfig.ImportedUIDFile = openFileDialog.FileName;
+                            //ImportedFile = "文件： " + openFileDialog.SafeFileName + " 已成功导入 " + SysConfig.UIDs.Count + " 个UID";
+                            ProgressBarVisiable(true);
+                            this.backgroundWorker.RunWorkerAsync();
+                        }
                     }
-                    SysConfig.UpdateDataGridViewHandler?.Invoke(null, null);
-                    SysConfig.UpdateTestInfoHandler?.Invoke(null, null);
                 }
+            }
+            catch (Exception ex)
+            {
             }
         }
 
@@ -129,6 +133,8 @@ namespace DynamicEnergyTest.UI
         {
             // TODO: do something with final calculation.
             ProgressBarVisiable(false);
+            SysConfig.UpdateDataGridViewHandler?.Invoke(null, null);
+            SysConfig.UpdateTestInfoHandler?.Invoke(null, null);
             //SysConfig.UpdateTestTable();
         }
 

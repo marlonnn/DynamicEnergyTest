@@ -128,10 +128,11 @@ namespace DynamicEnergyTest.Protocol
                     //decode data region
                     receiveDataModel.Decode(m.Data.DataRegion);
 
-                    C00 c00 = receiveDataModel as C00;
-                    if (c00 != null)
+                    C01 c01 = receiveDataModel as C01;
+                    if (c01 != null)
                     {
                         //收到数据则，进入产测模式
+                        DataAnalyzedHandler?.Invoke(c01);
                     }
                 }
 
@@ -147,13 +148,16 @@ namespace DynamicEnergyTest.Protocol
             var v = ByteHelper.Byte2ReadalbeXstring(bytes);
             Console.WriteLine(v);
 
-            var v2 = System.Text.Encoding.UTF8.GetString(bytes);
-            Console.WriteLine(v2);
+            //var v2 = System.Text.Encoding.UTF8.GetString(bytes);
+            //Console.WriteLine(v2);
             RawDataHandler?.Invoke(bytes);
         }
 
         public RawDataDelegate RawDataHandler;
         public delegate void RawDataDelegate(byte[] bytes);
+
+        public DataAnalyzedDelegate DataAnalyzedHandler;
+        public delegate void DataAnalyzedDelegate(DataModel dataModel);
 
         public static ProtocolFactory GetFactory()
         {
@@ -198,6 +202,7 @@ namespace DynamicEnergyTest.Protocol
         public ComCode Write(byte[] sendBytes, int funCode)
         {
             //close and reopen com port
+            receiveDataModel = null;
             if (Open())
             {
                 ComCode comCode = _communicator.Write(sendBytes, 0, sendBytes.Count());
@@ -217,7 +222,7 @@ namespace DynamicEnergyTest.Protocol
                             else
                                 return ComCode.ReceivedMessageError;
                         }
-                        if (sw.ElapsedMilliseconds > 3000)
+                        if (sw.ElapsedMilliseconds > 5000)
                         {
                             return ComCode.TimeOut;
                         }
@@ -261,12 +266,19 @@ namespace DynamicEnergyTest.Protocol
                             var raw = receiveDataModel.Raw;
                             var dataRegion = receiveDataModel.DataRegion;
                             if (receiveDataModel.CheckLegal())
+                            {
+                                Close();
                                 return ComCode.ReceivedOK;
+                            }
                             else
+                            {
+                                Close();
                                 return ComCode.ReceivedMessageError;
+                            }
                         }
-                        if (sw.ElapsedMilliseconds > 3000)
+                        if (sw.ElapsedMilliseconds > 5000)
                         {
+                            Close();
                             return ComCode.TimeOut;
                         }
                         Thread.Sleep(1);

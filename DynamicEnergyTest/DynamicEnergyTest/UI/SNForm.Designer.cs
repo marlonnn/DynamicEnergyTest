@@ -52,6 +52,7 @@
             this.txtSN.Size = new System.Drawing.Size(444, 21);
             this.txtSN.TabIndex = 1;
             this.txtSN.TextChanged += new System.EventHandler(this.TxtSN_TextChanged);
+            this.txtSN.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtSN_KeyPress);
             // 
             // btnOK
             // 
