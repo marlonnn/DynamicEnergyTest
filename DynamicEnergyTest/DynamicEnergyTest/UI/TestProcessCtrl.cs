@@ -100,31 +100,28 @@ namespace DynamicEnergyTest.UI
 
         private bool CheckEnterDynamicTest()
         {
+            bool canTest = false;
             TestPanelCtrl parentCtrl = this.Parent as TestPanelCtrl;
 
             var dataModel = protocolFactory.DataModels[0];
 
             var sendBytes = dataModel.Encode();
             string readableBytes = ByteHelper.Byte2ReadalbeXstring(sendBytes);
-            parentCtrl.UpdateListView("发送产测命令： " + readableBytes);
-            ComCode comCode = protocolFactory.Write(sendBytes, dataModel.FunCode);
-            parentCtrl.UpdateListView(comCode.GetComCodeDescription());
-            if (comCode == ComCode.ReceivedOK)
-                return true;
-            else
+
+            for (int i = 0; i < 10; i++)
             {
-                for (int i=0; i< 9; i++)
+                if (!enableAutoTest) break;
+                parentCtrl.UpdateListView("发送产测命令： " + readableBytes);
+                ComCode retComCode = protocolFactory.Write(sendBytes, dataModel.FunCode);
+                parentCtrl.UpdateListView(retComCode.GetComCodeDescription());
+                if (retComCode == ComCode.ReceivedOK)
                 {
-                    parentCtrl.UpdateListView("发送产测命令： " + readableBytes);
-                    ComCode retComCode = protocolFactory.Write(sendBytes, dataModel.FunCode);
-                    parentCtrl.UpdateListView(comCode.GetComCodeDescription());
-                    if (retComCode == ComCode.ReceivedOK)
-                    {
-                        return true;
-                    }
+                    canTest = true;
+                    break;
                 }
-                return false;
             }
+            return canTest;
+
         }
 
         private void MouseEventClick(object sender, MouseEventArgs e)
